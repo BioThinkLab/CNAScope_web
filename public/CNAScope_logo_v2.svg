@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" width="241" height="90" viewBox="0 0 241 90">
+<defs>
+<clipPath id="clip_0">
+<path transform="matrix(1,0,0,-1,0,90)" d="M0 .000002011657H240.96V90H0Z"/>
+</clipPath>
+</defs>
+<g clip-path="url(#clip_0)">
+<path transform="matrix(1,0,0,-1,0,90)" d="M0 90H240.96V.000002011657H0Z" fill="#ffffff"/>
+</g>
+<path transform="matrix(1,0,0,-1,0,90)" d="M0 90H241.25V.000002346933H0Z" fill="#ffffff"/>
+<path transform="matrix(1,0,0,-1,0,90)" d="M3.166378 59.13929H31.512839V87.46008H3.166378Z" fill="#0b76a0" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,90)" d="M31.51283 59.13929H59.85929V87.46008H31.51283Z" fill="#e97132" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,90)" d="M59.85929 59.13929H88.20575V87.46008H59.85929Z" fill="#f2aa84" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,90)" d="M3.166378 30.81851H31.512839V59.139299H3.166378Z" fill="#caeefb" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,90)" d="M31.51283 30.81851H59.85929V59.139299H31.51283Z" fill="#c04f15" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,90)" d="M59.85929 30.81851H88.20575V59.139299H59.85929Z" fill="#f6c6ad" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,90)" d="M3.166378 2.497719H31.512839V30.818509H3.166378Z" fill="#0f9ed5" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,90)" d="M31.51283 2.497719H59.85929V30.818509H31.51283Z" fill="#f6c6ad" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,90)" d="M59.85929 2.497719H88.20575V30.818509H59.85929Z" fill="#fbe3d6" fill-rule="evenodd"/>
+<path transform="matrix(.00007874016,0,0,.00007874016,3.166378,2.539917)" stroke-width="28575" stroke-linecap="butt" stroke-linejoin="round" fill="none" stroke="#ffffff" d="M360000-14287V1093309"/>
+<path transform="matrix(.00007874016,0,0,.00007874016,3.166378,2.539917)" stroke-width="28575" stroke-linecap="butt" stroke-linejoin="round" fill="none" stroke="#ffffff" d="M720000-14287V1093309"/>
+<path transform="matrix(.00007874016,0,0,.00007874016,3.166378,2.539917)" stroke-width="28575" stroke-linecap="butt" stroke-linejoin="round" fill="none" stroke="#ffffff" d="M-14287 359674H1094287"/>
+<path transform="matrix(.00007874016,0,0,.00007874016,3.166378,2.539917)" stroke-width="28575" stroke-linecap="butt" stroke-linejoin="round" fill="none" stroke="#ffffff" d="M-14287 719348H1094287"/>
+<path transform="matrix(.00007874016,0,0,.00007874016,3.166378,2.539917)" stroke-width="28575" stroke-linecap="butt" stroke-linejoin="round" fill="none" stroke="#ffffff" d="M0-14287V1093309"/>
+<path transform="matrix(.00007874016,0,0,.00007874016,3.166378,2.539917)" stroke-width="28575" stroke-linecap="butt" stroke-linejoin="round" fill="none" stroke="#ffffff" d="M1080000-14287V1093309"/>
+<path transform="matrix(.00007874016,0,0,.00007874016,3.166378,2.539917)" stroke-width="28575" stroke-linecap="butt" stroke-linejoin="round" fill="none" stroke="#ffffff" d="M-14287 0H1094287"/>
+<path transform="matrix(.00007874016,0,0,.00007874016,3.166378,2.539917)" stroke-width="28575" stroke-linecap="butt" stroke-linejoin="round" fill="none" stroke="#ffffff" d="M-14287 1079022H1094287"/>
+<text fill="#0f9ed5" xml:space="preserve" transform="matrix(.24 0 -0 .24 89.8322 146.64)" font-size="145.8333" font-family="Calibri" font-weight="bold"><tspan y="-375" x="0 77.08749 172.84163">CNA</tspan></text>
+<text fill="#e97132" xml:space="preserve" transform="matrix(.24 0 -0 .24 152.5822 146.64)" font-size="145.8333" font-family="Calibri" font-weight="bold"><tspan y="-375" x="0 68.74582 129.03331 207.11248 285.19163">Scope</tspan></text>
+</svg>
