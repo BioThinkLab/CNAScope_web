@@ -55,7 +55,7 @@ export const preprocessAndLayout = (
     // Calculate axis length
     const xMetaLength = heatMapSetting.metaRectWidth * metaFields.length
     const yMetaLength = heatMapSetting.mode === 'Fixed' ? heatMapSetting.rectHeight * fileIds.length : heatMapSetting.height
-    const xMatrixLength = heatMapSetting.CNVRectWidth * geneInfos.length
+    const xMatrixLength = heatMapSetting.CNARectWidth * geneInfos.length
 
     // Meta HeatMap y axis
     const yMeta = d3.scaleBand()
@@ -84,7 +84,7 @@ export const preprocessAndLayout = (
 
     // Gene CNV Matrix x axis
     const xMatrix = d3.scaleBand()
-        .domain(geneInfos.map(geneInfo => geneInfo['gene_id']))
+        .domain(geneInfos.map(geneInfo => geneInfo['gene']))
         .range([xMetaLength, xMatrixLength + xMetaLength])
 
 

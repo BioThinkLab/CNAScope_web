@@ -107,21 +107,25 @@ const NodeHistorySettingCollapse = ({ config, configKey, handleConfigChange }) =
 )
 
 const buildCollapseItems = (
+    entity,
     config,
     handleConfigChange,
     selectedGenes,
     sortedGenes,
     showModal,
-    renderHeatMap
+    renderHeatMap,
+    resetSelectedGenes
 ) => [
     {
-        key: 'genes',
-        label: 'Gene Setting',
+        key: 'data',
+        label: `${entity} Setting`,
         extra: <PieChartOutlined />,
         children: (
             <CNAGeneSelectCollapse
+                entity={entity}
                 selectedGenes={selectedGenes}
                 sortedGenes={sortedGenes}
+                resetSelectedGenes={resetSelectedGenes}
                 showModal={showModal}
                 renderHeatMap={renderHeatMap}
             />
@@ -166,18 +170,29 @@ const buildCollapseItems = (
 ]
 
 const CNAGeneHeatmapSettingPanel = ({
+    entity,
     config,
     handleConfigChange,
     selectedGenes,
     sortedGenes,
     showModal,
-    renderHeatMap
+    renderHeatMap,
+    resetSelectedGenes
 }) => {
-    const [activeKey, setActiveKey] = useState(['genes', 'heatmap', 'tree'])
+    const [activeKey, setActiveKey] = useState(['data', 'heatmap', 'tree'])
 
     const items = useMemo(() => {
-        return buildCollapseItems(config, handleConfigChange, selectedGenes, sortedGenes, showModal, renderHeatMap)
-    }, [config, handleConfigChange, renderHeatMap, selectedGenes, showModal, sortedGenes])
+        return buildCollapseItems(
+            entity,
+            config,
+            handleConfigChange,
+            selectedGenes,
+            sortedGenes,
+            showModal,
+            renderHeatMap,
+            resetSelectedGenes
+        )
+    }, [config, handleConfigChange, renderHeatMap, selectedGenes, showModal, sortedGenes, resetSelectedGenes])
 
     const handleCollapseChange = (props) => {
         setActiveKey(props)

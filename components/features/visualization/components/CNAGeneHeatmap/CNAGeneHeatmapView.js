@@ -3,12 +3,17 @@ import SplitterLayout from "@/components/layouts/SplitterLayout"
 import CNAGeneHeatmapSettingPanel
     from "@/components/features/visualization/components/CNAGeneHeatmap/CNAGeneHeatmapSettingPanel"
 import SelectGeneModal from "@/components/features/visualization/components/CNAGeneHeatmap/SelectGeneModal"
+import LoadingView from "@/components/common/status/LoadingView"
+import { Box } from "@mui/system"
+import CNAGeneHeatmapPanel from "@/components/features/visualization/components/CNAGeneHeatmap/CNAGeneHeatmapPanel"
 
 const CNAGeneHeatmapView = ({
     meta,
     newick,
     genes,
-    geneMatrixFetcher
+    geneMatrixFetcher,
+    baselineCNA,
+    entity='Gene'
 }) => {
     const [isShowLeft, setIsShowLeft] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -90,7 +95,6 @@ const CNAGeneHeatmapView = ({
         })
     }
 
-
     return (
         <>
             <SplitterLayout
@@ -98,16 +102,34 @@ const CNAGeneHeatmapView = ({
                 leftPanelWidth={300}
                 leftPanel={
                     <CNAGeneHeatmapSettingPanel
+                        entity={entity}
                         config={config}
                         handleConfigChange={handleConfigChange}
                         selectedGenes={selectedGenes}
                         sortedGenes={sortedGenes}
                         showModal={showModal}
                         renderHeatMap={renderHeatMap}
+                        resetSelectedGenes={resetSelectedGenes}
+                    />
+                }
+                rightPanel={
+                    <RightPanelWrapper
+                        entity={entity}
+                        meta={meta}
+                        newick={newick}
+                        renderGenes={renderGenes}
+                        geneMatrix={geneMatrix}
+                        baselineCNA={baselineCNA}
+                        config={config}
+                        processing={processing}
+                        isShowLeft={isShowLeft}
+                        handleIsShowLeftChange={handleIsShowLeftChange}
                     />
                 }
             />
             <SelectGeneModal
+                entity={entity}
+                genes={genes}
                 isModalOpen={isModalOpen}
                 handleModalCancel={handleModalCancel}
                 selectedGenes={selectedGenes}
@@ -116,5 +138,52 @@ const CNAGeneHeatmapView = ({
         </>
     )
 }
+
+const RightPanelWrapper = ({
+    entity,
+    meta,
+    newick,
+    renderGenes,
+    geneMatrix,
+    baselineCNA,
+    config,
+    processing,
+    isShowLeft,
+    handleIsShowLeftChange
+}) => (
+    <>
+        {
+            processing ? (
+                    <LoadingView
+                        containerSx={{ height: '910px' }}
+                        loadingPrompt="Processing Data..., please wait for a moment."
+                    />
+            ) : geneMatrix === null ? (
+                <Box sx={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <Box sx={{ fontWeight: 500, fontSize: '28px' }}>
+                        Please select {`${entity}s`} to render the corresponding visualization.
+                    </Box>
+                </Box>
+            ) : (
+                <CNAGeneHeatmapPanel
+                    meta={meta}
+                    newick={newick}
+                    renderGenes={renderGenes}
+                    geneMatrix={geneMatrix}
+                    baselineCNA={baselineCNA}
+                    config={config}
+                    isShowLeft={isShowLeft}
+                    handleIsShowLeftChange={handleIsShowLeftChange}
+                />
+            )
+        }
+    </>
+)
 
 export default CNAGeneHeatmapView

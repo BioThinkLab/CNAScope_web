@@ -16,22 +16,23 @@ const TooltipGeneChip = ({
 )
 
 const GeneChips = ({
+    entity,
     selectedGenes,
     sortedGenes,
     showModal
 }) => (
     <Stack spacing={1}>
-        <Box sx={{ fontWeight: 500 }}>Selected Genes:</Box>
-        <Stack direction='row' sx={{ flexWrap: 'wrap', width: '100%' }}>
+        <Box sx={{ fontWeight: 500 }}>Selected {`${entity}s`}:</Box>
+        <Stack direction='row' sx={{ flexWrap: 'wrap', width: '100%', rowGap: '6px' }}>
             {
                 selectedGenes.length === 0 ? (
-                    <BasicChip value="No Selected Genes" color="red"/>
+                    <BasicChip value={`No Selected ${entity}s`} color="red"/>
                 ) : (
                     sortedGenes.slice(0, 9).map((gene, index) => (
                         <BasicChip
                             key={index}
                             value={gene['gene']}
-                            color='cyan'
+                            color='volcano'
                         />
                     ))
                 )
@@ -40,10 +41,9 @@ const GeneChips = ({
             {
                 selectedGenes.length > 9 ? (
                     <TooltipGeneChip
-                        title="Click to see all selected genes."
-                        value={`+${selectedGenes.length - 9} Genes`}
-                        color="#000000"
-                        handleClick={showModal}
+                        title={`Click to see all selected ${entity}s.`}
+                        value={`+${selectedGenes.length - 9} ${entity}s`}
+                        color="volcano"
                     />
                 ) : (
                     <></>
@@ -96,6 +96,7 @@ const ButtonGroup = ({
 )
 
 const CNAGeneSelectCollapse = ({
+    entity,
     selectedGenes,
     sortedGenes,
     showModal,
@@ -103,7 +104,7 @@ const CNAGeneSelectCollapse = ({
     renderHeatMap
 }) => (
     <>
-        <GeneChips selectedGenes={selectedGenes} sortedGenes={sortedGenes} showModal={showModal} />
+        <GeneChips entity={entity} selectedGenes={selectedGenes} sortedGenes={sortedGenes} showModal={showModal} />
         <ButtonGroup showModal={showModal} resetSelectedGenes={resetSelectedGenes} renderHeatMap={renderHeatMap} />
     </>
 )

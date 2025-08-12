@@ -1,41 +1,31 @@
-import { ColorLegend } from "@/components/features/visualization/components/legend/ColorLegend"
 import * as d3 from "d3"
+import { ColorLegend } from "@/components/features/visualization/components/legend/ColorLegend"
 
-const CNAChromosomeHeatmapColorLegends = ({
-    width,
-    marginTop,
+const CNAGeneHeatmapLegend = ({
     legendWidth,
     legendHeight,
     colorScales,
     baselineCNA
 }) => {
-    let scaleRange
+    const CNARange = baselineCNA === 2 ? [0, 2, 10] : [-1, 0, 1]
 
-    if (baselineCNA === 0) {
-        scaleRange = [-1, 1]
-    } else {
-        scaleRange = [0, 10]
-    }
-
-    const cnvValueScale = d3.scaleSqrt(
-        [scaleRange[0], baselineCNA, scaleRange[1]], ["#add8e6", "#ffffff", "#6A0220"]
-    )
+    const cnvValueScale = d3.scaleSqrt(CNARange, ["#add8e6", "#ffffff", "#6A0220"])
 
     return (
-        <g transform={`translate(${(width - legendWidth) / 2}, ${marginTop})`}>
+        <g>
             <ColorLegend
                 color={cnvValueScale}
                 title={"CNV Value"}
                 width={legendWidth}
                 legendMarginTop={0}
-                ticks={(scaleRange[1] - scaleRange[0] + 1)}
+                ticks={CNARange[2] - CNARange[0] + 1}
             />
 
             <ColorLegend
                 color={colorScales['e_PCA1']}
                 title={"ePCA1"}
                 width={legendWidth}
-                legendMarginTop={legendHeight * 1}
+                legendMarginTop={legendHeight}
             />
 
             <ColorLegend
@@ -76,4 +66,4 @@ const CNAChromosomeHeatmapColorLegends = ({
     )
 }
 
-export default CNAChromosomeHeatmapColorLegends
+export default CNAGeneHeatmapLegend

@@ -6,6 +6,10 @@ import WorkflowSelector from "@/components/features/database/components/datasetD
 import CNAChromosomeHeatmapWrapper
     from "@/components/features/database/components/visualization/CNAChromosomeHeatmapWrapper"
 import CNAGeneHeatmapWrapper from "@/components/features/database/components/visualization/CNAGeneHeatmapWrapper"
+import CNATermHeatmapWrapper from "@/components/features/database/components/visualization/CNATermHeatmapWrapper"
+import CNAEmbeddingMapWrapper from "@/components/features/database/components/visualization/CNAEmbeddingMapWrapper"
+import CNAPloidyStairstepWrapper
+    from "@/components/features/database/components/visualization/CNAPloidyStairstepWrapper"
 
 const DatabaseDetailContent = ({ dataset }) => {
     const [selectedWorkflow, setSelectedWorkflow] = useState(null)
@@ -38,6 +42,9 @@ const DatabaseDetailContent = ({ dataset }) => {
             />
             <CNAChromosomeHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
             <CNAGeneHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+            <CNATermHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+            <CNAEmbeddingMapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+            <CNAPloidyStairstepWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
             <Box></Box>
         </Stack>
     )

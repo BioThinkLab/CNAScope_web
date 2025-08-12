@@ -1,15 +1,15 @@
 import { Box, Stack } from "@mui/system"
 import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
-import { useCNAGeneList } from "@/components/features/database/hooks/useCNAGeneList"
-import LoadingView from "@/components/common/status/LoadingView"
-import ErrorView from "@/components/common/status/ErrorView"
 import { useCNAMeta } from "@/components/features/database/hooks/useCNAMeta"
 import { useCNANewick } from "@/components/features/database/hooks/useCNANewick"
+import { useCNATermList } from "@/components/features/database/hooks/useCNATermList"
+import LoadingView from "@/components/common/status/LoadingView"
+import ErrorView from "@/components/common/status/ErrorView"
 import api from "@/lib/api/axios"
-import { getCNAGeneMatrixUrl } from "@/lib/api/dataset"
+import { getCNATermMatrixUrl } from "@/lib/api/dataset"
 import CNAGeneHeatmapView from "@/components/features/visualization/components/CNAGeneHeatmap/CNAGeneHeatmapView"
 
-const CNAGeneHeatmapContent = ({ selectedWorkflow, dataset }) => {
+const CNATermHeatmapContent = ({ selectedWorkflow, dataset }) => {
     const {
         meta,
         isMetaLoading,
@@ -23,38 +23,38 @@ const CNAGeneHeatmapContent = ({ selectedWorkflow, dataset }) => {
     } = useCNANewick(dataset.name, selectedWorkflow)
 
     const {
-        genes,
-        isGenesLoading,
-        isGenesError
-    } = useCNAGeneList(dataset.name, selectedWorkflow)
+        terms,
+        isTermsLoading,
+        isTermsError
+    } = useCNATermList(dataset.name, selectedWorkflow)
 
-    const geneMatrixFetcher = (selectedGenes) => {
-        return api.post(getCNAGeneMatrixUrl(), {
+    const geneMatrixFetcher = (selectedTerms) => {
+        return api.post(getCNATermMatrixUrl(), {
             datasetName: dataset.name,
             workflowType: selectedWorkflow,
-            genes: selectedGenes
+            terms: selectedTerms
         })
     }
 
     const baselineCNA = dataset['cn_type'] === 'Bin Integer' ? 2 : 0
 
-    if (isMetaLoading || isNewickLoading || isGenesLoading) return <LoadingView height='920px'/>
+    if (isMetaLoading || isNewickLoading || isTermsLoading) return <LoadingView height='920px'/>
 
-    if (isMetaError || isNewickError || isGenesError) return <ErrorView height='920px'/>
+    if (isMetaError || isNewickError || isTermsError) return <ErrorView height='920px'/>
 
     return (
         <CNAGeneHeatmapView
-            entity='Gene'
+            entity='Term'
             meta={meta}
             newick={newick}
-            genes={genes}
+            genes={terms}
             geneMatrixFetcher={geneMatrixFetcher}
             baselineCNA={baselineCNA}
         />
     )
 }
 
-const CNAGeneHeatmapWrapper = ({ selectedWorkflow, dataset }) => (
+const CNATermHeatmapWrapper = ({ selectedWorkflow, dataset }) => (
     <Stack spacing={4}>
         <Box
             component='h6'
@@ -66,12 +66,12 @@ const CNAGeneHeatmapWrapper = ({ selectedWorkflow, dataset }) => (
                 paddingBottom: '12px',
             }}
         >
-            Gene-Level CNA Heatmap
+            Term-Level CNA Heatmap
         </Box>
         <CNAVisualizationContainer>
-            <CNAGeneHeatmapContent dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+            <CNATermHeatmapContent selectedWorkflow={selectedWorkflow} dataset={dataset}/>
         </CNAVisualizationContainer>
     </Stack>
 )
 
-export default CNAGeneHeatmapWrapper
+export default CNATermHeatmapWrapper

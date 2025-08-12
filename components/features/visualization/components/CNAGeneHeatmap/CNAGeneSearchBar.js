@@ -1,28 +1,15 @@
-import Fuse from "fuse.js"
 import { Input } from 'antd'
 import { useState } from "react"
 
-export const SelectedGenesSearchBar = ({ selectedGenes, setSelectedGenes }) => {
+export const SelectedGenesSearchBar = ({ handleSearchTextChange }) => {
     const [searchText, setSearchText] = useState('')
 
-    const handleSearchTextChange = (e) => {
-        setSearchText(e.target.value)
+    const onSearch = () => {
+        handleSearchTextChange?.(searchText)
     }
 
-    const onSearch = () => {
-        if (searchText === '') {
-            setSelectedGenes(selectedGenes)
-        } else {
-            const fuseOptions = {
-                threshold: 0.2,
-                keys: [
-                    'gene'
-                ]
-            }
-            const fuse = new Fuse(selectedGenes, fuseOptions)
-            const searchedGeneIndexArray = fuse.search(searchText).map(record => record.refIndex)
-            setSelectedGenes(selectedGenes.filter((_, index) => searchedGeneIndexArray.includes(index)))
-        }
+    const onClear = () => {
+        handleSearchTextChange?.('')
     }
 
     return (
@@ -30,8 +17,9 @@ export const SelectedGenesSearchBar = ({ selectedGenes, setSelectedGenes }) => {
             placeholder="Search..."
             allowClear
             value={searchText}
-            onChange={handleSearchTextChange}
-            onSearch={(value) => onSearch(value)}
+            onChange={(e) => setSearchText(e.target.value)}
+            onSearch={onSearch}
+            onClear={onClear}
             style={{
                 width: 200,
             }}
