@@ -9,7 +9,7 @@ import { Stack } from "@mui/system"
 import DatasetsTableOperations from "@/components/features/database/components/datasetTable/DatasetsTableOperations"
 import Fuse from "fuse.js"
 
-const MULTI_VALUE_FIELDS = new Set(['protocol', 'workflow'])
+const MULTI_VALUE_FIELDS = new Set(['programme', 'protocol', 'workflow'])
 const FUSE_KEYS = [
     'name',
     'full_name',
@@ -111,6 +111,8 @@ const DatabaseTableContent = ({ datasets }) => {
         setSearchTest(newSearchText)
     }
 
+    console.log(availableFilters)
+
     return (
         <SplitterLayout
             isShowLeft={isShowLeft}
@@ -148,7 +150,7 @@ const buildFilters = (datasets) => {
 
     return {
         source: getSortedUnique(datasets.map(d => d.source)),
-        programme: getSortedUnique(datasets.map(d => d.programme)),
+        programme: getUniqueValues(datasets, 'programme'),
         modality: getSortedUnique(datasets.map(d => d.modality)),
         obs_type: getSortedUnique(datasets.map(d => d.obs_type)),
         protocol: getUniqueValues(datasets, 'protocol'),

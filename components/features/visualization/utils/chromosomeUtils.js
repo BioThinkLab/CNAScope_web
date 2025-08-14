@@ -78,8 +78,35 @@ export const hg38ChromosomeTicks = {
     '3031042417': "chrX",
     '3088269832': "chrY"
 }
+export const hg38ChromosomeRanges = {
+    "chr1": [0, 248956422],
+    "chr2": [248956422, 491149951],
+    "chr3": [491149951, 689445510],
+    "chr4": [689445510, 879660065],
+    "chr5": [879660065, 1061198324],
+    "chr6": [1061198324, 1232004303],
+    "chr7": [1232004303, 1391350276],
+    "chr8": [1391350276, 1536488912],
+    "chr9": [1536488912, 1674883629],
+    "chr10": [1674883629, 1808681051],
+    "chr11": [1808681051, 1943767673],
+    "chr12": [1943767673, 2077042982],
+    "chr13": [2077042982, 2191407310],
+    "chr14": [2191407310, 2298451028],
+    "chr15": [2298451028, 2400442217],
+    "chr16": [2400442217, 2490780562],
+    "chr17": [2490780562, 2574038003],
+    "chr18": [2574038003, 2654411288],
+    "chr19": [2654411288, 2713028904],
+    "chr20": [2713028904, 2777473071],
+    "chr21": [2777473071, 2824183054],
+    "chr22": [2824183054, 2875001522],
+    "chrX": [2875001522, 3031042417],
+    "chrY": [3031042417, 3088269832]
+}
 
 export const hg38ChromosomeXDomain = [1, 3088269832]
+export const hg38NoSexChromosomeDomain = [1, 2875001522]
 
 export const hg19ChromosomeLength = {
     chr1: 249250621,
@@ -162,7 +189,35 @@ export const hg19ChromosomeTicks = {
     '3095677412': "chrY"
 }
 
+export const hg19ChromosomeRanges = {
+    "chr1": [0, 249250621],
+    "chr2": [249250621, 492449994],
+    "chr3": [492449994, 690472424],
+    "chr4": [690472424, 881626700],
+    "chr5": [881626700, 1062541960],
+    "chr6": [1062541960, 1233657027],
+    "chr7": [1233657027, 1392795690],
+    "chr8": [1392795690, 1539159712],
+    "chr9": [1539159712, 1680373143],
+    "chr10": [1680373143, 1815907890],
+    "chr11": [1815907890, 1950914406],
+    "chr12": [1950914406, 2084766301],
+    "chr13": [2084766301, 2199936179],
+    "chr14": [2199936179, 2307285719],
+    "chr15": [2307285719, 2409817111],
+    "chr16": [2409817111, 2500171864],
+    "chr17": [2500171864, 2581367074],
+    "chr18": [2581367074, 2659444322],
+    "chr19": [2659444322, 2718573305],
+    "chr20": [2718573305, 2781598825],
+    "chr21": [2781598825, 2829728720],
+    "chr22": [2829728720, 2881033286],
+    "chrX": [2881033286, 3036303846],
+    "chrY": [3036303846, 3095677412]
+}
+
 export const hg19ChromosomeXDomain = [1, 3095677412]
+export const hg19NoSexChromosomeDomain = [1, 2881033286]
 
 export const calculateChromosomeBinCount = (binStep, version = 'hg38') => {
     const chromosomeLengthData = version === 'hg19' ? hg19ChromosomeLength : hg38ChromosomeLength
@@ -175,4 +230,22 @@ export const calculateChromosomeBinCount = (binStep, version = 'hg38') => {
     }
 
     return chromosomeBinCntDict
+}
+
+export const stripChromosome = (chromosome) => chromosome.replace('chr', '')
+
+export const chromosomeOrder = (chromosome, stripFunc = stripChromosome) => {
+    const chrValue = stripFunc(chromosome)
+
+    if (!isNaN(chrValue)) return parseInt(chrValue, 10)
+    if (chrValue === 'X') return 23
+    if (chrValue === 'Y') return 24
+}
+
+export const createChromosomeSorter = (order = 'asc', stripFunc = stripChromosome) => {
+    return order === 'desc' ? (
+        (a, b) => chromosomeOrder(b, stripFunc) - chromosomeOrder(a, stripFunc)
+    ) : (
+        (a, b) => chromosomeOrder(a, stripFunc) - chromosomeOrder(b, stripFunc)
+    )
 }

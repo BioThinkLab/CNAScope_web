@@ -1,10 +1,10 @@
 import useSWR from "swr"
-import { getBulkDatasetSamplesURL } from "@/lib/api/dataset"
+import { getDatasetSamplesURL } from "@/lib/api/dataset"
 import { fetcher } from "@/lib/api/fetcher"
 
-export const useBulkDatasetSampleList = (datasetName) => {
+export const useDatasetSampleList = (datasetName) => {
     const { data, error, isLoading, mutate } = useSWR(
-        datasetName ? getBulkDatasetSamplesURL(datasetName) : null,
+        datasetName ? getDatasetSamplesURL(datasetName) : null,
         fetcher
     )
 

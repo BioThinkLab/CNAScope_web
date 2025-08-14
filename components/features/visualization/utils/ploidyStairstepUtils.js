@@ -1,9 +1,7 @@
 import * as d3 from 'd3'
 import {
-    hg19ChromosomeLength,
     hg19ChromosomeStartPositions, hg19ChromosomeTicks,
     hg19ChromosomeXDomain,
-    hg38ChromosomeLength,
     hg38ChromosomeStartPositions, hg38ChromosomeTicks,
     hg38ChromosomeXDomain,
 } from "@/components/features/visualization/utils/chromosomeUtils"

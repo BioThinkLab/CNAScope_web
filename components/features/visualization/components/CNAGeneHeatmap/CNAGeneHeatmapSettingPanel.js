@@ -192,7 +192,7 @@ const CNAGeneHeatmapSettingPanel = ({
             renderHeatMap,
             resetSelectedGenes
         )
-    }, [config, handleConfigChange, renderHeatMap, selectedGenes, showModal, sortedGenes, resetSelectedGenes])
+    }, [entity, config, handleConfigChange, selectedGenes, sortedGenes, showModal, renderHeatMap, resetSelectedGenes])
 
     const handleCollapseChange = (props) => {
         setActiveKey(props)

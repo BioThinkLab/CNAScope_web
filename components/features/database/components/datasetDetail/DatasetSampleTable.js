@@ -1,4 +1,4 @@
-import { useBulkDatasetSampleList } from "@/components/features/database/hooks/useBulkDatasetSampleList"
+import { useDatasetSampleList } from "@/components/features/database/hooks/useDatasetSampleList"
 import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import { Box, Stack } from "@mui/system"
@@ -102,7 +102,7 @@ const bulkDatasetSampleColumns = [
 ]
 
 export const BulkDatasetSampleTable = ({ dataset }) => {
-    const { samples, isLoading, isError } = useBulkDatasetSampleList(dataset.name)
+    const { samples, isLoading, isError } = useDatasetSampleList(dataset.name)
 
     if (isLoading) return <LoadingView containerSx={{ height: '40vh', marginTop: '40px' }}/>
 

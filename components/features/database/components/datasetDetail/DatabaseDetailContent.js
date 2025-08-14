@@ -10,6 +10,9 @@ import CNATermHeatmapWrapper from "@/components/features/database/components/vis
 import CNAEmbeddingMapWrapper from "@/components/features/database/components/visualization/CNAEmbeddingMapWrapper"
 import CNAPloidyStairstepWrapper
     from "@/components/features/database/components/visualization/CNAPloidyStairstepWrapper"
+import CNAFocalCNAWrapper from "@/components/features/database/components/visualization/CNAFocalCNAWrapper"
+import CNAGeneRecurrenceQueryWrapper
+    from "@/components/features/database/components/visualization/CNAGeneRecurrenceQueryWrapper"
 
 const DatabaseDetailContent = ({ dataset }) => {
     const [selectedWorkflow, setSelectedWorkflow] = useState(null)
@@ -45,6 +48,8 @@ const DatabaseDetailContent = ({ dataset }) => {
             <CNATermHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
             <CNAEmbeddingMapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
             <CNAPloidyStairstepWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+            <CNAFocalCNAWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+            {/*<CNAGeneRecurrenceQueryWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>*/}
             <Box></Box>
         </Stack>
     )
