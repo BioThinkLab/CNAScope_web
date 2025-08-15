@@ -8,8 +8,11 @@ import ErrorView from "@/components/common/status/ErrorView"
 import api from "@/lib/api/axios"
 import { getCNATermMatrixUrl } from "@/lib/api/dataset"
 import CNAGeneHeatmapView from "@/components/features/visualization/components/CNAGeneHeatmap/CNAGeneHeatmapView"
+import { useRef } from "react"
+import { Button } from "antd"
+import { DownloadOutlined } from "@ant-design/icons"
 
-const CNATermHeatmapContent = ({ selectedWorkflow, dataset }) => {
+const CNATermHeatmapContent = ({ selectedWorkflow, dataset, vizRef }) => {
     const {
         meta,
         isMetaLoading,
@@ -50,28 +53,55 @@ const CNATermHeatmapContent = ({ selectedWorkflow, dataset }) => {
             genes={terms}
             geneMatrixFetcher={geneMatrixFetcher}
             baselineCNA={baselineCNA}
+            vizRef={vizRef}
         />
     )
 }
 
-const CNATermHeatmapWrapper = ({ selectedWorkflow, dataset }) => (
-    <Stack spacing={4}>
-        <Box
-            component='h6'
-            sx={{
-                fontSize: '36px',
-                mt: '12px',
-                mb: '36px',
-                borderBottom: '2px solid #e0e0e0',
-                paddingBottom: '12px',
-            }}
-        >
-            Term-Level CNA Heatmap
-        </Box>
-        <CNAVisualizationContainer>
-            <CNATermHeatmapContent selectedWorkflow={selectedWorkflow} dataset={dataset}/>
-        </CNAVisualizationContainer>
-    </Stack>
-)
+const CNATermHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
+    const vizRef = useRef(null)
+
+    return (
+        <Stack spacing={4}>
+            <Stack
+                direction='row'
+                spacing={6}
+                alignItems="center"
+                sx={{
+                    borderBottom: '2px solid #e0e0e0',
+                    paddingBottom: '12px',
+                }}
+            >
+                <Box
+                    component='h6'
+                    sx={{
+                        fontSize: '36px'
+                    }}
+                >
+                    Term-Level CNA Heatmap
+                </Box>
+                <Stack direction='row' spacing={2}>
+                    <Button
+                        type="primary"
+                        onClick={() => vizRef.current?.downloadSvg()}
+                        size='large'
+                        icon={<DownloadOutlined/>}
+                    >
+                        Download SVG Chart
+                    </Button>
+                    {/*<Button*/}
+                    {/*    type="primary"*/}
+                    {/*    onClick={() => vizRef.current?.downloadPng()}*/}
+                    {/*>*/}
+                    {/*    Download PNG Chart*/}
+                    {/*</Button>*/}
+                </Stack>
+            </Stack>
+            <CNAVisualizationContainer>
+                <CNATermHeatmapContent selectedWorkflow={selectedWorkflow} dataset={dataset} vizRef={vizRef}/>
+            </CNAVisualizationContainer>
+        </Stack>
+    )
+}
 
 export default CNATermHeatmapWrapper

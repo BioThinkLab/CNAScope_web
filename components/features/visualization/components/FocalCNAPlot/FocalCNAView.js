@@ -3,7 +3,7 @@ import SplitterLayout from "@/components/layouts/SplitterLayout"
 import FocalCNASettingPanel from "@/components/features/visualization/components/FocalCNAPlot/FocalCNASettingPanel"
 import FocalCNAPlotPanel from "@/components/features/visualization/components/FocalCNAPlot/FocalCNAPlotPanel"
 
-const FocalCNAView = ({ focalInfo, reference }) => {
+const FocalCNAView = ({ focalInfo, reference, vizRef }) => {
     const [chromosome, setChromosome] = useState('all')
     const [isShowLeft, setIsShowLeft] = useState(true)
     const [config, setConfig] = useState({
@@ -55,8 +55,6 @@ const FocalCNAView = ({ focalInfo, reference }) => {
         }))
     }
 
-    console.log(focalInfo)
-
     return (
         <SplitterLayout
             isShowLeft={isShowLeft}
@@ -77,6 +75,7 @@ const FocalCNAView = ({ focalInfo, reference }) => {
                   reference={reference}
                   isShowLeft={isShowLeft}
                   handleIsShowLeftChange={handleIsShowLeftChange}
+                  ref={vizRef}
               />
             }
         />

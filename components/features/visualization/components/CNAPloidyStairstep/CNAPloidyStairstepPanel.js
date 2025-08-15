@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { useEffect, useMemo, useRef } from "react"
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react"
 import { initFigure, parseCNAMatrixToNodePairs } from "@/components/features/visualization/utils/ploidyStairstepUtils"
 import { Box, Stack } from "@mui/system"
 import SplitterControlButton from "@/components/common/button/SplitterControlButton"
@@ -10,16 +10,17 @@ import { hg19ChromosomeTicks, hg38ChromosomeTicks } from "@/components/features/
 import {
     PloidyStairstepTooltipTemplate
 } from "@/components/features/visualization/components/tooltipTemplate/PloidyStairstepTooltipTemplate"
+import { downloadSvg } from "@/components/features/visualization/utils/downloadUtils"
 
 
-const CNAPloidyStairstepPanel = ({
+const CNAPloidyStairstepPanel = forwardRef(({
     clusterMean,
     config,
     baselineCNA,
     reference,
     isShowLeft,
     handleIsShowLeftChange
-}) => {
+}, ref) => {
     const { width, height } = useContainerSize()
     const svgWidth = isShowLeft ? width - 320 : width - 20
     const svgHeight = height - 20
@@ -110,6 +111,13 @@ const CNAPloidyStairstepPanel = ({
         d3.select(svgRef.current).call(zoom)
     }, [line, nodePairs, x, xAxis, xRange, yRange])
 
+    useImperativeHandle(ref, () => ({
+        downloadSvg: () => {
+            if (!svgRef.current) return
+            downloadSvg(svgRef.current, `Ploidy_Stairstep.svg`)
+        }
+    }))
+
     return (
         <Box sx={{ position: 'relative', height: '920px' }}>
             <Box sx={{ position: 'absolute', top: '14px', left: '4px' }}>
@@ -172,7 +180,7 @@ const CNAPloidyStairstepPanel = ({
             {createPortal(<CustomTooltip ref={toolTipRef}/>, document.body)}
         </Box>
     )
-}
+})
 
 const pointerMoved = (event, nodePairs, xz, toolTipRef, offset, tooltipLineRef, yRange, reference) => {
     const chromosomeTicks = reference === 'hg19' ? hg19ChromosomeTicks : hg38ChromosomeTicks
@@ -215,5 +223,7 @@ const pointerLeft = (toolTipRef, tooltipLineRef) => {
     toolTipRef.current.hideTooltip()
     d3.select(tooltipLineRef.current).selectAll('line').remove()
 }
+
+CNAPloidyStairstepPanel.displayName = 'CNAPloidyStairstepPanel'
 
 export default CNAPloidyStairstepPanel

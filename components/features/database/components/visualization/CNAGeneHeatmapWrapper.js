@@ -8,8 +8,11 @@ import { useCNANewick } from "@/components/features/database/hooks/useCNANewick"
 import api from "@/lib/api/axios"
 import { getCNAGeneMatrixUrl } from "@/lib/api/dataset"
 import CNAGeneHeatmapView from "@/components/features/visualization/components/CNAGeneHeatmap/CNAGeneHeatmapView"
+import { useRef } from "react"
+import { Button } from "antd"
+import { DownloadOutlined } from "@ant-design/icons"
 
-const CNAGeneHeatmapContent = ({ selectedWorkflow, dataset }) => {
+const CNAGeneHeatmapContent = ({ selectedWorkflow, dataset, vizRef }) => {
     const {
         meta,
         isMetaLoading,
@@ -50,28 +53,55 @@ const CNAGeneHeatmapContent = ({ selectedWorkflow, dataset }) => {
             genes={genes}
             geneMatrixFetcher={geneMatrixFetcher}
             baselineCNA={baselineCNA}
+            vizRef={vizRef}
         />
     )
 }
 
-const CNAGeneHeatmapWrapper = ({ selectedWorkflow, dataset }) => (
-    <Stack spacing={4}>
-        <Box
-            component='h6'
-            sx={{
-                fontSize: '36px',
-                mt: '12px',
-                mb: '36px',
-                borderBottom: '2px solid #e0e0e0',
-                paddingBottom: '12px',
-            }}
-        >
-            Gene-Level CNA Heatmap
-        </Box>
-        <CNAVisualizationContainer>
-            <CNAGeneHeatmapContent dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-        </CNAVisualizationContainer>
-    </Stack>
-)
+const CNAGeneHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
+    const vizRef = useRef(null)
+
+    return (
+        <Stack spacing={4}>
+            <Stack
+                direction='row'
+                spacing={6}
+                alignItems="center"
+                sx={{
+                    borderBottom: '2px solid #e0e0e0',
+                    paddingBottom: '12px',
+                }}
+            >
+                <Box
+                    component='h6'
+                    sx={{
+                        fontSize: '36px',
+                    }}
+                >
+                    Gene-Level CNA Heatmap
+                </Box>
+                <Stack direction='row' spacing={2}>
+                    <Button
+                        type="primary"
+                        onClick={() => vizRef.current?.downloadSvg()}
+                        size='large'
+                        icon={<DownloadOutlined/>}
+                    >
+                        Download SVG Chart
+                    </Button>
+                    {/*<Button*/}
+                    {/*    type="primary"*/}
+                    {/*    onClick={() => vizRef.current?.downloadPng()}*/}
+                    {/*>*/}
+                    {/*    Download PNG Chart*/}
+                    {/*</Button>*/}
+                </Stack>
+            </Stack>
+            <CNAVisualizationContainer>
+                <CNAGeneHeatmapContent dataset={dataset} selectedWorkflow={selectedWorkflow} vizRef={vizRef}/>
+            </CNAVisualizationContainer>
+        </Stack>
+    )
+}
 
 export default CNAGeneHeatmapWrapper

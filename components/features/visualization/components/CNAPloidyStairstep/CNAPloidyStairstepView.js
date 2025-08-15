@@ -55,7 +55,8 @@ const CNAPloidyStairstepView = ({
     matrix,
     meta,
     baselineCNA,
-    reference
+    reference,
+    vizRef
 }) => {
     const [hcluster, setHcluster] = useState(1)
     const [isShowLeft, setIsShowLeft] = useState(true)
@@ -111,6 +112,7 @@ const CNAPloidyStairstepView = ({
                     reference={reference}
                     isShowLeft={isShowLeft}
                     handleIsShowLeftChange={handleIsShowLeftChange}
+                    ref={vizRef}
                 />
             }
         />

@@ -6,8 +6,11 @@ import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import CNAPloidyStairstepView
     from "@/components/features/visualization/components/CNAPloidyStairstep/CNAPloidyStairstepView"
+import { useRef } from "react"
+import { Button } from "antd"
+import { DownloadOutlined } from "@ant-design/icons"
 
-const CNAPloidyStairstepContent = ({ selectedWorkflow, dataset }) => {
+const CNAPloidyStairstepContent = ({ selectedWorkflow, dataset, vizRef }) => {
     const {
         matrix,
         isMatrixLoading,
@@ -24,7 +27,7 @@ const CNAPloidyStairstepContent = ({ selectedWorkflow, dataset }) => {
 
     if (isMatrixLoading || isMetaLoading) return <LoadingView height='920px'/>
 
-    if (isMatrixError || isMetaError) return  <ErrorView height='920px'/>
+    if (isMatrixError || isMetaError) return <ErrorView height='920px'/>
 
     return (
         <CNAPloidyStairstepView
@@ -32,28 +35,55 @@ const CNAPloidyStairstepContent = ({ selectedWorkflow, dataset }) => {
             meta={meta}
             baselineCNA={baselineCNA}
             reference={dataset['reference']}
+            vizRef={vizRef}
         />
     )
 }
 
-const CNAPloidyStairstepWrapper = ({ selectedWorkflow, dataset }) => (
-    <Stack spacing={4}>
-        <Box
-            component='h6'
-            sx={{
-                fontSize: '36px',
-                mt: '12px',
-                mb: '36px',
-                borderBottom: '2px solid #e0e0e0',
-                paddingBottom: '12px',
-            }}
-        >
-            CNA Ploidy Stairstep
-        </Box>
-        <CNAVisualizationContainer>
-            <CNAPloidyStairstepContent selectedWorkflow={selectedWorkflow} dataset={dataset}/>
-        </CNAVisualizationContainer>
-    </Stack>
-)
+const CNAPloidyStairstepWrapper = ({ selectedWorkflow, dataset }) => {
+    const vizRef = useRef(null)
+
+    return (
+        <Stack spacing={4}>
+            <Stack
+                direction='row'
+                spacing={6}
+                alignItems="center"
+                sx={{
+                    borderBottom: '2px solid #e0e0e0',
+                    paddingBottom: '12px',
+                }}
+            >
+                <Box
+                    component='h6'
+                    sx={{
+                        fontSize: '36px'
+                    }}
+                >
+                    CNA Ploidy Stairstep
+                </Box>
+                <Stack direction='row' spacing={2}>
+                    <Button
+                        type="primary"
+                        onClick={() => vizRef.current?.downloadSvg()}
+                        size='large'
+                        icon={<DownloadOutlined/>}
+                    >
+                        Download SVG Chart
+                    </Button>
+                    {/*<Button*/}
+                    {/*    type="primary"*/}
+                    {/*    onClick={() => vizRef.current?.downloadPng()}*/}
+                    {/*>*/}
+                    {/*    Download PNG Chart*/}
+                    {/*</Button>*/}
+                </Stack>
+            </Stack>
+            <CNAVisualizationContainer>
+                <CNAPloidyStairstepContent selectedWorkflow={selectedWorkflow} dataset={dataset} vizRef={vizRef}/>
+            </CNAVisualizationContainer>
+        </Stack>
+    )
+}
 
 export default CNAPloidyStairstepWrapper

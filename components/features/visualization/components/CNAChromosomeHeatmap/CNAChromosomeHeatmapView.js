@@ -10,7 +10,8 @@ const CNAChromosomeHeatmapView = ({
     meta,
     tree,
     baselineCNA,
-    reference
+    reference,
+    vizRef
 }) => {
     const [isShowLeft, setIsShowLeft] = useState(true)
     const [config, setConfig] = useState({
@@ -77,6 +78,7 @@ const CNAChromosomeHeatmapView = ({
                     config={config}
                     isShowLeft={isShowLeft}
                     handleIsShowLeftChange={handleIsShowLeftChange}
+                    ref={vizRef}
                 />
             }
         />

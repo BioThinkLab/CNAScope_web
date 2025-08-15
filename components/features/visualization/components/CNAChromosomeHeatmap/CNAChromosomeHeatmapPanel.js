@@ -1,7 +1,7 @@
 import { Box } from "@mui/system"
 import SplitterControlButton from "@/components/common/button/SplitterControlButton"
 import { calculateChromosomeBinCount } from "@/components/features/visualization/utils/chromosomeUtils"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
 import * as d3 from "d3"
 import {
     calculateHeaderBlockOffset,
@@ -26,8 +26,9 @@ import CNAChromosomeHeatmap
     from "@/components/features/visualization/components/CNAChromosomeHeatmap/CNAChromosomeHeatmap"
 import CNAChromosomeHeatmapNodeHistory
     from "@/components/features/visualization/components/CNAChromosomeHeatmap/CNAChromosomeHeatmapNodeHistory"
+import { downloadSvg, downloadSvgAsPng } from "@/components/features/visualization/utils/downloadUtils"
 
-const CNAChromosomeHeatmapPanel = ({
+const CNAChromosomeHeatmapPanel = forwardRef(({
     matrix,
     meta,
     tree,
@@ -37,7 +38,7 @@ const CNAChromosomeHeatmapPanel = ({
     config,
     isShowLeft,
     handleIsShowLeftChange
-}) => {
+}, ref) => {
     const svgRef = useRef(null)
     const zoomContainerRef = useRef(null)
     const toolTipRef = useRef(null)
@@ -110,6 +111,13 @@ const CNAChromosomeHeatmapPanel = ({
 
         d3.select(svgRef.current).call(zoom)
     }, [])
+
+    useImperativeHandle(ref, () => ({
+        downloadSvg: () => {
+            if (!svgRef.current) return
+            downloadSvg(svgRef.current, 'Bin-Level_CNA_Heatmap.svg')
+        }
+    }))
 
     return (
         <Box sx={{ position: 'relative', height: '920px' }}>
@@ -189,6 +197,8 @@ const CNAChromosomeHeatmapPanel = ({
             {createPortal(<CustomTooltip ref={toolTipRef}/>, document.body)}
         </Box>
     )
-}
+})
+
+CNAChromosomeHeatmapPanel.displayName = 'CNAChromosomeHeatmapPanel'
 
 export default CNAChromosomeHeatmapPanel

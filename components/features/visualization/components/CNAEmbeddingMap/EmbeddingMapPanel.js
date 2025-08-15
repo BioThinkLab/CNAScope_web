@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { useEffect, useRef } from "react"
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react"
 import { initAxis, initAxisDomain, initFigureConfig } from "@/components/features/visualization/utils/embeddingMapUtils"
 import { Box, Stack } from "@mui/system"
 import SplitterControlButton from "@/components/common/button/SplitterControlButton"
@@ -8,15 +8,17 @@ import {
 } from "@/components/features/visualization/components/tooltipTemplate/EmbeddingMapTooltipTemplate"
 import { createPortal } from "react-dom"
 import CustomTooltip from "@/components/features/visualization/components/tooltip/ToolTip"
+import { downloadSvg } from "@/components/features/visualization/utils/downloadUtils"
 
-const EmbeddingMapPanel = ({
+const EmbeddingMapPanel = forwardRef(({
     embeddingMethod,
     meta,
     extents,
     config,
     isShowLeft,
     handleIsShowLeftChange
-}) => {
+}, ref) => {
+    const svgRef = useRef(null)
     const toolTipRef = useRef(null)
     const xAxisRef = useRef(null)
     const yAxisRef = useRef(null)
@@ -62,6 +64,13 @@ const EmbeddingMapPanel = ({
             .on('pointerleave', () => handleDotPointerLeft(toolTipRef))
     }, [config.scatter.radius, embeddingMethod, meta, x, y])
 
+    useImperativeHandle(ref, () => ({
+        downloadSvg: () => {
+            if (!svgRef.current) return
+            downloadSvg(svgRef.current, `${embeddingMethod.slice(2)}_Embedding_Map.svg`)
+        }
+    }))
+
     return (
         <Box sx={{ position: 'relative', height: '920px' }}>
             <Box sx={{ position: 'absolute', top: '14px', left: '4px' }}>
@@ -72,7 +81,7 @@ const EmbeddingMapPanel = ({
                 />
             </Box>
             <Stack sx={{ alignItems: 'center', overflowX: 'auto' }}>
-                <svg width={svgWidth} height={svgHeight}>
+                <svg ref={svgRef} width={svgWidth} height={svgHeight}>
                     <g className='plotContainer'
                        transform={`translate(${config.chart.margin}, ${config.chart.margin})`}>
                         <g className='title'>
@@ -117,7 +126,7 @@ const EmbeddingMapPanel = ({
             {createPortal(<CustomTooltip ref={toolTipRef}/>, document.body)}
         </Box>
     )
-}
+})
 
 const handleDotPointerEnter = (event, nodeId, coordinate, color, tooltipRef) => {
     tooltipRef.current.showTooltip(event, EmbeddingScatterPlotTooltipTemplate(nodeId, coordinate, color))
@@ -126,5 +135,7 @@ const handleDotPointerEnter = (event, nodeId, coordinate, color, tooltipRef) => 
 const handleDotPointerLeft = (tooltipRef) => {
     tooltipRef.current.hideTooltip()
 }
+
+EmbeddingMapPanel.displayName = 'EmbeddingMapPanel'
 
 export default EmbeddingMapPanel

@@ -1,7 +1,7 @@
 import { Box } from "@mui/system"
 import SplitterControlButton from "@/components/common/button/SplitterControlButton"
 import useNodeHistoryList from "@/components/features/visualization/hooks/useNodeHistoryList"
-import { useEffect, useMemo, useRef } from "react"
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react"
 import { parseNewickTree, preprocessAndLayout } from "@/components/features/visualization/utils/TreeUtils"
 import { parseCNVMeta, parseGeneCNVMatrix } from "@/components/features/visualization/utils/matrixUtils"
 import CNAGeneHeatmapLegend from "@/components/features/visualization/components/CNAGeneHeatmap/CNAGeneHeatmapLegend"
@@ -13,20 +13,22 @@ import { createPortal } from "react-dom"
 import CustomTooltip from "@/components/features/visualization/components/tooltip/ToolTip"
 import CNAGeneMetaHeatmap from "@/components/features/visualization/components/CNAGeneHeatmap/CNAGeneMetaHeatmap"
 import CNAGeneHeatmap from "@/components/features/visualization/components/CNAGeneHeatmap/CNAGeneHeatmap"
+import { downloadSvg } from "@/components/features/visualization/utils/downloadUtils"
 
 const metaFields = ['e_PCA1', 'e_PCA2', 'e_TSNE1', 'e_TSNE2', 'e_UMAP1', 'e_UMAP2']
 
-const CNAGeneHeatmapPanel = ({
+const CNAGeneHeatmapPanel = forwardRef(({
     meta,
     newick,
     renderGenes,
     geneMatrix,
     baselineCNA,
+    entity='Gene',
     cluster = 64,
     config,
     isShowLeft,
     handleIsShowLeftChange
-}) => {
+}, ref) => {
     const {
         nodeHistoryList,
         currentNodeIndex,
@@ -93,6 +95,13 @@ const CNAGeneHeatmapPanel = ({
 
         d3.select(svgRef.current).call(zoom)
     }, [])
+
+    useImperativeHandle(ref, () => ({
+        downloadSvg: () => {
+            if (!svgRef.current) return
+            downloadSvg(svgRef.current, `${entity}-Level_CNA_Heatmap.svg`)
+        }
+    }))
 
     return (
         <Box sx={{ position: 'relative', height: '920px' }}>
@@ -167,6 +176,8 @@ const CNAGeneHeatmapPanel = ({
             {createPortal(<CustomTooltip ref={toolTipRef}/>, document.body)}
         </Box>
     )
-}
+})
+
+CNAGeneHeatmapPanel.displayName = 'CNAGeneHeatmapPanel'
 
 export default CNAGeneHeatmapPanel

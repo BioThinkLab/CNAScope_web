@@ -1,33 +1,34 @@
 import { Box, Stack } from "@mui/system"
 import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
-import { useCNAMeta } from "@/components/features/database/hooks/useCNAMeta"
+import { usePloidyDistribution } from "@/components/features/database/hooks/usePloidyDistribution"
 import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
-import CNAEmbeddingMapView from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapView"
+import PloidyDistributionView
+    from "@/components/features/visualization/components/PloidyDistribution/PloidyDistributionView"
+import { useRef } from "react"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
-import { useRef } from "react"
 
-const CNAEmbeddingMapContent = ({ selectedWorkflow, dataset, vizRef }) => {
+const CNAPloidyDistributionContent = ({ selectedWorkflow, dataset, vizRef }) => {
     const {
-        meta,
-        isMetaLoading,
-        isMetaError
-    } = useCNAMeta(dataset.name, selectedWorkflow)
+        distributions,
+        isDistributionsLoading,
+        isDistributionsError
+    } = usePloidyDistribution(dataset.name, selectedWorkflow)
 
-    if (isMetaLoading) return <LoadingView height='920px'/>
+    if (isDistributionsLoading) return <LoadingView height='920px'/>
 
-    if (isMetaError) return <ErrorView height='920px'/>
+    if (isDistributionsError) return <ErrorView height='920px'/>
 
     return (
-        <CNAEmbeddingMapView
-            meta={meta}
+        <PloidyDistributionView
+            distributions={distributions}
             vizRef={vizRef}
         />
     )
 }
 
-const CNAEmbeddingMapWrapper = ({ selectedWorkflow, dataset }) => {
+const CNAPloidyDistributionWrapper = ({ selectedWorkflow, dataset }) => {
     const vizRef = useRef(null)
 
     return (
@@ -47,7 +48,7 @@ const CNAEmbeddingMapWrapper = ({ selectedWorkflow, dataset }) => {
                         fontSize: '36px'
                     }}
                 >
-                    CNA Embedding Map
+                    CNA Ploidy Distribution
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -67,10 +68,10 @@ const CNAEmbeddingMapWrapper = ({ selectedWorkflow, dataset }) => {
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAEmbeddingMapContent dataset={dataset} selectedWorkflow={selectedWorkflow} vizRef={vizRef}/>
+                <CNAPloidyDistributionContent selectedWorkflow={selectedWorkflow} dataset={dataset} vizRef={vizRef}/>
             </CNAVisualizationContainer>
         </Stack>
     )
 }
 
-export default CNAEmbeddingMapWrapper
+export default CNAPloidyDistributionWrapper

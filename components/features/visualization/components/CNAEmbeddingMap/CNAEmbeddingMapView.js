@@ -37,7 +37,8 @@ const processMeta = (meta) => {
 }
 
 const CNAEmbeddingMapView = ({
-    meta
+    meta,
+    vizRef
 }) => {
     const [embeddingMethod, setEmbeddingMethod] = useState('e_PCA')
     const [isShowLeft, setIsShowLeft] = useState(true)
@@ -105,6 +106,7 @@ const CNAEmbeddingMapView = ({
                     config={config}
                     isShowLeft={isShowLeft}
                     handleIsShowLeftChange={handleIsShowLeftChange}
+                    ref={vizRef}
                 />
             }
         />

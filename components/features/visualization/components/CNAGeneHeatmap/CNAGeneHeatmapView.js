@@ -13,7 +13,8 @@ const CNAGeneHeatmapView = ({
     genes,
     geneMatrixFetcher,
     baselineCNA,
-    entity='Gene'
+    entity='Gene',
+    vizRef
 }) => {
     const [isShowLeft, setIsShowLeft] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -124,6 +125,7 @@ const CNAGeneHeatmapView = ({
                         processing={processing}
                         isShowLeft={isShowLeft}
                         handleIsShowLeftChange={handleIsShowLeftChange}
+                        vizRef={vizRef}
                     />
                 }
             />
@@ -149,7 +151,8 @@ const RightPanelWrapper = ({
     config,
     processing,
     isShowLeft,
-    handleIsShowLeftChange
+    handleIsShowLeftChange,
+    vizRef
 }) => (
     <>
         {
@@ -177,9 +180,11 @@ const RightPanelWrapper = ({
                     renderGenes={renderGenes}
                     geneMatrix={geneMatrix}
                     baselineCNA={baselineCNA}
+                    entity={entity}
                     config={config}
                     isShowLeft={isShowLeft}
                     handleIsShowLeftChange={handleIsShowLeftChange}
+                    ref={vizRef}
                 />
             )
         }

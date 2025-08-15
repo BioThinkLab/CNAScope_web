@@ -1,6 +1,9 @@
 import { Box, Stack } from "@mui/system"
 import DatasetDescription from "@/components/features/database/components/datasetDetail/DatasetDescription"
-import { BulkDatasetSampleTable } from "@/components/features/database/components/datasetDetail/DatasetSampleTable"
+import {
+    BulkDatasetSampleTable,
+    SCDNADatasetSampleTable, SCRNADatasetSampleTable, STDatasetSampleTable
+} from "@/components/features/database/components/datasetDetail/DatasetSampleTable"
 import { useEffect, useState } from "react"
 import WorkflowSelector from "@/components/features/database/components/datasetDetail/WorkflowSelector"
 import CNAChromosomeHeatmapWrapper
@@ -11,8 +14,9 @@ import CNAEmbeddingMapWrapper from "@/components/features/database/components/vi
 import CNAPloidyStairstepWrapper
     from "@/components/features/database/components/visualization/CNAPloidyStairstepWrapper"
 import CNAFocalCNAWrapper from "@/components/features/database/components/visualization/CNAFocalCNAWrapper"
-import CNAGeneRecurrenceQueryWrapper
-    from "@/components/features/database/components/visualization/CNAGeneRecurrenceQueryWrapper"
+import PhylogeneticTreeWrapper from "@/components/features/database/components/visualization/PhylogeneticTreeWrapper"
+import CNAPloidyDistributionWrapper
+    from "@/components/features/database/components/visualization/CNAPloidyDistributionWrapper"
 
 const DatabaseDetailContent = ({ dataset }) => {
     const [selectedWorkflow, setSelectedWorkflow] = useState(null)
@@ -25,6 +29,8 @@ const DatabaseDetailContent = ({ dataset }) => {
         if (dataset.workflow) {
             const firstWorkflow = dataset.workflow.split(',')[0]
             setSelectedWorkflow(firstWorkflow)
+        } else {
+            setSelectedWorkflow('NA')
         }
     }, [dataset.workflow])
 
@@ -32,8 +38,14 @@ const DatabaseDetailContent = ({ dataset }) => {
         <Stack spacing={4} sx={{ pt: '12px', px: '32px' }}>
             <DatasetDescription dataset={dataset}/>
             {
-                dataset.source === 'GDC Portal' ? (
+                dataset.modality === 'bulkDNA' ? (
                     <BulkDatasetSampleTable dataset={dataset}/>
+                ) : dataset.modality === 'scDNA' ? (
+                    <SCDNADatasetSampleTable dataset={dataset}/>
+                ) : dataset.modality === 'scRNA' ? (
+                    <SCRNADatasetSampleTable dataset={dataset}/>
+                ) : dataset.modality === 'ST' ? (
+                    <STDatasetSampleTable dataset={dataset}/>
                 ) : (
                     <></>
                 )
@@ -43,13 +55,23 @@ const DatabaseDetailContent = ({ dataset }) => {
                 selectedWorkflow={selectedWorkflow}
                 handleSelectedWorkflowChange={handleSelectedWorkflowChange}
             />
-            <CNAChromosomeHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-            <CNAGeneHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-            <CNATermHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-            <CNAEmbeddingMapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-            <CNAPloidyStairstepWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-            <CNAFocalCNAWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-            {/*<CNAGeneRecurrenceQueryWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>*/}
+            {
+                selectedWorkflow ? (
+                    <>
+                        <CNAChromosomeHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        <CNAGeneHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        <CNATermHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        <PhylogeneticTreeWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        <CNAEmbeddingMapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        <CNAPloidyStairstepWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        <CNAPloidyDistributionWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        <CNAFocalCNAWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        {/*<CNAGeneRecurrenceQueryWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>*/}
+                    </>
+                ) : (
+                    <></>
+                )
+            }
             <Box></Box>
         </Stack>
     )

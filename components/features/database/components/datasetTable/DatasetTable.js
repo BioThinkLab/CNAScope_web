@@ -145,7 +145,7 @@ const columns = [
                 <Button
                     type='primary'
                     icon={<FileTextOutlined/>}
-                    href={`/database/${record.name}`}
+                    href={`/database/detail?datasetName=${record.name}`}
                 >
                     Detail
                 </Button>

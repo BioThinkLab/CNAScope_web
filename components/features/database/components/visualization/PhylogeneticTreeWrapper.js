@@ -1,33 +1,41 @@
 import { Box, Stack } from "@mui/system"
 import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
-import { useCNAMeta } from "@/components/features/database/hooks/useCNAMeta"
+import { useCNANewick } from "@/components/features/database/hooks/useCNANewick"
 import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
-import CNAEmbeddingMapView from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapView"
+import PhylogeneticTreeView from "@/components/features/visualization/components/PhylogeneticTree/PhylogeneticTreeView"
+import { useRef } from "react"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
-import { useRef } from "react"
+import { useCNAMeta } from "@/components/features/database/hooks/useCNAMeta"
 
-const CNAEmbeddingMapContent = ({ selectedWorkflow, dataset, vizRef }) => {
+const PhylogeneticTreeContent = ({ selectedWorkflow, dataset, vizRef }) => {
     const {
         meta,
         isMetaLoading,
         isMetaError
     } = useCNAMeta(dataset.name, selectedWorkflow)
 
-    if (isMetaLoading) return <LoadingView height='920px'/>
+    const {
+        newick,
+        isNewickLoading,
+        isNewickError
+    } = useCNANewick(dataset.name, selectedWorkflow)
 
-    if (isMetaError) return <ErrorView height='920px'/>
+    if (isMetaLoading || isNewickLoading) return <LoadingView height='920px'/>
+
+    if (isMetaError || isNewickError) return <ErrorView height='920px'/>
 
     return (
-        <CNAEmbeddingMapView
+        <PhylogeneticTreeView
             meta={meta}
+            newick={newick}
             vizRef={vizRef}
         />
     )
 }
 
-const CNAEmbeddingMapWrapper = ({ selectedWorkflow, dataset }) => {
+const PhylogeneticTreeWrapper = ({ selectedWorkflow, dataset }) => {
     const vizRef = useRef(null)
 
     return (
@@ -47,7 +55,7 @@ const CNAEmbeddingMapWrapper = ({ selectedWorkflow, dataset }) => {
                         fontSize: '36px'
                     }}
                 >
-                    CNA Embedding Map
+                    CNA Phylogenetic Tree
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -67,10 +75,10 @@ const CNAEmbeddingMapWrapper = ({ selectedWorkflow, dataset }) => {
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAEmbeddingMapContent dataset={dataset} selectedWorkflow={selectedWorkflow} vizRef={vizRef}/>
+                <PhylogeneticTreeContent selectedWorkflow={selectedWorkflow} dataset={dataset} vizRef={vizRef}/>
             </CNAVisualizationContainer>
         </Stack>
     )
 }
 
-export default CNAEmbeddingMapWrapper
+export default PhylogeneticTreeWrapper

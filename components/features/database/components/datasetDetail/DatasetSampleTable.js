@@ -122,7 +122,442 @@ export const BulkDatasetSampleTable = ({ dataset }) => {
             </Box>
             <StyledTable
                 columns={bulkDatasetSampleColumns}
-                rowKey={(record) => record['id']}
+                rowKey={(record) => record['sample_id']}
+                dataSource={samples}
+                scroll={{ x: 'max-content' }}
+            />
+        </>
+    )
+}
+
+const scDNADatasetSampleColumns = (source) => source === '10x Official' ? (
+    [
+        {
+            title: 'Cell ID',
+            dataIndex: 'cell_id',
+            sorter: (a, b) => a['cell_id'].toLowerCase().localeCompare(b['cell_id'].toLowerCase()),
+            fixed: 'left',
+            align: 'center',
+            render: cellId => <BasicChip value={cellId} color='volcano' />
+        },
+        {
+            title: 'Total Num Reads',
+            dataIndex: 'total_num_reads',
+            sorter: (a, b) => a['total_num_reads'] - b['total_num_reads'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Num UnMapped Reads',
+            dataIndex: 'num_unmapped_reads',
+            sorter: (a, b) => a['num_unmapped_reads'] - b['num_unmapped_reads'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Num Lowmapq Reads',
+            dataIndex: 'num_lowmapq_reads',
+            sorter: (a, b) => a['num_lowmapq_reads'] - b['num_lowmapq_reads'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Num Duplicate Reads',
+            dataIndex: 'num_duplicate_reads',
+            sorter: (a, b) => a['num_duplicate_reads'] - b['num_duplicate_reads'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Num Mapped Dedup Reads',
+            dataIndex: 'num_mapped_dedup_reads',
+            sorter: (a, b) => a['num_mapped_dedup_reads'] - b['num_mapped_dedup_reads'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Fraction Mapped Duplicates',
+            dataIndex: 'frac_mapped_duplicates',
+            sorter: (a, b) => a['frac_mapped_duplicates'] - b['frac_mapped_duplicates'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Effective Depth of Coverage',
+            dataIndex: 'effective_depth_of_coverage',
+            sorter: (a, b) => a['effective_depth_of_coverage'] - b['effective_depth_of_coverage'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Effective Reads per 1Mbp',
+            dataIndex: 'effective_reads_per_1Mbp',
+            sorter: (a, b) => a['effective_reads_per_1Mbp'] - b['effective_reads_per_1Mbp'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Raw MapD',
+            dataIndex: 'raw_mapd',
+            sorter: (a, b) => a['raw_mapd'] - b['raw_mapd'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Normalized MapD',
+            dataIndex: 'normalized_mapd',
+            sorter: (a, b) => a['normalized_mapd'] - b['normalized_mapd'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Raw DimapD',
+            dataIndex: 'raw_dimapd',
+            sorter: (a, b) => a['raw_dimapd'] - b['raw_dimapd'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Normalized DimapD',
+            dataIndex: 'normalized_dimapd',
+            sorter: (a, b) => a['normalized_dimapd'] - b['normalized_dimapd'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Mean Ploidy',
+            dataIndex: 'mean_ploidy',
+            sorter: (a, b) => a['mean_ploidy'] - b['mean_ploidy'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Ploidy Confidence',
+            dataIndex: 'ploidy_confidence',
+            sorter: (a, b) => a['ploidy_confidence'] - b['ploidy_confidence'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Is High DimapD',
+            dataIndex: 'is_high_dimapd',
+            sorter: (a, b) => a['is_high_dimapd'] - b['is_high_dimapd'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Is Noisy',
+            dataIndex: 'is_noisy',
+            sorter: (a, b) => a['is_noisy'] - b['is_noisy'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Estimated CNV Resolution (MB)',
+            dataIndex: 'est_cnv_resolution_mb',
+            sorter: (a, b) => a['est_cnv_resolution_mb'] - b['est_cnv_resolution_mb'],
+            align: 'center',
+            render: value => value || '--'
+        }
+    ]
+) : (
+    [
+        {
+            title: 'Cell ID',
+            dataIndex: 'cell_id',
+            sorter: (a, b) => a['cell_id'].toLowerCase().localeCompare(b['cell_id'].toLowerCase()),
+            align: 'center',
+            render: cellId => <BasicChip value={cellId} color='volcano'/>
+        },
+        {
+            title: 'Dataset Name',
+            dataIndex: 'dataset_name',
+            sorter: (a, b) => a['dataset_name'].toLowerCase().localeCompare(b['dataset_name'].toLowerCase()),
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Cell Type',
+            dataIndex: 'cell_type',
+            sorter: (a, b) => a['cell_type'].toLowerCase().localeCompare(b['cell_type'].toLowerCase()),
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Confidence',
+            dataIndex: 'confidence',
+            sorter: (a, b) => a['confidence'] - b['confidence'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Donor',
+            dataIndex: 'donor',
+            sorter: (a, b) => a['donor'].toLowerCase().localeCompare(b['donor'].toLowerCase()),
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'CNV Score',
+            dataIndex: 'cnv_score',
+            sorter: (a, b) => a['cnv_score'] - b['cnv_score'],
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'CNV Status',
+            dataIndex: 'cnv_status',
+            sorter: (a, b) => a['cnv_status'].toLowerCase().localeCompare(b['cnv_status'].toLowerCase()),
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Malignancy',
+            dataIndex: 'malignancy',
+            sorter: (a, b) => a['malignancy'].toLowerCase().localeCompare(b['malignancy'].toLowerCase()),
+            align: 'center',
+            render: value => value || '--'
+        },
+        {
+            title: 'Cell Label',
+            dataIndex: 'cell_label',
+            sorter: (a, b) => a['cell_label'].toLowerCase().localeCompare(b['cell_label'].toLowerCase()),
+            align: 'center',
+            render: value => value || '--'
+        }
+    ]
+)
+
+export const SCDNADatasetSampleTable = ({ dataset }) => {
+    const { samples, isLoading, isError } = useDatasetSampleList(dataset.name)
+
+    const columns = scDNADatasetSampleColumns(dataset.source)
+
+    if (isLoading) return <LoadingView containerSx={{ height: '40vh', marginTop: '40px' }}/>
+
+    if (isError) return <ErrorView containerSx={{ height: '40vh', marginTop: '40px' }}/>
+
+    return (
+        <>
+            <Box component='h6'
+                 sx={{
+                     fontSize: '36px',
+                     borderBottom: '2px solid #e0e0e0',
+                     mb: '36px',
+                     paddingBottom: '12px'
+                 }}
+            >
+                Cells List
+            </Box>
+            <StyledTable
+                columns={columns}
+                rowKey={(record) => record['cell_id']}
+                dataSource={samples}
+                scroll={{ x: 'max-content' }}
+            />
+        </>
+    )
+}
+
+const scRNADatasetSampleColumns = [
+    {
+        title: 'Cell ID',
+        dataIndex: 'cell_id',
+        sorter: (a, b) => a.cell_id?.toLowerCase().localeCompare(b.cell_id?.toLowerCase()),
+        fixed: 'left',
+        align: 'center',
+        render: cellId => <BasicChip value={cellId} color='volcano'/>
+    },
+    {
+        title: 'Dataset Name',
+        dataIndex: 'dataset_name',
+        sorter: (a, b) => a.dataset_name?.toLowerCase().localeCompare(b.dataset_name?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Cell Type',
+        dataIndex: 'cell_type',
+        sorter: (a, b) => a.cell_type?.toLowerCase().localeCompare(b.cell_type?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Confidence',
+        dataIndex: 'confidence',
+        sorter: (a, b) => a.confidence?.toLowerCase().localeCompare(b.confidence?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Donor',
+        dataIndex: 'donor',
+        sorter: (a, b) => a.donor?.toLowerCase().localeCompare(b.donor?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'CNV Score',
+        dataIndex: 'cnv_score',
+        sorter: (a, b) => (a.cnv_score ?? -Infinity) - (b.cnv_score ?? -Infinity),
+        align: 'center',
+        render: value => value ?? '--'
+    },
+    {
+        title: 'CNV Status',
+        dataIndex: 'cnv_status',
+        sorter: (a, b) => a.cnv_status?.toLowerCase().localeCompare(b.cnv_status?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Malignancy',
+        dataIndex: 'malignancy',
+        sorter: (a, b) => a.malignancy?.toLowerCase().localeCompare(b.malignancy?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Cell Label',
+        dataIndex: 'cell_label',
+        sorter: (a, b) => a.cell_label?.toLowerCase().localeCompare(b.cell_label?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    }
+]
+
+export const SCRNADatasetSampleTable = ({ dataset }) => {
+    const { samples, isLoading, isError } = useDatasetSampleList(dataset.name)
+
+    if (isLoading) return <LoadingView containerSx={{ height: '40vh', marginTop: '40px' }}/>
+
+    if (isError) return <ErrorView containerSx={{ height: '40vh', marginTop: '40px' }}/>
+
+    return (
+        <>
+            <Box component='h6'
+                 sx={{
+                     fontSize: '36px',
+                     borderBottom: '2px solid #e0e0e0',
+                     mb: '36px',
+                     paddingBottom: '12px'
+                 }}
+            >
+                Cells List
+            </Box>
+            <StyledTable
+                columns={scRNADatasetSampleColumns}
+                rowKey={(record) => record['cell_id']}
+                dataSource={samples}
+                scroll={{ x: 'max-content' }}
+            />
+        </>
+    )
+}
+
+const STDatasetSampleColumns = [
+    {
+        title: 'Spot ID',
+        dataIndex: 'spot_id',
+        sorter: (a, b) => a.spot_id?.toLowerCase().localeCompare(b.spot_id?.toLowerCase()),
+        fixed: 'left',
+        align: 'center',
+        render: spotId => <BasicChip value={spotId} color='volcano'/>
+    },
+    {
+        title: 'Dataset Name',
+        dataIndex: 'dataset_name',
+        sorter: (a, b) => a.dataset_name?.toLowerCase().localeCompare(b.dataset_name?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Cell Type',
+        dataIndex: 'cell_type',
+        sorter: (a, b) => a.cell_type?.toLowerCase().localeCompare(b.cell_type?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Confidence',
+        dataIndex: 'confidence',
+        sorter: (a, b) => a.confidence?.toLowerCase().localeCompare(b.confidence?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Donor',
+        dataIndex: 'donor',
+        sorter: (a, b) => a.donor?.toLowerCase().localeCompare(b.donor?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'CNV Score',
+        dataIndex: 'cnv_score',
+        sorter: (a, b) => (a.cnv_score ?? -Infinity) - (b.cnv_score ?? -Infinity),
+        align: 'center',
+        render: value => value ?? '--'
+    },
+    {
+        title: 'CNV Status',
+        dataIndex: 'cnv_status',
+        sorter: (a, b) => a.cnv_status?.toLowerCase().localeCompare(b.cnv_status?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Malignancy',
+        dataIndex: 'malignancy',
+        sorter: (a, b) => a.malignancy?.toLowerCase().localeCompare(b.malignancy?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Cell Label',
+        dataIndex: 'cell_label',
+        sorter: (a, b) => a.cell_label?.toLowerCase().localeCompare(b.cell_label?.toLowerCase()),
+        align: 'center',
+        render: value => value || '--'
+    },
+    {
+        title: 'Spatial 1',
+        dataIndex: 'spatial_1',
+        sorter: (a, b) => (a.spatial_1 ?? -Infinity) - (b.spatial_1 ?? -Infinity),
+        align: 'center',
+        render: value => value ?? '--'
+    },
+    {
+        title: 'Spatial 2',
+        dataIndex: 'spatial_2',
+        sorter: (a, b) => (a.spatial_2 ?? -Infinity) - (b.spatial_2 ?? -Infinity),
+        align: 'center',
+        render: value => value ?? '--'
+    }
+]
+
+export const STDatasetSampleTable = ({ dataset }) => {
+    const { samples, isLoading, isError } = useDatasetSampleList(dataset.name)
+
+    if (isLoading) return <LoadingView containerSx={{ height: '40vh', marginTop: '40px' }}/>
+
+    if (isError) return <ErrorView containerSx={{ height: '40vh', marginTop: '40px' }}/>
+
+    return (
+        <>
+            <Box component='h6'
+                 sx={{
+                     fontSize: '36px',
+                     borderBottom: '2px solid #e0e0e0',
+                     mb: '36px',
+                     paddingBottom: '12px'
+                 }}
+            >
+                Cells List
+            </Box>
+            <StyledTable
+                columns={STDatasetSampleColumns}
+                rowKey={(record) => record['spot_id']}
                 dataSource={samples}
                 scroll={{ x: 'max-content' }}
             />

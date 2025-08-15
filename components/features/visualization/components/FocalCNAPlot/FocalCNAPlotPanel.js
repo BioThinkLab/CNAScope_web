@@ -1,7 +1,7 @@
 import * as d3 from "d3"
 import { Box } from "@mui/system"
 import SplitterControlButton from "@/components/common/button/SplitterControlButton"
-import { useEffect, useMemo, useRef } from "react"
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react"
 import {
     calculateChromosomeSignificantRegions,
     calculateChromosomeXAxisPositions,
@@ -20,6 +20,7 @@ import {
 } from "@/components/features/visualization/components/tooltipTemplate/FocalCNAPlotTooltipTemplate"
 import { createPortal } from "react-dom"
 import CustomTooltip from "@/components/features/visualization/components/tooltip/ToolTip"
+import { downloadSvg } from "@/components/features/visualization/utils/downloadUtils"
 
 const parseScoresGISTIC = (scoresGISTIC) => {
     return scoresGISTIC
@@ -39,14 +40,14 @@ const parseScoresGISTIC = (scoresGISTIC) => {
         }))
 }
 
-const FocalCNAPlotPanel = ({
+const FocalCNAPlotPanel = forwardRef(({
     chromosome,
     focalInfo,
     config,
     reference,
     isShowLeft,
     handleIsShowLeftChange
-}) => {
+}, ref) => {
     const { width, height } = useContainerSize()
     const svgWidth = isShowLeft ? width - 320 : width - 20
     const svgHeight = height - 20
@@ -286,6 +287,13 @@ const FocalCNAPlotPanel = ({
         ]
     )
 
+    useImperativeHandle(ref, () => ({
+        downloadSvg: () => {
+            if (!svgRef.current) return
+            downloadSvg(svgRef.current, `Focal_CNA_&_Gene.svg`)
+        }
+    }))
+
     return (
         <Box sx={{ position: 'relative', height: '920px' }}>
             <Box sx={{ position: 'absolute', top: '14px', left: '4px' }}>
@@ -380,7 +388,7 @@ const FocalCNAPlotPanel = ({
             {createPortal(<CustomTooltip ref={toolTipRef}/>, document.body)}
         </Box>
     )
-}
+})
 
 const pointerMoved = (
     event,
@@ -453,5 +461,7 @@ const pointerLeft = (tooltipRef, tooltipLineRef) => {
     tooltipRef.current.hideTooltip()
     d3.select(tooltipLineRef.current).selectAll('line').remove()
 }
+
+FocalCNAPlotPanel.displayName = 'FocalCNAPlotPanel'
 
 export default FocalCNAPlotPanel

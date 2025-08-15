@@ -26,7 +26,7 @@ const WorkflowSelector = ({ workflow, selectedWorkflow, handleSelectedWorkflowCh
                 value={selectedWorkflow}
                 size='large'
             >
-                {workflow.split(',').map((w) => (
+                {(workflow ? workflow.split(',') : ['NA']).map((w) => (
                     <Option key={w} value={w} style={{ fontSize: '16px' }}>
                         {w}
                     </Option>

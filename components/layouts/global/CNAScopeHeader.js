@@ -82,21 +82,15 @@ const menuItems = [
     },
     {
         key: 'analysis',
-        label: 'Analysis',
+        label: 'Workflow',
         icon: <BarChartOutlined style={{ fontSize: '20px' }}/>,
-        link: '/analysis'
+        link: '/workflow'
     },
     {
         key: 'workspace',
         label: 'Workspace',
         icon: <ProfileOutlined style={{ fontSize: '20px' }}/>,
         link: '/workspace'
-    },
-    {
-        key: 'download',
-        label: 'Download',
-        icon: <CloudDownloadOutlined style={{ fontSize: '20px' }}/>,
-        link: '/download'
     },
     {
         key: 'tutorial',
