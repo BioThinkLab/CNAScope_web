@@ -88,7 +88,7 @@ const TeamIntroduction = () => {
                         </Stack>
                         <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
                             <EnvironmentOutlined/>
-                            <Box component='span'><b>Address:</b> 1A-102, 1/F, Block 1, To Yuen Building, Tat Chee Avenue, Kowloon, Hong Kong, China</Box>
+                            <Box component='span'><b>Address:</b> No. 127 Taicang Avenue, Taicang City, Jiangsu Province</Box>
                         </Stack>
                     </Stack>
                 </Stack>

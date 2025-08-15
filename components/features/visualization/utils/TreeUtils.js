@@ -106,6 +106,64 @@ export const preprocessAndLayout = (
     }
 }
 
+export const preprocessAndLayoutMeta = (
+    root,
+    cluster,
+    processedMeta,
+    metaFields,
+    hierarchicalClusteringTreeSetting,
+    heatMapSetting
+) => {
+    const { middles, leaves } = cutTree(root, cluster)
+    const fileIds = []
+    const leavesAssociateFileIds = {}
+
+    // Get current hierarchical clustering tree leaves associate file id list.
+    for (const leaf of leaves) {
+        const leafFileIds = leaf.leaves().map(l => l.data.name)
+        fileIds.push(...leafFileIds)
+        leavesAssociateFileIds[leaf.data.name] = leafFileIds
+    }
+
+    // Calculate axis length
+    const xMetaLength = heatMapSetting.metaRectWidth * metaFields.length
+    const yMetaLength = heatMapSetting.mode === 'Fixed' ? heatMapSetting.rectHeight * fileIds.length : heatMapSetting.height
+
+    // Meta HeatMap y axis
+    const yMeta = d3.scaleBand()
+        .domain(fileIds)
+        .range([0, yMetaLength])
+
+    // Meta HeatMap x axis
+    const xMeta = d3.scaleBand()
+        .domain(metaFields)
+        .range([0, xMetaLength])
+
+    // Filter meta matrix
+    const filteredMeta = Object.fromEntries(
+        Object.entries(processedMeta).filter(([fileId, _]) => fileIds.includes(fileId))
+    )
+
+    // Layout hierarchical clustering tree.
+    layoutCutTree(
+        root,
+        middles,
+        leaves,
+        leavesAssociateFileIds,
+        hierarchicalClusteringTreeSetting.width,
+        yMeta
+    )
+
+
+    return {
+        nodes: [...middles, ...leaves],
+        leaves: leaves,
+        yMeta: yMeta,
+        xMeta: xMeta,
+        filteredMeta: filteredMeta
+    }
+}
+
 const getYMatrix = (leaves) => {
     return leaves.reduce((acc, leaf) => {
         acc[leaf.data.name] = {

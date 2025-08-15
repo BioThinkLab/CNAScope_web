@@ -2,12 +2,12 @@ import { useState } from "react"
 import { useGlobalMessage } from "@/context/MessageContext"
 import { useRouter } from "next/router"
 import { Button, Card, Form, InputNumber, Select, Space, Spin, Typography, Upload } from "antd"
-import { Stack } from "@mui/system"
+import { Box, Stack } from "@mui/system"
 import ActionButtonGroup from "@/components/features/workflow/components/modules/ActionButtonGroup"
 import { AnalysisBasicAlert } from "@/components/features/workflow/components/modules/AnalysisAlert"
 import { InboxOutlined } from "@ant-design/icons"
 import api from "@/lib/api/axios"
-import { getRecurrentAnnotationSubmitUrl } from "@/lib/api/analysis"
+import { getRecurrentAnnotationSubmitUrl, getRunDemoUrl } from "@/lib/api/analysis"
 import ResultModal from "@/components/features/workflow/components/modules/ResultModal"
 
 const { Title } = Typography
@@ -29,6 +29,60 @@ const OBS_TYPE_CHOICES = [
 /** Upload 组件的值转换（antd 约定做法） */
 const normalizeUpload = (e) => (Array.isArray(e) ? e : e?.fileList)
 
+const buildRunDemoItems = (onRunDemo) => [
+    {
+        key: '1',
+        label: (
+            <Box onClick={() => onRunDemo('LUAD')}>
+                LUAD
+            </Box>
+        ),
+    },
+    {
+        key: '2',
+        label: (
+            <Box onClick={() => onRunDemo('LUSC')}>
+                LUSC
+            </Box>
+        )
+    },
+    {
+        key: '3',
+        label: (
+            <Box onClick={() => onRunDemo('COAD')}>
+                COAD
+            </Box>
+        )
+    }
+]
+
+const buildViewResultItems = (router) => [
+    {
+        key: '1',
+        label: (
+            <Box onClick={() => router.push('/workspace/detail?taskId=c0cdebe2-b827-42a3-9ba9-290f6141a3e6')}>
+                LUAD
+            </Box>
+        )
+    },
+    {
+        key: '2',
+        label: (
+            <Box onClick={() => router.push('/workspace/detail?taskId=1aa0a87b-c907-4deb-9b17-2f8618dd4013')}>
+                LUSC
+            </Box>
+        )
+    },
+    {
+        key: '3',
+        label: (
+            <Box onClick={() => router.push('/workspace/detail?taskId=ed8a3bc2-2a73-42be-8077-8099012c4d87')}>
+                COAD
+            </Box>
+        )
+    }
+]
+
 const RecurrentCNAAnnotationModule = ({}) => {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isModalOpen, setIsModelOpen] = useState(false)
@@ -38,17 +92,31 @@ const RecurrentCNAAnnotationModule = ({}) => {
     const messageApi = useGlobalMessage()
     const router = useRouter()
 
-    const onRunDemo = () => {
-        console.log('Run Demo!')
-    }
+    const onRunDemo = async (demoType) => {
+        try {
+            setIsSubmitting(true)
 
-    const onViewResult = () => {
-        console.log('View Result!')
+            const response = await api.get(getRunDemoUrl(demoType))
+
+            setTaskUUID(response.data.data.uuid)
+            setSubmissionStatus(true)
+            setIsModelOpen(true)
+            messageApi.success('Submit Success!')
+        } catch (err) {
+            setSubmissionStatus(false)
+            setIsModelOpen(true)
+            messageApi.error('Submit Fail!')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     const onHelp = () => {
-        console.log('Help!')
+        router.push('/tutorial')
     }
+
+    const runDemoItems = buildRunDemoItems(onRunDemo)
+    const viewResultItems = buildViewResultItems(router)
 
     const onSubmit = async (values) => {
         try {
@@ -113,8 +181,8 @@ const RecurrentCNAAnnotationModule = ({}) => {
                     Recurrent CNA Annotation
                 </Title>
                 <ActionButtonGroup
-                    onRunDemo={onRunDemo}
-                    onViewResult={onViewResult}
+                    runDemoItems={runDemoItems}
+                    viewResultItems={viewResultItems}
                     onHelp={onHelp}
                 />
                 <AnalysisBasicAlert/>

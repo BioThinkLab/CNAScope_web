@@ -27,38 +27,10 @@ const HomeIntroduction = () => (
                 marginBottom: '24px',
             }}
         >
-            CNAScope aggregates high-quality CNA data from a broad spectrum of nine major cancer genomics programs,
-            including TCGA, TARGET, HCMI, and others. It harmonizes both sequencing-based and array-based
-            CNA datasets, and provides both chromosome-level and gene-level CNA profiles
-            across <strong>33</strong> cancer types and <strong>53</strong> anatomical
-            sites, supporting robust cross-study exploration. In total, it gathers <strong>47</strong> cancer
-            projects, <strong>19,905</strong> sample
-            cases, <strong>467,206</strong> biospecimens, <strong>112,297</strong> CNV profiles,
-            and <strong>239,645</strong> associated clinical records.
+            CNAScope curates and functionally annotates over <strong>334,187</strong> CNA profiles and <strong>286,812</strong> metadata from <strong>354</strong>
+            datasets, <strong>97,203</strong> samples, <strong>71,009</strong> single cells, and <strong>118,600</strong> spatial spots, spanning <strong>82</strong> cancer subtypes from
+            <strong>6</strong> data sources and <strong>55</strong> cancer initiatives and institutions.
         </Paragraph>
-        <Stack
-            direction='row'
-            spacing={2}
-            justifyContent="center"
-            mt={6}
-        >
-            <Button
-                type="default"
-                size="large"
-            >
-                Data Statistics
-            </Button>
-            <Link href='/database'>
-                <Button
-                    type="primary"
-                    size="large"
-                    icon={<ArrowRightOutlined/>}
-                    iconPosition='end'
-                >
-                    Explore Data
-                </Button>
-            </Link>
-        </Stack>
     </Box>
 )
 

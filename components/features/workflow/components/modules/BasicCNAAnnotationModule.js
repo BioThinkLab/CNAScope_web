@@ -2,12 +2,12 @@ import { useRouter } from "next/router"
 import { useGlobalMessage } from "@/context/MessageContext"
 import { useState } from "react"
 import { Button, Card, Form, InputNumber, Select, Space, Spin, Typography, Upload } from "antd"
-import { Stack } from "@mui/system"
+import { Box, Stack } from "@mui/system"
 import ActionButtonGroup from "@/components/features/workflow/components/modules/ActionButtonGroup"
 import { AnalysisBasicAlert } from "@/components/features/workflow/components/modules/AnalysisAlert"
 import { InboxOutlined } from "@ant-design/icons"
 import api from "@/lib/api/axios"
-import { getBasicAnnotationSubmitUrl } from "@/lib/api/analysis"
+import { getBasicAnnotationSubmitUrl, getRunDemoUrl } from "@/lib/api/analysis"
 import ResultModal from "@/components/features/workflow/components/modules/ResultModal"
 
 const { Title } = Typography
@@ -44,6 +44,60 @@ const normalizeUpload = (e) => {
     return e?.fileList?.slice(-1) // 只保留最后一个文件
 }
 
+const buildRunDemoItems = (onRunDemo) => [
+    {
+        key: '1',
+        label: (
+            <Box onClick={() => onRunDemo('TCGA-ACC')}>
+                TCGA-ACC
+            </Box>
+        ),
+    },
+    {
+        key: '2',
+        label: (
+            <Box onClick={() => onRunDemo('WCDT-MCRPC')}>
+                WCDT-MCRPC
+            </Box>
+        )
+    },
+    {
+        key: '3',
+        label: (
+            <Box onClick={() => onRunDemo('BRCA-T10')}>
+                BRCA-T10
+            </Box>
+        )
+    }
+]
+
+const buildViewResultItems = (router) => [
+    {
+        key: '1',
+        label: (
+            <Box onClick={() => router.push('/workspace/detail?taskId=5935135b-e52c-43aa-a949-0b526c000013')}>
+                TCGA-ACC
+            </Box>
+        )
+    },
+    {
+        key: '2',
+        label: (
+            <Box onClick={() => router.push('/workspace/detail?taskId=d7b6653e-b819-44db-a9c7-78719b0587d6')}>
+                WCDT-MCRPC
+            </Box>
+        )
+    },
+    {
+        key: '3',
+        label: (
+            <Box onClick={() => router.push('/workspace/detail?taskId=69420ed8-532f-4701-b081-1ea77a12fca5')}>
+                BRCA-T10
+            </Box>
+        )
+    }
+]
+
 const BasicCNAAnnotationModule = ({}) => {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isModalOpen, setIsModelOpen] = useState(false)
@@ -53,17 +107,31 @@ const BasicCNAAnnotationModule = ({}) => {
     const messageApi = useGlobalMessage()
     const router = useRouter()
 
-    const onRunDemo = () => {
-        console.log('Run Demo!')
-    }
+    const onRunDemo = async (demoType) => {
+        try {
+            setIsSubmitting(true)
 
-    const onViewResult = () => {
-        console.log('View Result!')
+            const response = await api.get(getRunDemoUrl(demoType))
+
+            setTaskUUID(response.data.data.uuid)
+            setSubmissionStatus(true)
+            setIsModelOpen(true)
+            messageApi.success('Submit Success!')
+        } catch (err) {
+            setSubmissionStatus(false)
+            setIsModelOpen(true)
+            messageApi.error('Submit Fail!')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     const onHelp = () => {
-        console.log('Help!')
+        router.push('/tutorial')
     }
+
+    const runDemoItems = buildRunDemoItems(onRunDemo)
+    const viewResultItems = buildViewResultItems(router)
 
     const onSubmit = async (values) => {
         try {
@@ -127,8 +195,8 @@ const BasicCNAAnnotationModule = ({}) => {
                     Basic CNA Annotation
                 </Title>
                 <ActionButtonGroup
-                    onRunDemo={onRunDemo}
-                    onViewResult={onViewResult}
+                    runDemoItems={runDemoItems}
+                    viewResultItems={viewResultItems}
                     onHelp={onHelp}
                 />
                 <AnalysisBasicAlert/>

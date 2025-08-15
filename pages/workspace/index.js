@@ -110,7 +110,7 @@ const TaskDetail = ({taskInformation, handleSearch}) => {
     const router = useRouter()
 
     const handleNavigate = () => {
-        router.push(`/result?resultId=${taskInformation.uuid}`)
+        router.push(`/workspace/detail?taskId=${taskInformation['data']['uuid']}`)
     }
 
     return (

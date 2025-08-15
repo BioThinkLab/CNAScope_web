@@ -1,3 +1,5 @@
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import "@/styles/globals.css";
 import { StyleProvider } from "@ant-design/cssinjs"
 import { ConfigProvider } from "antd"

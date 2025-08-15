@@ -111,8 +111,6 @@ const DatabaseTableContent = ({ datasets }) => {
         setSearchTest(newSearchText)
     }
 
-    console.log(availableFilters)
-
     return (
         <SplitterLayout
             isShowLeft={isShowLeft}
