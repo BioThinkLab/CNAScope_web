@@ -14,7 +14,7 @@ const DatabasePage = ({}) => {
                     component='h6'
                     sx={{ fontSize: '40px' }}
                 >
-                    Datasets List
+                    Dataset List
                 </Box>
                 <DatabaseMainView/>
             </Stack>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <title>SVG3DTagCloud - Example 1</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="/js/jquery.svg3dtagcloud.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Oswald&amp;subset=latin,latin-ext" rel="stylesheet"
+          type="text/css">
+
+    <style type="text/css">
+
+        html, body, div, span, applet, object, iframe,
+        h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+        a, abbr, acronym, address, big, cite, code,
+        del, dfn, em, font, img, ins, kbd, q, s, samp,
+        small, strike, strong, sub, sup, tt, var,
+        b, u, i, center,
+        dl, dt, dd, ol, ul, li,
+        fieldset, form, label, legend,
+        table, caption, tbody, tfoot, thead, tr, th, td {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            outline: 0;
+            font-size: 100%;
+            vertical-align: baseline;
+            background: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background-color: #FFF;
+        }
+
+        .source-link text {
+            fill: #ff4d4f !important;
+        }
+
+        .programme-link text {
+            fill: #ffa940 !important;
+        }
+
+        .modality-link text {
+             fill: #9254de !important;
+        }
+
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            var index = 0,
+                entries = [
+                    [
+                        {
+                            label: '10x Official',
+                            target: '_blank',
+                            url: '/database?source=10x Official',
+                            class: 'source-link',
+                        },
+                        {
+                            label: 'cBioportal',
+                            target: '_blank',
+                            url: '/database?source=cBioportal',
+                            class: 'source-link',
+                        },
+                        {
+                            label: 'COSMIC',
+                            target: '_blank',
+                            url: '/database?source=COSMIC',
+                            class: 'source-link',
+                        },
+                        {
+                            label: 'GDC Portal',
+                            target: '_blank',
+                            url: '/database?source=GDC Portal',
+                            class: 'source-link',
+                        },
+                        {
+                            label: 'HSCGD',
+                            target: '_blank',
+                            url: '/database?source=HSCGD',
+                            class: 'source-link',
+                        },
+                        {
+                            label: 'scTML',
+                            target: '_blank',
+                            url: '/database?source=scTML',
+                            class: 'source-link',
+                        },
+                        {
+                            label: 'TCGA',
+                            target: '_blank',
+                            url: '/database?programme=TCGA',
+                            class: 'programme-link',
+                        },
+                        {
+                            label: '10x Official',
+                            target: '_blank',
+                            url: '/database?programme=10x Official',
+                            class: 'programme-link',
+                        },
+                        {
+                            label: 'CGCI',
+                            target: '_blank',
+                            url: '/database?programme=CGCI',
+                            class: 'programme-link',
+                        },
+                        {
+                            label: 'CPTAC',
+                            target: '_blank',
+                            url: '/database?programme=CPTAC',
+                            class: 'programme-link',
+                        },
+                        {
+                            label: 'HCMI',
+                            target: '_blank',
+                            url: '/database?programme=HCMI',
+                            class: 'programme-link',
+                        },
+                        {
+                            label: 'MSK',
+                            target: '_blank',
+                            url: '/database?programme=MSK',
+                            class: 'programme-link',
+                        },
+                        {
+                            label: 'NCBI GEO',
+                            target: '_blank',
+                            url: '/database?programme=NCBI GEO',
+                            class: 'programme-link',
+                        },
+                        {
+                            label: 'NCBI SRA',
+                            target: '_blank',
+                            url: '/database?programme=NCBI SRA',
+                            class: 'programme-link',
+                        },
+                        {
+                            label: 'TARGET',
+                            target: '_blank',
+                            url: '/database?programme=TARGET',
+                            class: 'programme-link',
+                        },
+                        {
+                            label: 'Broad',
+                            target: '_blank',
+                            url: '/database?programme=Broad',
+                            class: 'programme-link',
+                        },
+                        {
+                            label: 'bulkDNA',
+                            target: '_blank',
+                            url: '/database?modality=bulkDNA',
+                            class: 'modality-link',
+                        },
+                        {
+                            label: 'scDNA',
+                            target: '_blank',
+                            url: '/database?modality=scDNA',
+                            class: 'modality-link',
+                        },
+                        {
+                            label: 'scRNA',
+                            target: '_blank',
+                            url: '/database?modality=scRNA',
+                            class: 'modality-link',
+                        },
+                        {
+                            label: 'ST',
+                            target: '_blank',
+                            url: '/database?modality=ST',
+                            class: 'modality-link',
+                        },
+                    ],
+                ]
+
+            var settings = {
+                entries: entries[index],
+                width: 500,
+                height: 500,
+                radius: '70%',
+                radiusMin: 75,
+                bgDraw: true,
+                bgColor: '#FFF',
+                opacityOver: 1,
+                opacityOut: 0.05,
+                opacitySpeed: 6,
+                fov: 800,
+                speed: 0.4,
+                fontFamily: 'Oswald, Arial, sans-serif',
+                fontSize: '20',
+                fontColor: '#456074',
+                fontWeight: 'normal', //bold
+                fontStyle: 'normal', //italic
+                fontStretch: 'normal', //wider, narrower, ultra-condensed, extra-condensed, condensed, semi-condensed, semi-expanded, expanded, extra-expanded, ultra-expanded
+                fontToUpperCase: true,
+                tooltipFontFamily: 'Oswald, Arial, sans-serif',
+                tooltipFontSize: '11',
+                tooltipFontColor: '#fff',
+                tooltipFontWeight: 'normal', //bold
+                tooltipFontStyle: 'normal', //italic
+                tooltipFontStretch: 'normal', //wider, narrower, ultra-condensed, extra-condensed, condensed, semi-condensed, semi-expanded, expanded, extra-expanded, ultra-expanded
+                tooltipFontToUpperCase: false,
+                tooltipTextAnchor: 'left',
+                tooltipDiffX: 0,
+                tooltipDiffY: 10,
+            }
+
+            //var svg3DTagCloud = new SVG3DTagCloud( document.getElementById( 'holder'  ), settings );
+            $('#holder').svg3DTagCloud(settings)
+            // $('.plasmid-link').find('text').css('fill', '#EE7E7D !important')
+        })
+    </script>
+
+</head>
+
+<body>
+<div id="holder"></div>
+</body>
+</html>

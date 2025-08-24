@@ -4,7 +4,10 @@ import { useState } from "react"
 import { Button, Card, Form, InputNumber, Select, Space, Spin, Typography, Upload } from "antd"
 import { Box, Stack } from "@mui/system"
 import ActionButtonGroup from "@/components/features/workflow/components/modules/ActionButtonGroup"
-import { AnalysisBasicAlert } from "@/components/features/workflow/components/modules/AnalysisAlert"
+import {
+    AnalysisBasicAlert,
+    AnalysisSupportAlert
+} from "@/components/features/workflow/components/modules/AnalysisAlert"
 import { InboxOutlined } from "@ant-design/icons"
 import api from "@/lib/api/axios"
 import { getBasicAnnotationSubmitUrl, getRunDemoUrl } from "@/lib/api/analysis"

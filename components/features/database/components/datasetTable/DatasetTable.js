@@ -11,6 +11,7 @@ import MultiTagList from "@/components/common/tag/MultiTagList"
 import CNAValueTypeChip from "@/components/common/chip/CNAValueTypeChip"
 import ReferenceGenomeChip from "@/components/common/chip/ReferenceGenomeChip"
 import { DownloadOutlined, FileTextOutlined } from "@ant-design/icons"
+import { downloadSingleFile, getDatasetDownloadUrl } from "@/lib/api/dataset"
 
 const columns = [
     {
@@ -149,7 +150,7 @@ const columns = [
                 >
                     Detail
                 </Button>
-                <Button icon={<DownloadOutlined/>}>
+                <Button icon={<DownloadOutlined/>} onClick={() => downloadSingleFile(getDatasetDownloadUrl(record.name))}>
                     Download
                 </Button>
             </Stack>

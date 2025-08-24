@@ -5,7 +5,7 @@ import { DoubleLeftOutlined } from "@ant-design/icons"
 import FilterCancel from "@/components/icons/FilterCancel"
 
 const FilterCollapse = ({ filters, setFilters, availableFilters, clearFilters }) => {
-    const [activeKey, setActiveKey] = useState(['source', 'programme'])
+    const [activeKey, setActiveKey] = useState(['source', 'programme', 'modality'])
 
     const collapseItems = useMemo(() => {
         return buildCollapseItems(availableFilters, filters, setFilters)

@@ -60,7 +60,7 @@ const CNAGeneHeatmapTree = ({
                 showTooltip(event, treeNodeTooltipTemplate(d.data.name, d.parent ? d.parent.data.name : 'NONE', d.value, d.data.distanceToRoot))
             })
             .on('mouseout', hideTooltip)
-    }, [nodes, goToTreeNode, settings.nodeRadius, hideTooltip, showTooltip, settings.width, leaves])
+    }, [nodes, goToTreeNode, settings.nodeRadius, hideTooltip, showTooltip, settings.width, leaves, settings.marginToHeatmap])
 
     return (
         <g ref={chartWrapperRef}>

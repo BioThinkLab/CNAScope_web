@@ -12,7 +12,7 @@ const ContactInfo = () => (
             </Box>
             <Stack direction="row" spacing={1} sx={{ fontSize: '16px', alignItems: 'center' }}>
                 <EnvironmentOutlined/>
-                <Box component='span'>Address: 1A-102, 1/F, Block 1, To Yuen Building, Tat Chee Avenue, Kowloon, Hong
+                <Box component='span'>Address: 1B-109, 1/F, Block 1, To Yuen Building, Tat Chee Avenue, Kowloon, Hong
                     Kong, China</Box>
             </Stack>
             <Stack direction="row" spacing={1} sx={{ fontSize: '16px', alignItems: 'center' }}>

@@ -1,5 +1,5 @@
-import { Box } from "@mui/system"
-import { Descriptions, Tooltip } from "antd"
+import { Box, Stack } from "@mui/system"
+import { Button, Descriptions, Tooltip } from "antd"
 import BasicChip from "@/components/ui/chips/BasicChip"
 import Link from "next/link"
 import EllipsisText from "@/components/common/text/EllipsisText"
@@ -9,6 +9,7 @@ import ObservationTypeChip from "@/components/common/chip/ObservationTypeChip"
 import MultiTagList from "@/components/common/tag/MultiTagList"
 import CNAValueTypeChip from "@/components/common/chip/CNAValueTypeChip"
 import ReferenceGenomeChip from "@/components/common/chip/ReferenceGenomeChip"
+import { BookOutlined } from "@ant-design/icons"
 
 const buildItems = (dataset) => [
     {
@@ -107,21 +108,36 @@ const buildItems = (dataset) => [
     }
 ]
 
-const DatasetDescription = ({ dataset }) => {
+const DatasetDescription = ({ dataset, resetTutorialState }) => {
     const items = buildItems(dataset)
 
     return (
         <>
-            <Box component='h6'
-                 sx={{
-                     fontSize: '36px',
-                     borderBottom: '2px solid #e0e0e0',
-                     mb: '36px',
-                     paddingBottom: '12px'
-                 }}
+            <Stack
+                direction="row"
+                alignItems="center"
+                spacing={6}
+                sx={{
+                    borderBottom: '2px solid #e0e0e0',
+                    mb: '36px',
+                    paddingBottom: '12px'
+                }}
             >
-                Dataset Information
-            </Box>
+                <Box component='h6'
+                     sx={{
+                         fontSize: '36px'
+                     }}
+                >
+                    Dataset Information
+                </Box>
+                <Button
+                    type='primary'
+                    icon={<BookOutlined />}
+                    onClick={resetTutorialState}
+                >
+                    View Tutorial
+                </Button>
+            </Stack>
             <Descriptions
                 bordered
                 items={items}

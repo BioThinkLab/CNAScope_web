@@ -17,9 +17,12 @@ import CNAFocalCNAWrapper from "@/components/features/database/components/visual
 import PhylogeneticTreeWrapper from "@/components/features/database/components/visualization/PhylogeneticTreeWrapper"
 import CNAPloidyDistributionWrapper
     from "@/components/features/database/components/visualization/CNAPloidyDistributionWrapper"
+import { useDetailPageTutorialStore } from "@/stores/DetailPageTutorialStore"
+import DatabaseTutorialModal from "@/components/features/database/components/datasetDetail/DatabaseTutorialModal"
 
 const DatabaseDetailContent = ({ dataset }) => {
     const [selectedWorkflow, setSelectedWorkflow] = useState(null)
+    const { resetTutorialState } = useDetailPageTutorialStore()
 
     const handleSelectedWorkflowChange = (newWorkflow) => {
         setSelectedWorkflow(newWorkflow)
@@ -36,7 +39,7 @@ const DatabaseDetailContent = ({ dataset }) => {
 
     return (
         <Stack spacing={4} sx={{ pt: '12px', px: '32px' }}>
-            <DatasetDescription dataset={dataset}/>
+            <DatasetDescription dataset={dataset} resetTutorialState={resetTutorialState}/>
             {
                 dataset.modality === 'bulkDNA' ? (
                     <BulkDatasetSampleTable dataset={dataset}/>
@@ -58,14 +61,32 @@ const DatabaseDetailContent = ({ dataset }) => {
             {
                 selectedWorkflow ? (
                     <>
-                        <CNAChromosomeHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        {
+                            dataset['cn_type'] !== 'Gene Integer' && dataset['cn_type'] !== 'Gene Log' ? (
+                                <CNAChromosomeHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                            ) : (
+                                <></>
+                            )
+                        }
                         <CNAGeneHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
                         <CNATermHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
                         <PhylogeneticTreeWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
                         <CNAEmbeddingMapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-                        <CNAPloidyStairstepWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        {
+                            dataset['cn_type'] !== 'Gene Integer' && dataset['cn_type'] !== 'Gene Log' ? (
+                                <CNAPloidyStairstepWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                            ) : (
+                                <></>
+                            )
+                        }
                         <CNAPloidyDistributionWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-                        <CNAFocalCNAWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        {
+                            dataset.source === 'GDC Portal' ? (
+                                <CNAFocalCNAWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                            ) : (
+                                <></>
+                            )
+                        }
                         {/*<CNAGeneRecurrenceQueryWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>*/}
                     </>
                 ) : (
@@ -73,6 +94,7 @@ const DatabaseDetailContent = ({ dataset }) => {
                 )
             }
             <Box></Box>
+            <DatabaseTutorialModal/>
         </Stack>
     )
 }

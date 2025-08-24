@@ -1,5 +1,5 @@
 import { Button, Divider, Dropdown, Space } from "antd"
-import { ExperimentOutlined, FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons"
+import { ExperimentOutlined, FileExcelOutlined, FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons"
 
 const ActionButtonGroup = ({
     runDemoItems,
@@ -20,6 +20,9 @@ const ActionButtonGroup = ({
         <Divider type="vertical" verticalAlign='middle' style={{ height: 24 }} />
         <Button type="primary" icon={<QuestionCircleOutlined/>} onClick={onHelp}>
             Submission Help
+        </Button>
+        <Button danger icon={<FileExcelOutlined />} href="/demo/cna.csv" target="_blank">
+            View Demo File
         </Button>
     </Space>
 )

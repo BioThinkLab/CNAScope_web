@@ -219,7 +219,7 @@ const RecurrentCNAAnnotationModule = ({}) => {
                             label="Input File"
                             valuePropName="fileList"
                             getValueFromEvent={normalizeUpload}
-                            tooltip="Upload CNA matrix file"
+                            tooltip="Upload a single CNA matrix file or a zip file containing multiple CNV matrix files"
                             rules={[{ required: true }]}
                         >
                             <Dragger

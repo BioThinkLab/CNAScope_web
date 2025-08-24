@@ -2,12 +2,13 @@ import { useDatasetList } from "@/components/features/database/hooks/useDatasetL
 import SplitterLayout from "@/components/layouts/SplitterLayout"
 import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import FilterCollapse from "@/components/features/database/components/datasetTable/FilterCollapse"
 import DatasetTable from "@/components/features/database/components/datasetTable/DatasetTable"
 import { Stack } from "@mui/system"
 import DatasetsTableOperations from "@/components/features/database/components/datasetTable/DatasetsTableOperations"
 import Fuse from "fuse.js"
+import { useRouter } from "next/router"
 
 const MULTI_VALUE_FIELDS = new Set(['programme', 'protocol', 'workflow'])
 const FUSE_KEYS = [
@@ -37,20 +38,39 @@ const FUSE_OPTIONS = {
 
 const DatabaseMainViewWrapper = ({}) => {
     const { datasets, isLoading, isError } = useDatasetList()
+    const router = useRouter()
+    const { query } = router
+
+    // 使用 useMemo 缓存 filters 初始化，只用 URL 参数初始化 filters
+    const initialFilters = useMemo(() => {
+        const filters = {}
+        for (const key of Object.keys(query)) {
+            const paramValue = query[key]
+            if (paramValue) {
+                filters[key] = paramValue.split(',') // 假设 URL 参数值是逗号分隔的多个值
+            }
+        }
+        return filters
+    }, [query]) // 依赖 query，确保只有初次加载时才根据 URL 设置 filters
 
     if (isLoading) return <LoadingView containerSx={{ height: '80vh', marginTop: '40px' }}/>
 
     if (isError) return <ErrorView containerSx={{ height: '80vh', marginTop: '40px' }}/>
 
     return (
-        <DatabaseTableContent datasets={datasets}/>
+        <DatabaseTableContent datasets={datasets} initialFilters={initialFilters}/>
     )
 }
 
-const DatabaseTableContent = ({ datasets }) => {
+const DatabaseTableContent = ({ datasets, initialFilters }) => {
     const [isShowLeft, setIsShowLeft] = useState(true)
-    const [filters, setFilters] = useState({})
+    const [filters, setFilters] = useState(initialFilters) // 初始化 filters
     const [searchText, setSearchTest] = useState('')
+
+    // 每当 URL 查询参数变化时重新设置 filters
+    useEffect(() => {
+        setFilters(initialFilters) // 根据新的 URL 查询参数覆盖 filters
+    }, [initialFilters]) // 依赖于 initialFilters，确保 URL 变化时重新初始化 filters
 
     const availableFilters = useMemo(() => {
         return buildFilters(datasets)
