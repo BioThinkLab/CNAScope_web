@@ -6,6 +6,61 @@ import {
     hg38ChromosomeXDomain,
 } from "@/components/features/visualization/utils/chromosomeUtils"
 
+export function sortChromosomes(chromosomes) {
+    // 提取染色体名和区间的起始和结束位置
+    function extractInfo(chromosomeStr) {
+        const regex = /(chr[\w]+):(\d+)-(\d+)/;
+        const match = chromosomeStr.match(regex);
+        if (match) {
+            const chromName = match[1];
+            const start = parseInt(match[2], 10);
+            const end = parseInt(match[3], 10);
+            return { chromName, start, end };
+        }
+        return null;
+    }
+
+    // 自定义染色体名称的排序
+    function chromNameSort(a, b) {
+        const chromOrder = {
+            "chrX": 23,
+            "chrY": 24
+        };
+
+        // 将染色体名称中的数字部分提取出来，数字越小排序越前
+        const getChromNumber = (chromName) => {
+            const match = chromName.match(/chr(\d+|X|Y|M)/);
+            if (match) {
+                const name = match[1];
+                if (name === "X") return 23;
+                if (name === "Y") return 24;
+                if (name === "M") return 25; // 如果有特殊染色体M，自己调整排序
+                return parseInt(name, 10);
+            }
+            return -1;
+        };
+
+        const numberA = getChromNumber(a);
+        const numberB = getChromNumber(b);
+        return numberA - numberB;
+    }
+
+    // 排序函数
+    return chromosomes.sort((a, b) => {
+        const infoA = extractInfo(a);
+        const infoB = extractInfo(b);
+
+        // 比较染色体名称
+        const chromNameComparison = chromNameSort(infoA.chromName, infoB.chromName);
+        if (chromNameComparison !== 0) {
+            return chromNameComparison;
+        }
+
+        // 如果染色体名称相同，按区间起始位置排序
+        return infoA.start - infoB.start;
+    });
+}
+
 export const parseCNAMatrixToNodePairs = (matrix, columns, version) => {
     const chromosomeStartPositions = version === 'hg19' ? hg19ChromosomeStartPositions : hg38ChromosomeStartPositions
 

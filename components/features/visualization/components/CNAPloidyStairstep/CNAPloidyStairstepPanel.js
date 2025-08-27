@@ -1,6 +1,10 @@
 import * as d3 from 'd3'
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
-import { initFigure, parseCNAMatrixToNodePairs } from "@/components/features/visualization/utils/ploidyStairstepUtils"
+import {
+    initFigure,
+    parseCNAMatrixToNodePairs,
+    sortChromosomes
+} from "@/components/features/visualization/utils/ploidyStairstepUtils"
 import { Box, Stack } from "@mui/system"
 import SplitterControlButton from "@/components/common/button/SplitterControlButton"
 import { useContainerSize } from "@/components/common/container/ResponsiveVisualizationContainer"
@@ -40,7 +44,11 @@ const CNAPloidyStairstepPanel = forwardRef(({
 
     const nodePairs = useMemo(() => {
         return Object.keys(clusterMeans).reduce((acc, key) => {
-            acc[key] = parseCNAMatrixToNodePairs(clusterMeans[key], Object.keys(clusterMeans[key]), reference)
+            acc[key] = parseCNAMatrixToNodePairs(
+                clusterMeans[key],
+                sortChromosomes(Object.keys(clusterMeans[key])),
+                reference
+            )
             return acc
         }, {})
     }, [clusterMeans, reference])
