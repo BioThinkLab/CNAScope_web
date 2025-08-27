@@ -7,6 +7,7 @@ import CNAEmbeddingMapView from "@/components/features/visualization/components/
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
 import { useRef } from "react"
+import { useCNANewick } from "@/components/features/database/hooks/useCNANewick"
 
 const CNAEmbeddingMapContent = ({ selectedWorkflow, dataset, vizRef }) => {
     const {
@@ -15,13 +16,21 @@ const CNAEmbeddingMapContent = ({ selectedWorkflow, dataset, vizRef }) => {
         isMetaError
     } = useCNAMeta(dataset.name, selectedWorkflow)
 
-    if (isMetaLoading) return <LoadingView height='920px'/>
+    const {
+        newick,
+        isNewickLoading,
+        isNewickError
+    } = useCNANewick(dataset.name, selectedWorkflow)
 
-    if (isMetaError) return <ErrorView height='920px'/>
+    if (isMetaLoading || isNewickLoading) return <LoadingView height='920px'/>
+
+    if (isMetaError || isNewickError) return <ErrorView height='920px'/>
 
     return (
         <CNAEmbeddingMapView
             meta={meta}
+            newick={newick}
+            dataset={dataset}
             vizRef={vizRef}
         />
     )

@@ -248,11 +248,11 @@ export const createColorScales = (metaRanges, CNVBaseline) => {
         .interpolator(d3.interpolateRgb('#52b199', '#0d7c66'))
 
     const eTSNE1ColorScale = d3.scaleSequential()
-        .domain(metaRanges['e_TSNE1'])
+        .domain(metaRanges['e_TSNE1'] || [0, 1])
         .interpolator(d3.interpolateRgb('#d88f92', '#c63c51'))
 
     const eTSNE2ColorScale = d3.scaleSequential()
-        .domain(metaRanges['e_TSNE2'])
+        .domain(metaRanges['e_TSNE2'] || [0, 1])
         .interpolator(d3.interpolateRgb('#bad9ff', '#3572ef'))
 
     const eUMAP1ColorScale = d3.scaleSequential()

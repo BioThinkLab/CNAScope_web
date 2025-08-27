@@ -34,7 +34,7 @@ export const parseCNAMatrixToNodePairs = (matrix, columns, version) => {
     return nodePairs
 }
 
-export const initFigure = (width, height, config, baselineCNA, version) => {
+export const initFigure = (width, height, config, baselineCNA, version, cluster) => {
     const chromosomeXDomain = version === 'hg19' ? hg19ChromosomeXDomain : hg38ChromosomeXDomain
     const chromosomeTicks = version === 'hg19' ? hg19ChromosomeTicks : hg38ChromosomeTicks
 
@@ -42,8 +42,16 @@ export const initFigure = (width, height, config, baselineCNA, version) => {
     const innerWidth = width - config.chart.marginLeft - config.chart.marginRight
     const innerHeight = height - config.chart.marginTop - config.chart.marginBottom
 
+    // Calculate each row legend number.
+    const rowLegendNum = Math.floor(innerWidth * 0.8 / (config.legend.itemHorizontalGap + config.legend.width))
+    const rowNum = Math.ceil(cluster / rowLegendNum)
+    const currentRowLegendNum = cluster < rowLegendNum ? cluster : rowLegendNum
+    const legendOffset =
+        (innerWidth - currentRowLegendNum * config.legend.width - (currentRowLegendNum - 1) * config.legend.itemHorizontalGap) / 2
+        + config.chart.marginLeft
+
     // Calculate Line Chart settings.
-    const yPadding = 45 + config.chart.marginTop
+    const yPadding = (rowNum + 1) * config.legend.height + 45 + config.chart.marginTop
     const lineChartWidth = innerWidth
     const lineChartHeight = innerHeight - yPadding
     const xRange = [config.chart.marginLeft, config.chart.marginLeft + lineChartWidth]
@@ -81,6 +89,8 @@ export const initFigure = (width, height, config, baselineCNA, version) => {
     }
 
     return {
+        rowLegendNum,
+        legendOffset,
         xRange,
         yRange,
         x,

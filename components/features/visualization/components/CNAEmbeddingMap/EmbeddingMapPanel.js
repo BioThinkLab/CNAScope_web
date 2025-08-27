@@ -12,6 +12,7 @@ import { downloadSvg } from "@/components/features/visualization/utils/downloadU
 
 const EmbeddingMapPanel = forwardRef(({
     embeddingMethod,
+    cluster,
     meta,
     extents,
     config,
@@ -23,18 +24,23 @@ const EmbeddingMapPanel = forwardRef(({
     const xAxisRef = useRef(null)
     const yAxisRef = useRef(null)
     const dotsRef = useRef(null)
+    const legendContainerRef = useRef(null)
 
     const {
         svgWidth,
         svgHeight,
         innerWidth,
         figureSize,
+        rowLegendNum,
         xOffsetScatterPlot,
         yOffsetScatterPlot,
         yOffsetXAxis,
+        xOffsetLegend,
+        yOffsetLegend,
         xRange,
-        yRange
-    } = initFigureConfig(920, config)
+        yRange,
+        colorScale
+    } = initFigureConfig(920, cluster, config)
     const axisDomain = initAxisDomain(embeddingMethod, extents)
     const { x, y } = initAxis(axisDomain, xRange, yRange)
 
@@ -53,16 +59,63 @@ const EmbeddingMapPanel = forwardRef(({
     useEffect(() => {
         const gDots = d3.select(dotsRef.current)
 
-        gDots.selectAll('circle')
-            .data(meta, d => d.id)
-            .join('circle')
-            .attr('cx', d => x(d[`${embeddingMethod}1`]))
-            .attr('cy', d => y(d[`${embeddingMethod}2`]))
-            .attr('r', config.scatter.radius)
-            .attr('fill', 'rgba(30, 144, 255, 0.6)')
-            .on('pointerenter pointermove', (event, d) => handleDotPointerEnter(event, d.id, [d[`${embeddingMethod}1`], d[`${embeddingMethod}2`]], 'rgba(30, 144, 255, 0.6)', toolTipRef))
-            .on('pointerleave', () => handleDotPointerLeft(toolTipRef))
-    }, [config.scatter.radius, embeddingMethod, meta, x, y])
+        gDots.selectAll('g')
+            .data(Array.from({ length: cluster }, (_, i) => i + 1))
+            .join('g')
+            .attr('class', d => `cluster${d}`)
+            .each(function (datum) {
+                const gClusterDots = d3.select(this)
+
+                gClusterDots.selectAll('circle')
+                    .data(meta.filter(item => item.cluster === datum), d => d.id)
+                    .join('circle')
+                    .attr('cx', d => x(d[`${embeddingMethod}1`]))
+                    .attr('cy', d => y(d[`${embeddingMethod}2`]))
+                    .attr('r', config.scatter.radius)
+                    .attr('fill', colorScale(datum))
+                    .on('pointerenter pointermove', (event, d) => handleDotPointerEnter(event, d.id, [d[`${embeddingMethod}1`], d[`${embeddingMethod}2`]], 'rgba(30, 144, 255, 0.6)', toolTipRef))
+                    .on('pointerleave', () => handleDotPointerLeft(toolTipRef))
+            })
+    }, [cluster, colorScale, config.scatter.radius, embeddingMethod, meta, x, y])
+
+    useEffect(() => {
+        const gLegend = d3.select(legendContainerRef.current)
+
+        gLegend.selectAll('g')
+            .data(Array.from({ length: cluster }, (_, i) => i + 1))
+            .join('g')
+            .attr('transform', (d, i) => `translate(${Math.floor(i / rowLegendNum) * (config.legend.width + config.legend.itemHorizontalGap)}, ${(config.legend.itemVerticalGap + config.legend.height) * (i % rowLegendNum)})`)
+            .each(function (d) {
+                const g = d3.select(this)
+
+                g.selectAll('rect')
+                    .data([d])
+                    .join('rect')
+                    .attr('y', 2)
+                    .attr('width', 26)
+                    .attr('height', 16)
+                    .attr('rx', 4)
+                    .attr('ry', 4)
+                    .attr('fill', colorScale(d))
+
+                g.selectAll('text')
+                    .data([d])
+                    .join('text')
+                    .attr('x', 30)
+                    .attr('dy', '1rem')
+                    .text(d => `Cluster ${d}`)
+
+                g.selectAll('.legend-event-trigger')
+                    .data([d])
+                    .join('rect')
+                    .attr('class', 'legend-event-trigger')
+                    .attr('width', config.legend.width)
+                    .attr('height', config.legend.height)
+                    .attr('fill', 'transparent')
+                    .on('pointerenter pointermove', (event, d) => handleLegendPointerEnter(d, dotsRef))
+                    .on('pointerleave', (event, d) => handleLegendPointerLeft(d, dotsRef))
+            })
+    }, [cluster, colorScale, config.legend.height, config.legend.itemHorizontalGap, config.legend.itemVerticalGap, config.legend.width, rowLegendNum])
 
     useImperativeHandle(ref, () => ({
         downloadSvg: () => {
@@ -72,14 +125,7 @@ const EmbeddingMapPanel = forwardRef(({
     }))
 
     return (
-        <Box sx={{ position: 'relative', height: '920px' }}>
-            <Box sx={{ position: 'absolute', top: '14px', left: '4px' }}>
-                <SplitterControlButton
-                    isShowLeft={isShowLeft}
-                    handleIsShowLeftChange={handleIsShowLeftChange}
-                    title='Setting Options'
-                />
-            </Box>
+        <>
             <Stack sx={{ alignItems: 'center', overflowX: 'auto' }}>
                 <svg ref={svgRef} width={svgWidth} height={svgHeight}>
                     <g className='plotContainer'
@@ -120,13 +166,28 @@ const EmbeddingMapPanel = forwardRef(({
                             </text>
                         </g>
                         <g ref={dotsRef} transform={`translate(${xOffsetScatterPlot}, ${yOffsetScatterPlot})`}></g>
+                        <g ref={legendContainerRef} transform={`translate(${xOffsetLegend}, ${yOffsetLegend})`}></g>
                     </g>
                 </svg>
             </Stack>
             {createPortal(<CustomTooltip ref={toolTipRef}/>, document.body)}
-        </Box>
+        </>
     )
 })
+
+const handleLegendPointerEnter = (datum, dotsRef) => {
+    const gDots = d3.select(dotsRef.current)
+
+    gDots.selectAll(`g:not(.cluster${datum})`)
+        .attr('opacity', 0.2)
+}
+
+const handleLegendPointerLeft = (datum, dotsRef) => {
+    const gDots = d3.select(dotsRef.current)
+
+    gDots.selectAll('g')
+        .attr('opacity', 1)
+}
 
 const handleDotPointerEnter = (event, nodeId, coordinate, color, tooltipRef) => {
     tooltipRef.current.showTooltip(event, EmbeddingScatterPlotTooltipTemplate(nodeId, coordinate, color))

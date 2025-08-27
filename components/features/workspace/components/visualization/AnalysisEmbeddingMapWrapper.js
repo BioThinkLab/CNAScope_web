@@ -7,6 +7,7 @@ import { useAnalysisCNAMeta } from "@/components/features/workspace/hooks/useAna
 import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import CNAEmbeddingMapView from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapView"
+import { useAnalysisCNANewick } from "@/components/features/workspace/hooks/useAnalysisCNANewick"
 
 const AnalysisEmbeddingMapContent = ({ task, vizRef }) => {
     const {
@@ -15,13 +16,21 @@ const AnalysisEmbeddingMapContent = ({ task, vizRef }) => {
         isMetaError
     } = useAnalysisCNAMeta(task.data.uuid)
 
-    if (isMetaLoading) return <LoadingView height='920px'/>
+    const {
+        newick,
+        isNewickLoading,
+        isNewickError
+    } = useAnalysisCNANewick(task.data.uuid)
 
-    if (isMetaError) return <ErrorView height='920px'/>
+    if (isMetaLoading || isNewickLoading) return <LoadingView height='920px'/>
+
+    if (isMetaError || isNewickError) return <ErrorView height='920px'/>
 
     return (
         <CNAEmbeddingMapView
             meta={meta}
+            newick={newick}
+            dataset={null}
             vizRef={vizRef}
         />
     )

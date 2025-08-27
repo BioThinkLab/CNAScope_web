@@ -177,7 +177,7 @@ const Authors = () => {
         <Stack spacing={1} sx={{alignItems: 'center'}}>
             <Box component='h6' sx={{fontSize: '40px', paddingBottom: '20px'}}>Authors</Box>
             <Stack spacing={4}>
-                <Grid container spacing={4} sx={{ fontSize: '20px' }}>
+                <Grid container spacing={3.5} sx={{ fontSize: '20px' }}>
                     <Grid xs={6}>
                         <AuthorsCard name="Xikang Feng" email="fxk@nwpu.edu.cn" char="F" colorIndex={4} />
                     </Grid>
@@ -185,7 +185,7 @@ const Authors = () => {
                         <AuthorsCard name="Lingxi Chen" email="lingxi.chen@cityu.edu.hk" char="C" colorIndex={3} />
                     </Grid>
                 </Grid>
-                <Grid container spacing={4} sx={{ fontSize: '20px' }}>
+                <Grid container spacing={3.5} sx={{ fontSize: '20px' }}>
                     <Grid xs={6}>
                         <AuthorsCard name="Qiangguo Jin" email="qgking@nwpu.edu.cn" char="Z" colorIndex={12} />
                     </Grid>
@@ -193,7 +193,7 @@ const Authors = () => {
                         <AuthorsCard name="Jieyi Zheng" email="zhengjieyi@mail.nwpu.edu.cn" char="Z" colorIndex={12} />
                     </Grid>
                 </Grid>
-                <Grid container spacing={4} sx={{ fontSize: '20px' }}>
+                <Grid container spacing={3.5} sx={{ fontSize: '20px' }}>
                     <Grid xs={6}>
                         <AuthorsCard name="Sisi Peng" email="sisipeng@mail.nwpu.edu.cn" char="Z" colorIndex={12} />
                     </Grid>
@@ -201,7 +201,7 @@ const Authors = () => {
                         <AuthorsCard name="Anna Jiang" email="anna.jiang@my.cityu.edu.hk" char="Z" colorIndex={12} />
                     </Grid>
                 </Grid>
-                <Grid container spacing={4} sx={{ fontSize: '20px' }}>
+                <Grid container spacing={3.5} sx={{ fontSize: '20px' }}>
                     <Grid xs={6}>
                         <AuthorsCard name="Chengshang Lyu" email="cs.lyu@my.cityu.edu.hk" char="Z" colorIndex={12} />
                     </Grid>

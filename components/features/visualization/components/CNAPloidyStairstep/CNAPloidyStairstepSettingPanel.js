@@ -2,24 +2,36 @@ import { useMemo, useState } from "react"
 import { PieChartOutlined, SettingOutlined } from "@ant-design/icons"
 import { Box, Stack } from "@mui/system"
 import { SettingNumberInput } from "@/components/features/visualization/components/input/SettingInput"
-import { Collapse, ConfigProvider, Select } from "antd"
+import { Button, Collapse, ConfigProvider, Select } from "antd"
 
-const DataSetting = ({ hcluster, handleHclusterChange, clusterList }) => {
-    const options = clusterList.map(cluster => ({
-        value: cluster,
-        label: cluster
-    }))
+const clusterOptions = Array.from({ length: 9 }).map((_, i) => ({
+    value: i + 2,
+    label: i + 2
+}))
 
+const DataSetting = ({ cluster, handleClusterChange, showModal }) => {
     return (
-        <Stack spacing={1}>
-            <Box sx={{ fontWeight: 500 }}>HCluster:</Box>
-            <Select
-                value={hcluster}
-                onChange={handleHclusterChange}
-                options={options}
-                style={{ width: '240px' }}
-                size='large'
-            />
+        <Stack spacing={3}>
+            <Stack spacing={1}>
+                <Box sx={{ fontWeight: 500 }}>Cluster:</Box>
+                <Select
+                    value={cluster}
+                    onChange={handleClusterChange}
+                    options={clusterOptions}
+                    style={{ width: '240px' }}
+                    size='large'
+                />
+            </Stack>
+            <Button
+                style={{
+                    backgroundColor: '#41B3A2',
+                    color: '#FFFFFF',
+                    borderColor: '#41B3A2',
+                }}
+                onClick={showModal}
+            >
+                View Cluster Info
+            </Button>
         </Stack>
     )
 }
@@ -57,16 +69,16 @@ const ChartSetting = ({ config, configKey, handleConfigChange }) => (
     </Stack>
 )
 
-const buildCollapseItems = (config, handleConfigChange, hcluster, handleHclusterChange, clusterList) => [
+const buildCollapseItems = (config, handleConfigChange, cluster, handleClusterChange, showModal) => [
     {
         key: 'data',
         label: 'Data Setting',
         extra: <PieChartOutlined/>,
         children: (
             <DataSetting
-                hcluster={hcluster}
-                handleHclusterChange={handleHclusterChange}
-                clusterList={clusterList}
+                cluster={cluster}
+                handleClusterChange={handleClusterChange}
+                showModal={showModal}
             />
         )
     },
@@ -85,17 +97,17 @@ const buildCollapseItems = (config, handleConfigChange, hcluster, handleHcluster
 ]
 
 const CNAPloidyStairstepSettingPanel = ({
-    hcluster,
-    handleHclusterChange,
-    clusterList,
+    cluster,
+    handleClusterChange,
     config,
-    handleConfigChange
+    handleConfigChange,
+    showModal
 }) => {
     const [activeKey, setActiveKey] = useState(['data', 'chart'])
 
     const items = useMemo(() => {
-        return buildCollapseItems(config, handleConfigChange, hcluster, handleHclusterChange, clusterList)
-    }, [clusterList, config, handleConfigChange, handleHclusterChange, hcluster])
+        return buildCollapseItems(config, handleConfigChange, cluster, handleClusterChange, showModal)
+    }, [cluster, config, handleClusterChange, handleConfigChange, showModal])
 
     const handleCollapseChange = (props) => {
         setActiveKey(props)

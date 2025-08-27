@@ -9,6 +9,7 @@ import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import CNAPloidyStairstepView
     from "@/components/features/visualization/components/CNAPloidyStairstep/CNAPloidyStairstepView"
+import { useAnalysisCNANewick } from "@/components/features/workspace/hooks/useAnalysisCNANewick"
 
 const AnalysisCNAPloidyStairstepContent = ({ task, vizRef }) => {
     const {
@@ -23,9 +24,15 @@ const AnalysisCNAPloidyStairstepContent = ({ task, vizRef }) => {
         isMetaError
     } = useAnalysisCNAMeta(task.data.uuid)
 
-    if (isMatrixLoading || isMetaLoading) return <LoadingView height='920px'/>
+    const {
+        newick,
+        isNewickLoading,
+        isNewickError
+    } = useAnalysisCNANewick(task.data.uuid)
 
-    if (isMatrixError || isMetaError) return <ErrorView height='920px'/>
+    if (isMatrixLoading || isMetaLoading || isNewickLoading) return <LoadingView height='920px'/>
+
+    if (isMatrixError || isMetaError || isNewickError) return <ErrorView height='920px'/>
 
     const baselineCNA = task.data['value_type'] === 'int' ? 2 : 0
 
@@ -33,6 +40,8 @@ const AnalysisCNAPloidyStairstepContent = ({ task, vizRef }) => {
         <CNAPloidyStairstepView
             matrix={matrix}
             meta={meta}
+            newick={newick}
+            dataset={null}
             baselineCNA={baselineCNA}
             reference={task.data.ref}
             vizRef={vizRef}

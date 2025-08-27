@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { PieChartOutlined, SettingOutlined } from "@ant-design/icons"
 import { Box, Stack } from "@mui/system"
-import { Collapse, ConfigProvider, Select } from "antd"
+import { Button, Collapse, ConfigProvider, Select } from "antd"
 import { SettingNumberInput } from "@/components/features/visualization/components/input/SettingInput"
 
 const embeddingMethodOptions = [
@@ -19,16 +19,41 @@ const embeddingMethodOptions = [
     }
 ]
 
-const DataSetting = ({ embeddingMethod, handleEmbeddingMethodChange }) => (
-    <Stack spacing={1}>
-        <Box sx={{ fontWeight: 500 }}>Embedding Method:</Box>
-        <Select
-            value={embeddingMethod}
-            onChange={handleEmbeddingMethodChange}
-            options={embeddingMethodOptions}
-            style={{ width: '240px' }}
-            size='large'
-        />
+const clusterOptions = Array.from({length: 9}).map((_, i) => ({
+    value: i + 2,
+    label: i + 2
+}))
+
+const DataSetting = ({ embeddingMethod, handleEmbeddingMethodChange, cluster, handleClusterChange, showModal }) => (
+    <Stack spacing={3}>
+        <Stack spacing={1}>
+            <Box sx={{ fontWeight: 500 }}>Embedding Method:</Box>
+            <Select
+                value={embeddingMethod}
+                onChange={handleEmbeddingMethodChange}
+                options={embeddingMethodOptions}
+                style={{ width: '240px' }}
+                size='large'
+            />
+            <Box sx={{ fontWeight: 500 }}>Cluster:</Box>
+            <Select
+                value={cluster}
+                onChange={handleClusterChange}
+                options={clusterOptions}
+                style={{ width: '240px' }}
+                size='large'
+            />
+        </Stack>
+        <Button
+            style={{
+                backgroundColor: '#41B3A2',
+                color: '#FFFFFF',
+                borderColor: '#41B3A2',
+            }}
+            onClick={showModal}
+        >
+            View Cluster Info
+        </Button>
     </Stack>
 )
 
@@ -127,7 +152,15 @@ const LegendSetting = ({ config, configKey, handleConfigChange }) => (
     </Stack>
 )
 
-const buildCollapseItems = (config, handleConfigChange, embeddingMethod, handleEmbeddingMethodChange) => [
+const buildCollapseItems = (
+    config,
+    handleConfigChange,
+    embeddingMethod,
+    handleEmbeddingMethodChange,
+    cluster,
+    handleClusterChange,
+    showModal
+) => [
     {
         key: 'data',
         label: 'Data Setting',
@@ -136,6 +169,9 @@ const buildCollapseItems = (config, handleConfigChange, embeddingMethod, handleE
             <DataSetting
                 embeddingMethod={embeddingMethod}
                 handleEmbeddingMethodChange={handleEmbeddingMethodChange}
+                cluster={cluster}
+                handleClusterChange={handleClusterChange}
+                showModal={showModal}
             />
         )
     },
@@ -192,14 +228,25 @@ const buildCollapseItems = (config, handleConfigChange, embeddingMethod, handleE
 const CNAEmbeddingMapSettingPanel = ({
     embeddingMethod,
     handleEmbeddingMethodChange,
+    cluster,
+    handleClusterChange,
     config,
-    handleConfigChange
+    handleConfigChange,
+    showModal
 }) => {
     const [activeKey, setActiveKey] = useState(['data', 'chart', 'scatter'])
 
     const items = useMemo(() => {
-        return buildCollapseItems(config, handleConfigChange, embeddingMethod, handleEmbeddingMethodChange)
-    }, [config, embeddingMethod, handleConfigChange, handleEmbeddingMethodChange])
+        return buildCollapseItems(
+            config,
+            handleConfigChange,
+            embeddingMethod,
+            handleEmbeddingMethodChange,
+            cluster,
+            handleClusterChange,
+            showModal
+        )
+    }, [cluster, config, embeddingMethod, handleClusterChange, handleConfigChange, handleEmbeddingMethodChange, showModal])
 
     const handleCollapseChange = (props) => {
         setActiveKey(props)

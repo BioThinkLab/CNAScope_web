@@ -9,6 +9,7 @@ import CNAPloidyStairstepView
 import { useRef } from "react"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
+import { useCNANewick } from "@/components/features/database/hooks/useCNANewick"
 
 const CNAPloidyStairstepContent = ({ selectedWorkflow, dataset, vizRef }) => {
     const {
@@ -23,16 +24,24 @@ const CNAPloidyStairstepContent = ({ selectedWorkflow, dataset, vizRef }) => {
         isMetaError
     } = useCNAMeta(dataset.name, selectedWorkflow)
 
+    const {
+        newick,
+        isNewickLoading,
+        isNewickError
+    } = useCNANewick(dataset.name, selectedWorkflow)
+
     const baselineCNA = dataset['cn_type'] === 'Bin Integer' ? 2 : 0
 
-    if (isMatrixLoading || isMetaLoading) return <LoadingView height='920px'/>
+    if (isMatrixLoading || isMetaLoading || isNewickLoading) return <LoadingView height='920px'/>
 
-    if (isMatrixError || isMetaError) return <ErrorView height='920px'/>
+    if (isMatrixError || isMetaError || isNewickError) return <ErrorView height='920px'/>
 
     return (
         <CNAPloidyStairstepView
             matrix={matrix}
             meta={meta}
+            newick={newick}
+            dataset={dataset}
             baselineCNA={baselineCNA}
             reference={dataset['reference']}
             vizRef={vizRef}

@@ -132,7 +132,7 @@ const CNAEmbeddingMapContent = ({}) => (
             profiles, leveraging dimensionality reduction techniques such as UMAP, TSNE, and PCA to project the
             high-dimensional CNA data from datasets like TCGA-ACC into a two-dimensional space.
         </Paragraph>
-        <Image src='/tutorial/CNAEmbeddingMap.png' alt='CNAEmbeddingMap.png'/>
+        <Image src='/tutorial/CNAEmbeddingMap.gif' alt='CNAEmbeddingMap.gif'/>
     </>
 )
 

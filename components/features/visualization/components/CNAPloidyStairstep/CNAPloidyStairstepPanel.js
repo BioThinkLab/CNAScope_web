@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react"
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
 import { initFigure, parseCNAMatrixToNodePairs } from "@/components/features/visualization/utils/ploidyStairstepUtils"
 import { Box, Stack } from "@mui/system"
 import SplitterControlButton from "@/components/common/button/SplitterControlButton"
@@ -11,16 +11,20 @@ import {
     PloidyStairstepTooltipTemplate
 } from "@/components/features/visualization/components/tooltipTemplate/PloidyStairstepTooltipTemplate"
 import { downloadSvg } from "@/components/features/visualization/utils/downloadUtils"
+import { produce } from "immer"
 
+const colorScale = d3.scaleOrdinal(d3.schemeCategory10)
 
 const CNAPloidyStairstepPanel = forwardRef(({
-    clusterMean,
+    clusterMeans,
+    cluster,
     config,
     baselineCNA,
     reference,
-    isShowLeft,
-    handleIsShowLeftChange
+    isShowLeft
 }, ref) => {
+    const [groupInfos, setGroupInfos] = useState([])
+
     const { width, height } = useContainerSize()
     const svgWidth = isShowLeft ? width - 320 : width - 20
     const svgHeight = height - 20
@@ -28,23 +32,37 @@ const CNAPloidyStairstepPanel = forwardRef(({
     const xAxisRef = useRef(null)
     const yAxisRef = useRef(null)
     const pathRef = useRef(null)
+    const legendRef = useRef(null)
     const svgRef = useRef(null)
     const toolTipRef = useRef(null)
     const toolTipLineRef = useRef(null)
     const xz = useRef(null)
 
     const nodePairs = useMemo(() => {
-        return parseCNAMatrixToNodePairs(clusterMean, Object.keys(clusterMean), reference)
-    }, [clusterMean, reference])
+        return Object.keys(clusterMeans).reduce((acc, key) => {
+            acc[key] = parseCNAMatrixToNodePairs(clusterMeans[key], Object.keys(clusterMeans[key]), reference)
+            return acc
+        }, {})
+    }, [clusterMeans, reference])
 
     const {
+        rowLegendNum,
+        legendOffset,
         xRange,
         yRange,
         x,
         y,
         xAxis,
         line
-    } = initFigure(svgWidth, svgHeight, config, baselineCNA, reference)
+    } = initFigure(svgWidth, svgHeight, config, baselineCNA, reference, cluster)
+
+    useEffect(() => {
+        setGroupInfos(Object.keys(nodePairs).map((cluster, index) => ({
+            name: cluster,
+            display: true,
+            index: index
+        })))
+    }, [nodePairs])
 
     useEffect(() => {
         const gx = d3.select(xAxisRef.current)
@@ -84,21 +102,67 @@ const CNAPloidyStairstepPanel = forwardRef(({
         const gPath = d3.select(pathRef.current)
 
         gPath.selectAll('path')
-            .data([1])
+            .data(groupInfos.filter(info => info.display))
             .join('path')
             .attr('clip-path', 'url(#ploidy-stairstep-clip)')
-            .attr('stroke', "#1f77b4")
+            .attr('stroke', d => colorScale(d.index))
             .attr('fill', 'transparent')
-            .attr('d',line(nodePairs, x))
-    }, [line, nodePairs, x])
+            .attr('d', d => line(nodePairs[d.name], x))
+    }, [groupInfos, line, nodePairs, x])
+
+    useEffect(() => {
+        const gLegend = d3.select(legendRef.current)
+
+        gLegend.selectAll('g')
+            .data(groupInfos)
+            .join('g')
+            .attr('transform', (d, i) => legendTransform(i, rowLegendNum, config))
+            .each(function (d) {
+                const g = d3.select(this)
+
+                g.selectAll('line')
+                    .data([d])
+                    .join('line')
+                    .attr('x1', 0)
+                    .attr('y1', config.legend.height / 2)
+                    .attr('x2', config.legend.width / 4)
+                    .attr('y2', config.legend.height / 2)
+                    .attr('stroke', colorScale(d.index))
+                    .attr('stroke-width', 2)
+                    .attr('opacity', d.display ? 1 : 0.3)
+
+                g.selectAll('text')
+                    .data([d])
+                    .join('text')
+                    .attr('x', config.legend.width / 4 + 5)
+                    .attr('dy', '1rem')
+                    .text(d => `Cluster ${d.name}`)
+                    .attr('font-size', '14px')
+                    .attr('font-family', 'sans-serif')
+                    .attr('opacity', d.display ? 1 : 0.3)
+
+                g.selectAll('rect')
+                    .data([d])
+                    .join('rect')
+                    .attr('x', 0)
+                    .attr('y', 0)
+                    .attr('width', config.legend.width)
+                    .attr('height', config.legend.height)
+                    .attr('fill', 'transparent')
+                    .attr('cursor', 'pointer')
+                    .on('click', (event, d) => {
+                        handleLegendClick(d, setGroupInfos)
+                    })
+            })
+    }, [config, groupInfos, rowLegendNum])
 
     useEffect(() => {
         const zoomed = (event) => {
             xz.current = event.transform.rescaleX(x)
             d3.select(pathRef.current)
                 .selectAll('path')
-                .data([1])
-                .attr('d', line(nodePairs, xz.current))
+                .data(groupInfos.filter(info => info.display))
+                .attr('d', d => line(nodePairs[d.name], xz.current))
             d3.select(xAxisRef.current).call(xAxis, xz.current);
         }
 
@@ -109,7 +173,7 @@ const CNAPloidyStairstepPanel = forwardRef(({
             .on("zoom", zoomed);
 
         d3.select(svgRef.current).call(zoom)
-    }, [line, nodePairs, x, xAxis, xRange, yRange])
+    }, [groupInfos, line, nodePairs, x, xAxis, xRange, yRange])
 
     useImperativeHandle(ref, () => ({
         downloadSvg: () => {
@@ -119,14 +183,7 @@ const CNAPloidyStairstepPanel = forwardRef(({
     }))
 
     return (
-        <Box sx={{ position: 'relative', height: '920px' }}>
-            <Box sx={{ position: 'absolute', top: '14px', left: '4px' }}>
-                <SplitterControlButton
-                    isShowLeft={isShowLeft}
-                    handleIsShowLeftChange={handleIsShowLeftChange}
-                    title='Setting Options'
-                />
-            </Box>
+        <>
             <svg
                 width={svgWidth}
                 height={svgHeight}
@@ -145,6 +202,7 @@ const CNAPloidyStairstepPanel = forwardRef(({
                 >
                     Ploidy Stairstep
                 </text>
+                <g ref={legendRef} transform={`translate(${legendOffset}, ${config.chart.marginTop + 45})`}></g>
                 <g ref={xAxisRef} transform={`translate(0,${yRange[0]})`}></g>
                 <g ref={yAxisRef} transform={`translate(${xRange[0]}, 0)`}></g>
                 <g ref={pathRef}></g>
@@ -155,6 +213,7 @@ const CNAPloidyStairstepPanel = forwardRef(({
                     fill='transparent'
                     onPointerEnter={(event) => pointerMoved(
                         event,
+                        groupInfos,
                         nodePairs,
                         xz,
                         toolTipRef,
@@ -165,6 +224,7 @@ const CNAPloidyStairstepPanel = forwardRef(({
                     )}
                     onPointerMove={(event) => pointerMoved(
                         event,
+                        groupInfos,
                         nodePairs,
                         xz,
                         toolTipRef,
@@ -178,30 +238,40 @@ const CNAPloidyStairstepPanel = forwardRef(({
                 <g ref={toolTipLineRef}></g>
             </svg>
             {createPortal(<CustomTooltip ref={toolTipRef}/>, document.body)}
-        </Box>
+        </>
     )
 })
 
-const pointerMoved = (event, nodePairs, xz, toolTipRef, offset, tooltipLineRef, yRange, reference) => {
+const pointerMoved = (event, groupInfos, nodePairs, xz, toolTipRef, offset, tooltipLineRef, yRange, reference) => {
     const chromosomeTicks = reference === 'hg19' ? hg19ChromosomeTicks : hg38ChromosomeTicks
 
     const nodePairsBisect = d3.bisector(d => d[0]).right
     const chrInfoBisect = d3.bisector(d => parseInt(d)).left
+    const groupActivatedList = groupInfos.filter(group => group.display).map(group => group.name)
     const xPosition = parseInt(xz.current.invert(d3.pointer(event)[0] + offset))
 
-    const groupValue = {}
+    const groupValues = {}
 
     const chrEnds = Object.keys(chromosomeTicks)
     const chrIndex = chrInfoBisect(chrEnds, xPosition)
     const currentChr = chromosomeTicks[chrEnds[chrIndex]]
     const currentXPosition = chrIndex === 0 ? xPosition : xPosition - parseInt(chrEnds[chrIndex - 1])
 
-    groupValue.chromosome = currentChr
-    groupValue.xPosition = currentXPosition
+    groupValues.chromosome = currentChr
+    groupValues.xPosition = currentXPosition
 
-    const i = nodePairsBisect(nodePairs, xPosition) - 1
+    groupValues.colorScale = colorScale
+    groupValues.values = []
 
-    groupValue.value = nodePairs[i][1]
+    for(let group of groupActivatedList) {
+        const CNVNodePairs = nodePairs[group]
+        const i = nodePairsBisect(CNVNodePairs, xPosition) - 1
+
+        groupValues.values.push({
+            group: group,
+            value: CNVNodePairs[i][1]
+        })
+    }
 
     d3.select(tooltipLineRef.current)
         .selectAll('line')
@@ -216,12 +286,28 @@ const pointerMoved = (event, nodePairs, xz, toolTipRef, offset, tooltipLineRef, 
         .attr("stroke-opacity", 0.3)
         .style("pointer-events", "none")
 
-    toolTipRef.current.showTooltip(event, PloidyStairstepTooltipTemplate(groupValue))
+    toolTipRef.current.showTooltip(event, PloidyStairstepTooltipTemplate(groupValues))
 }
 
 const pointerLeft = (toolTipRef, tooltipLineRef) => {
     toolTipRef.current.hideTooltip()
     d3.select(tooltipLineRef.current).selectAll('line').remove()
+}
+
+const legendTransform = (index, rowLegendNum, config) => {
+    const xOffset = (index % rowLegendNum) * (config.legend.width + config.legend.itemHorizontalGap)
+    const yOffset = Math.floor(index / rowLegendNum) * (config.legend.height + config.legend.itemVerticalGap)
+
+    return `translate(${xOffset}, ${yOffset})`
+}
+
+const handleLegendClick = (groupInfo, setGroupInfos) => {
+    setGroupInfos(produce(draft => {
+        const group = draft.find(g => g.name === groupInfo.name)
+        if (group) {
+            group.display = !group.display
+        }
+    }))
 }
 
 CNAPloidyStairstepPanel.displayName = 'CNAPloidyStairstepPanel'
