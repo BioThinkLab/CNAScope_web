@@ -10,6 +10,8 @@ import ErrorView from "@/components/common/status/ErrorView"
 import CNAPloidyStairstepView
     from "@/components/features/visualization/components/CNAPloidyStairstep/CNAPloidyStairstepView"
 import { useAnalysisCNANewick } from "@/components/features/workspace/hooks/useAnalysisCNANewick"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
+import { transformTaskCNType } from "@/components/features/workspace/utils/visualization/CNTypeUtils"
 
 const AnalysisCNAPloidyStairstepContent = ({ task, vizRef }) => {
     const {
@@ -52,6 +54,7 @@ const AnalysisCNAPloidyStairstepContent = ({ task, vizRef }) => {
 
 const AnalysisCNAPloidyStairstepWrapper = ({ task }) => {
     const vizRef = useRef(null)
+    const CNType = transformTaskCNType(task)
 
     return (
         <Stack spacing={4}>
@@ -70,7 +73,7 @@ const AnalysisCNAPloidyStairstepWrapper = ({ task }) => {
                         fontSize: '36px'
                     }}
                 >
-                    CNA Ploidy Stairstep
+                    CN Stairstep(<CNTypePrompt CNType={CNType} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

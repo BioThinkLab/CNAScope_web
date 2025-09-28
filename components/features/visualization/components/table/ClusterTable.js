@@ -518,15 +518,15 @@ const STDatasetSampleColumns = [
     },
     {
         title: 'Spatial 1',
-        dataIndex: 'n_spatial_1',
-        sorter: (a, b) => (a.n_spatial_1 ?? -Infinity) - (b.n_spatial_1 ?? -Infinity),
+        dataIndex: 'n_spatial1',
+        sorter: (a, b) => (a.n_spatial1 ?? -Infinity) - (b.n_spatial1 ?? -Infinity),
         align: 'center',
         render: value => value ?? '--'
     },
     {
         title: 'Spatial 2',
-        dataIndex: 'n_spatial_2',
-        sorter: (a, b) => (a.n_spatial_2 ?? -Infinity) - (b.n_spatial_2 ?? -Infinity),
+        dataIndex: 'n_spatial2',
+        sorter: (a, b) => (a.n_spatial2 ?? -Infinity) - (b.n_spatial2 ?? -Infinity),
         align: 'center',
         render: value => value ?? '--'
     }

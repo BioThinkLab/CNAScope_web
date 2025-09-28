@@ -7,13 +7,19 @@ import FocalCNAView from "@/components/features/visualization/components/FocalCN
 import { useRef } from "react"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 
-const CNAFocalCNAContent = ({ selectedWorkflow, dataset, vizRef }) => {
+const CNAFocalCNAContent = ({
+    selectedWorkflow,
+    dataset,
+    vizRef,
+    binSize
+}) => {
     const {
         focalInfo,
         isFocalInfoLoading,
         isFocalInfoError
-    } = useFocalCNAInfo(dataset.name, selectedWorkflow)
+    } = useFocalCNAInfo(dataset.name, selectedWorkflow, binSize)
 
     if (isFocalInfoLoading) return <LoadingView height='920px'/>
 
@@ -28,7 +34,11 @@ const CNAFocalCNAContent = ({ selectedWorkflow, dataset, vizRef }) => {
     )
 }
 
-const CNAFocalCNAWrapper = ({ selectedWorkflow, dataset }) => {
+const CNAFocalCNAWrapper = ({
+    selectedWorkflow,
+    dataset,
+    binSize
+}) => {
     const vizRef = useRef(null)
 
     return (
@@ -48,7 +58,7 @@ const CNAFocalCNAWrapper = ({ selectedWorkflow, dataset }) => {
                         fontSize: '36px'
                     }}
                 >
-                    Focal CNA & Gene
+                    Focal CNA & Gene(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -59,16 +69,15 @@ const CNAFocalCNAWrapper = ({ selectedWorkflow, dataset }) => {
                     >
                         Download SVG Chart
                     </Button>
-                    {/*<Button*/}
-                    {/*    type="primary"*/}
-                    {/*    onClick={() => vizRef.current?.downloadPng()}*/}
-                    {/*>*/}
-                    {/*    Download PNG Chart*/}
-                    {/*</Button>*/}
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAFocalCNAContent dataset={dataset} selectedWorkflow={selectedWorkflow} vizRef={vizRef}/>
+                <CNAFocalCNAContent
+                    dataset={dataset}
+                    selectedWorkflow={selectedWorkflow}
+                    vizRef={vizRef}
+                    binSize={binSize}
+                />
             </CNAVisualizationContainer>
         </Stack>
     )

@@ -116,14 +116,14 @@ The CNA Embedding Map in CNAScope offers a powerful visualization of cancer copy
 
 <div align=center><img src="./DB_figures/pca.png" width="1000"></div>
 
-### CNA Ploidy Stairstep
+### CN Stairstep
 
-The CNA ploidy distribution can intuitively show tumor heterogeneity. The ploidy line plot along the chromosomes can also visually show the heterogeneity between tumor sample groups by combining genomic coordinates. By collapsing the  cases in the same tumor sample groups into one observation, we can infer the pseudo-bulk ploidy of each sample group. Since cancer CNA ploidy line alters along chromosomes, we call it the "stairstep plot''.
+The CN distribution can intuitively show tumor heterogeneity. The CN line plot along the chromosomes can also visually show the heterogeneity between tumor sample groups by combining genomic coordinates. By collapsing the  cases in the same tumor sample groups into one observation, we can infer the pseudo-bulk CN of each sample group. Since cancer CN line alters along chromosomes, we call it the "stairstep plot''.
 
 <div align=center><img src="./DB_figures/p.png" width="1000"></div>
 
-### CNA Ploidy Distribution
-The CNA Ploidy Distribution visualization in CNAScope provides a detailed representation of the ploidy levels (total DNA content) across samples or cells within a dataset, such as TCGA-ACC, reflecting the genomic instability characteristic of cancer. 
+### CN Distribution
+The CN Distribution visualization in CNAScope provides a detailed representation of the CN levels (total DNA content) across samples or cells within a dataset, such as TCGA-ACC, reflecting the genomic instability characteristic of cancer. 
 <div align=center><img src="./DB_figures/pp.png" width="1000"></div>
 
 ### Focal CNA & Gene

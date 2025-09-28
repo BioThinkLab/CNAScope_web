@@ -10,25 +10,31 @@ import { useRef } from "react"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
 import { useCNANewick } from "@/components/features/database/hooks/useCNANewick"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 
-const CNAPloidyStairstepContent = ({ selectedWorkflow, dataset, vizRef }) => {
+const CNAPloidyStairstepContent = ({
+    selectedWorkflow,
+    dataset,
+    vizRef,
+    binSize
+}) => {
     const {
         matrix,
         isMatrixLoading,
         isMatrixError
-    } = useCNAMatrix(dataset.name, selectedWorkflow)
+    } = useCNAMatrix(dataset.name, selectedWorkflow, binSize)
 
     const {
         meta,
         isMetaLoading,
         isMetaError
-    } = useCNAMeta(dataset.name, selectedWorkflow)
+    } = useCNAMeta(dataset.name, selectedWorkflow, binSize)
 
     const {
         newick,
         isNewickLoading,
         isNewickError
-    } = useCNANewick(dataset.name, selectedWorkflow)
+    } = useCNANewick(dataset.name, selectedWorkflow, binSize)
 
     const baselineCNA = dataset['cn_type'] === 'Bin Integer' ? 2 : 0
 
@@ -49,7 +55,11 @@ const CNAPloidyStairstepContent = ({ selectedWorkflow, dataset, vizRef }) => {
     )
 }
 
-const CNAPloidyStairstepWrapper = ({ selectedWorkflow, dataset }) => {
+const CNAPloidyStairstepWrapper = ({
+    selectedWorkflow,
+    dataset,
+    binSize
+}) => {
     const vizRef = useRef(null)
 
     return (
@@ -69,7 +79,7 @@ const CNAPloidyStairstepWrapper = ({ selectedWorkflow, dataset }) => {
                         fontSize: '36px'
                     }}
                 >
-                    CNA Ploidy Stairstep
+                    CN Stairstep(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -80,16 +90,15 @@ const CNAPloidyStairstepWrapper = ({ selectedWorkflow, dataset }) => {
                     >
                         Download SVG Chart
                     </Button>
-                    {/*<Button*/}
-                    {/*    type="primary"*/}
-                    {/*    onClick={() => vizRef.current?.downloadPng()}*/}
-                    {/*>*/}
-                    {/*    Download PNG Chart*/}
-                    {/*</Button>*/}
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAPloidyStairstepContent selectedWorkflow={selectedWorkflow} dataset={dataset} vizRef={vizRef}/>
+                <CNAPloidyStairstepContent
+                    selectedWorkflow={selectedWorkflow}
+                    dataset={dataset}
+                    vizRef={vizRef}
+                    binSize={binSize}
+                />
             </CNAVisualizationContainer>
         </Stack>
     )

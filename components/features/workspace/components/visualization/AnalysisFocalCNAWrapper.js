@@ -8,6 +8,8 @@ import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import FocalCNAView from "@/components/features/visualization/components/FocalCNAPlot/FocalCNAView"
 import { useAnalysisFocalCNAInfo } from "@/components/features/workspace/hooks/useAnalysisFocalCNAInfo"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
+import { transformTaskCNType } from "@/components/features/workspace/utils/visualization/CNTypeUtils"
 
 const AnalysisFocalCNAContent = ({ task, vizRef }) => {
     const {
@@ -31,6 +33,7 @@ const AnalysisFocalCNAContent = ({ task, vizRef }) => {
 
 const AnalysisFocalCNAWrapper = ({ task }) => {
     const vizRef = useRef(null)
+    const CNType = transformTaskCNType(task)
 
     return (
         <Stack spacing={4}>
@@ -49,7 +52,7 @@ const AnalysisFocalCNAWrapper = ({ task }) => {
                         fontSize: '36px'
                     }}
                 >
-                    Focal CNA & Gene
+                    Focal CNA & Gene(<CNTypePrompt CNType={CNType} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

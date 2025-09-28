@@ -15,6 +15,8 @@ import { useAnalysisCNAMeta } from "@/components/features/workspace/hooks/useAna
 import { useAnalysisCNANewick } from "@/components/features/workspace/hooks/useAnalysisCNANewick"
 import { useAnalysisCNATerms } from "@/components/features/workspace/hooks/useAnalysisCNATerms"
 import { getAnalysisCNATermsMatrixUrl } from "@/lib/api/analysis"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
+import { transformTaskCNType } from "@/components/features/workspace/utils/visualization/CNTypeUtils"
 
 const AnalysisTermGeneHeatmapContent = ({ task, vizRef }) => {
     const {
@@ -63,6 +65,7 @@ const AnalysisTermGeneHeatmapContent = ({ task, vizRef }) => {
 
 const AnalysisTermGeneHeatmapWrapper = ({ task }) => {
     const vizRef = useRef(null)
+    const CNType = transformTaskCNType(task)
 
     return (
         <Stack spacing={4}>
@@ -81,7 +84,7 @@ const AnalysisTermGeneHeatmapWrapper = ({ task }) => {
                         fontSize: '36px'
                     }}
                 >
-                    Term-Level CNA Heatmap
+                    Term-Level CNA Heatmap(<CNTypePrompt CNType={CNType} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

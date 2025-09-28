@@ -7,6 +7,13 @@ const cnaTypeColorMap = {
     'Gene Log': 'purple',
 }
 
+const cnaTypeValueMap = {
+    'Bin Integer': 'Bin Absolute',
+    'Bin Log': 'Bin Log',
+    'Gene Integer': 'Gene Absolute',
+    'Gene Log': 'Gene Log'
+}
+
 const fallbackStyle = {
     backgroundColor: '#f0f0f0',
     color: '#555',
@@ -19,8 +26,9 @@ const CNAValueTypeCHip = ({ value }) => {
     }
 
     const color = cnaTypeColorMap[value] || 'default'
+    const label = cnaTypeValueMap[value] || '--'
 
-    return <BasicChip value={value} color={color} />
+    return <BasicChip value={label} color={color} />
 }
 
 export default CNAValueTypeCHip

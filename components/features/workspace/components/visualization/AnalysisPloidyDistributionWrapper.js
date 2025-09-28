@@ -8,6 +8,8 @@ import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import PloidyDistributionView
     from "@/components/features/visualization/components/PloidyDistribution/PloidyDistributionView"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
+import { transformTaskCNType } from "@/components/features/workspace/utils/visualization/CNTypeUtils"
 
 const AnalysisPloidyDistributionContent = ({ task, vizRef }) => {
     const {
@@ -30,6 +32,7 @@ const AnalysisPloidyDistributionContent = ({ task, vizRef }) => {
 
 const AnalysisPloidyDistributionWrapper = ({ task }) => {
     const vizRef = useRef(null)
+    const CNType = transformTaskCNType(task)
 
     return (
         <Stack spacing={4}>
@@ -48,7 +51,7 @@ const AnalysisPloidyDistributionWrapper = ({ task }) => {
                         fontSize: '36px'
                     }}
                 >
-                    CNA Ploidy Distribution
+                    CN Distribution(<CNTypePrompt CNType={CNType} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

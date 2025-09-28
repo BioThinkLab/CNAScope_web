@@ -14,6 +14,8 @@ import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import CNAGeneHeatmapView from "@/components/features/visualization/components/CNAGeneHeatmap/CNAGeneHeatmapView"
 import { getAnalysisCNAGeneMatrixUrl, getAnalysisCNAGenesUrl } from "@/lib/api/analysis"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
+import { transformTaskCNType } from "@/components/features/workspace/utils/visualization/CNTypeUtils"
 
 const AnalysisGeneHeatmapContent = ({ task, vizRef }) => {
     const {
@@ -62,6 +64,7 @@ const AnalysisGeneHeatmapContent = ({ task, vizRef }) => {
 
 const AnalysisGeneHeatmapWrapper = ({ task }) => {
     const vizRef = useRef(null)
+    const CNType = transformTaskCNType(task)
 
     return (
         <Stack spacing={4}>
@@ -80,7 +83,7 @@ const AnalysisGeneHeatmapWrapper = ({ task }) => {
                         fontSize: '36px',
                     }}
                 >
-                    Gene-Level CNA Heatmap
+                    Gene-Level CNA Heatmap(<CNTypePrompt CNType={CNType} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

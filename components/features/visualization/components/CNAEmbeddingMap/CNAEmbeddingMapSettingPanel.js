@@ -1,61 +1,227 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { PieChartOutlined, SettingOutlined } from "@ant-design/icons"
 import { Box, Stack } from "@mui/system"
-import { Button, Collapse, ConfigProvider, Select } from "antd"
+import { AutoComplete, Button, Collapse, ConfigProvider, Select } from "antd"
 import { SettingNumberInput } from "@/components/features/visualization/components/input/SettingInput"
 
-const embeddingMethodOptions = [
+const colorByOptions = [
     {
-        value: 'e_PCA',
-        label: 'PCA'
+        value: 'cluster',
+        label: 'Cluster'
     },
     {
-        value: 'e_TSNE',
-        label: 'TSNE'
+        value: 'gene',
+        label: 'Gene'
     },
     {
-        value: 'e_UMAP',
-        label: 'UMAP'
+        value: 'term',
+        label: 'Term'
     }
 ]
 
-const clusterOptions = Array.from({length: 9}).map((_, i) => ({
+const clusterOptions = Array.from({ length: 9 }).map((_, i) => ({
     value: i + 2,
     label: i + 2
 }))
 
-const DataSetting = ({ embeddingMethod, handleEmbeddingMethodChange, cluster, handleClusterChange, showModal }) => (
-    <Stack spacing={3}>
-        <Stack spacing={1}>
-            <Box sx={{ fontWeight: 500 }}>Embedding Method:</Box>
-            <Select
-                value={embeddingMethod}
-                onChange={handleEmbeddingMethodChange}
-                options={embeddingMethodOptions}
-                style={{ width: '240px' }}
-                size='large'
-            />
-            <Box sx={{ fontWeight: 500 }}>Cluster:</Box>
-            <Select
-                value={cluster}
-                onChange={handleClusterChange}
-                options={clusterOptions}
-                style={{ width: '240px' }}
-                size='large'
-            />
-        </Stack>
+const ClusterSelector = ({
+    colorOptions,
+    handleColorOptionsChange
+}) => (
+    <>
+        <Box sx={{ fontWeight: 500 }}>Cluster:</Box>
+        <Select
+            value={colorOptions.cluster}
+            onChange={(value) => handleColorOptionsChange('cluster', value)}
+            options={clusterOptions}
+            style={{ width: '240px' }}
+            size='large'
+        />
+    </>
+)
+
+const GeneSelector = ({
+    genes,
+    geneValue,
+    onGeneValueChange,
+    handleColorOptionsChange
+}) => (
+    <>
+        <Box sx={{ fontWeight: 500 }}>Selected Gene:</Box>
+        <AutoComplete
+            value={geneValue}
+            onSelect={(value) => handleColorOptionsChange('gene', value)}
+            onChange={onGeneValueChange}
+            options={genes}
+            filterOption={
+                (inputValue, option) =>
+                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+            }
+            style={{ width: '240px' }}
+        />
+    </>
+)
+
+const TermSelector = ({
+    terms,
+    termValue,
+    onTermValueChange,
+    handleColorOptionsChange
+}) => (
+    <>
+        <Box sx={{ fontWeight: 500 }}>Selected Term:</Box>
+        <AutoComplete
+            value={termValue}
+            onSelect={(value) => handleColorOptionsChange('term', value)}
+            onChange={onTermValueChange}
+            options={terms}
+            filterOption={
+                (inputValue, option) =>
+                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+            }
+            popupMatchSelectWidth={750}
+            style={{ width: '240px' }}
+        />
+    </>
+)
+
+const RenderButtonGroup = ({
+    onRender,
+    resetRenderData,
+}) => (
+    <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
         <Button
             style={{
+                width: '110px',
                 backgroundColor: '#41B3A2',
                 color: '#FFFFFF',
-                borderColor: '#41B3A2',
+                borderColor: '#41B3A2'
             }}
-            onClick={showModal}
+            onClick={onRender}
         >
-            View Cluster Info
+            Render
+        </Button>
+        <Button
+            style={{
+                width: '110px',
+                color: '#41B3A2',
+                borderColor: '#41B3A2'
+            }}
+            onClick={resetRenderData}
+        >
+            Reset
         </Button>
     </Stack>
 )
+
+const DataSetting = ({
+    genes,
+    terms,
+    embeddingMethod,
+    handleEmbeddingMethodChange,
+    colorOptions,
+    handleColorOptionsChange,
+    onRender,
+    resetRenderData,
+    metaFieldOptions,
+    showModal
+}) => {
+    const [geneValue, setGeneValue] = useState('')
+    const [termValue, setTermValue] = useState('')
+
+    const onGeneValueChange = data => {
+        setGeneValue(data)
+    }
+
+    const onTermValueChange = data => {
+        setTermValue(data)
+    }
+
+    useEffect(() => {
+        if (colorOptions.gene) {
+            setGeneValue(colorOptions.gene)
+        }
+    }, [colorOptions.gene])
+
+    useEffect(() => {
+        if (colorOptions.term) {
+            setTermValue(colorOptions.term)
+        }
+    }, [colorOptions.term])
+
+    const selectorMap = {
+        'cluster': (
+            <ClusterSelector
+                colorOptions={colorOptions}
+                handleColorOptionsChange={handleColorOptionsChange}
+            />
+        ),
+        'gene': (
+            <GeneSelector
+                genes={genes}
+                geneValue={geneValue}
+                onGeneValueChange={onGeneValueChange}
+                handleColorOptionsChange={handleColorOptionsChange}
+            />
+        ),
+        'term': (
+            <TermSelector
+                terms={terms}
+                termValue={termValue}
+                onTermValueChange={onTermValueChange}
+                handleColorOptionsChange={handleColorOptionsChange}
+            />
+        ),
+    }
+
+    return (
+        <Stack spacing={3}>
+            <Stack spacing={1}>
+                <Box sx={{ fontWeight: 500 }}>Embedding Method:</Box>
+                <Select
+                    value={embeddingMethod}
+                    onChange={handleEmbeddingMethodChange}
+                    options={metaFieldOptions}
+                    style={{ width: '240px' }}
+                    size='large'
+                />
+                <Box sx={{ fontWeight: 500 }}>Color By:</Box>
+                <Select
+                    value={colorOptions.colorBy}
+                    onChange={(value) => handleColorOptionsChange('colorBy', value)}
+                    options={colorByOptions}
+                    style={{ width: '240px' }}
+                    size='large'
+                />
+                {
+                    selectorMap[colorOptions.colorBy]
+                }
+            </Stack>
+            <Stack spacing={1} sx={{ mt: 3, mb: 2 }}>
+                <RenderButtonGroup
+                    onRender={onRender}
+                    resetRenderData={resetRenderData}
+                />
+                {
+                    colorOptions.colorBy === 'cluster' ? (
+                        <Button
+                            style={{
+                                backgroundColor: '#41B3A2',
+                                color: '#FFFFFF',
+                                borderColor: '#41B3A2',
+                            }}
+                            onClick={showModal}
+                        >
+                            View Cluster Info
+                        </Button>
+                    ) : (
+                        <></>
+                    )
+                }
+            </Stack>
+        </Stack>
+    )
+}
 
 const ChartSetting = ({ config, configKey, handleConfigChange }) => (
     <Stack spacing={2}>
@@ -153,12 +319,17 @@ const LegendSetting = ({ config, configKey, handleConfigChange }) => (
 )
 
 const buildCollapseItems = (
+    genes,
+    terms,
     config,
     handleConfigChange,
     embeddingMethod,
     handleEmbeddingMethodChange,
-    cluster,
-    handleClusterChange,
+    colorOptions,
+    handleColorOptionsChange,
+    onRender,
+    resetRenderData,
+    metaFieldOptions,
     showModal
 ) => [
     {
@@ -167,10 +338,15 @@ const buildCollapseItems = (
         extra: <PieChartOutlined/>,
         children: (
             <DataSetting
+                genes={genes}
+                terms={terms}
                 embeddingMethod={embeddingMethod}
                 handleEmbeddingMethodChange={handleEmbeddingMethodChange}
-                cluster={cluster}
-                handleClusterChange={handleClusterChange}
+                colorOptions={colorOptions}
+                handleColorOptionsChange={handleColorOptionsChange}
+                onRender={onRender}
+                resetRenderData={resetRenderData}
+                metaFieldOptions={metaFieldOptions}
                 showModal={showModal}
             />
         )
@@ -226,27 +402,37 @@ const buildCollapseItems = (
 ]
 
 const CNAEmbeddingMapSettingPanel = ({
+    genes,
+    terms,
     embeddingMethod,
     handleEmbeddingMethodChange,
-    cluster,
-    handleClusterChange,
+    colorOptions,
+    handleColorOptionsChange,
     config,
     handleConfigChange,
+    onRender,
+    resetRenderData,
+    metaFieldOptions,
     showModal
 }) => {
-    const [activeKey, setActiveKey] = useState(['data', 'chart', 'scatter'])
+    const [activeKey, setActiveKey] = useState(['data', 'chart'])
 
     const items = useMemo(() => {
         return buildCollapseItems(
+            genes,
+            terms,
             config,
             handleConfigChange,
             embeddingMethod,
             handleEmbeddingMethodChange,
-            cluster,
-            handleClusterChange,
+            colorOptions,
+            handleColorOptionsChange,
+            onRender,
+            resetRenderData,
+            metaFieldOptions,
             showModal
         )
-    }, [cluster, config, embeddingMethod, handleClusterChange, handleConfigChange, handleEmbeddingMethodChange, showModal])
+    }, [genes, terms, config, handleConfigChange, embeddingMethod, handleEmbeddingMethodChange, colorOptions, handleColorOptionsChange, onRender, resetRenderData, metaFieldOptions, showModal])
 
     const handleCollapseChange = (props) => {
         setActiveKey(props)

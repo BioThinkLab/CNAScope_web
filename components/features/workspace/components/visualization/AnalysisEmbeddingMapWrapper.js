@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useMemo, useRef } from "react"
 import { Box, Stack } from "@mui/system"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
@@ -8,6 +8,9 @@ import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import CNAEmbeddingMapView from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapView"
 import { useAnalysisCNANewick } from "@/components/features/workspace/hooks/useAnalysisCNANewick"
+import { processMeta } from "@/components/features/visualization/utils/embeddingMapUtils"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
+import { transformTaskCNType } from "@/components/features/workspace/utils/visualization/CNTypeUtils"
 
 const AnalysisEmbeddingMapContent = ({ task, vizRef }) => {
     const {
@@ -22,13 +25,21 @@ const AnalysisEmbeddingMapContent = ({ task, vizRef }) => {
         isNewickError
     } = useAnalysisCNANewick(task.data.uuid)
 
+    const { parsedMeta, embeddingMethods, extents } = useMemo(() => {
+        if (!meta) return { parsedMeta: [], embeddingMethods: [], extents: {} }
+
+        return processMeta(meta)
+    }, [meta])
+
     if (isMetaLoading || isNewickLoading) return <LoadingView height='920px'/>
 
     if (isMetaError || isNewickError) return <ErrorView height='920px'/>
 
     return (
         <CNAEmbeddingMapView
-            meta={meta}
+            meta={parsedMeta}
+            embeddingMethods={embeddingMethods}
+            extents={extents}
             newick={newick}
             dataset={null}
             vizRef={vizRef}
@@ -38,6 +49,7 @@ const AnalysisEmbeddingMapContent = ({ task, vizRef }) => {
 
 const AnalysisEmbeddingMapWrapper = ({ task }) => {
     const vizRef = useRef(null)
+    const CNType = transformTaskCNType(task)
 
     return (
         <Stack spacing={4}>
@@ -56,7 +68,7 @@ const AnalysisEmbeddingMapWrapper = ({ task }) => {
                         fontSize: '36px'
                     }}
                 >
-                    CNA Embedding Map
+                    CNA Embedding Map(<CNTypePrompt CNType={CNType} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

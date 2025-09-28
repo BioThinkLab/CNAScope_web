@@ -46,12 +46,24 @@ const BasicDetail = ({ task }) => {
                 </Button>
             </Stack>
             <InformationDescriptions taskInformation={task}/>
-            <AnalysisChromosomeHeatmapWrapper task={task}/>
+            {
+                task.data['window_type'] !== 'gene' ? (
+                    <AnalysisChromosomeHeatmapWrapper task={task}/>
+                ) : (
+                    <></>
+                )
+            }
             <AnalysisGeneHeatmapWrapper task={task}/>
             <AnalysisTermGeneHeatmapWrapper task={task}/>
             <AnalysisCNAPhylogeneticTreeWrapper task={task}/>
             <AnalysisEmbeddingMapWrapper task={task}/>
-            <AnalysisCNAPloidyStairstepWrapper task={task}/>
+            {
+                task.data['window_type'] !== 'gene' ? (
+                    <AnalysisCNAPloidyStairstepWrapper task={task}/>
+                ) : (
+                    <></>
+                )
+            }
             <AnalysisPloidyDistributionWrapper task={task}/>
         </Stack>
     )

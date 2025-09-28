@@ -8,6 +8,8 @@ import { useAnalysisCNANewick } from "@/components/features/workspace/hooks/useA
 import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import PhylogeneticTreeView from "@/components/features/visualization/components/PhylogeneticTree/PhylogeneticTreeView"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
+import { transformTaskCNType } from "@/components/features/workspace/utils/visualization/CNTypeUtils"
 
 const AnalysisCNAPhylogeneticTreeContent = ({ task, vizRef }) => {
     const {
@@ -37,6 +39,7 @@ const AnalysisCNAPhylogeneticTreeContent = ({ task, vizRef }) => {
 
 const AnalysisCNAPhylogeneticTreeWrapper = ({ task }) => {
     const vizRef = useRef(null)
+    const CNType = transformTaskCNType(task)
 
     return (
         <Stack spacing={4}>
@@ -55,7 +58,7 @@ const AnalysisCNAPhylogeneticTreeWrapper = ({ task }) => {
                         fontSize: '36px'
                     }}
                 >
-                    CNA Phylogenetic Tree
+                    CNA Phylogenetic Tree(<CNTypePrompt CNType={CNType} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

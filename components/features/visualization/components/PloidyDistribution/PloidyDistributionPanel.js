@@ -143,7 +143,7 @@ const PloidyDistributionPanel = forwardRef(({
                     fontWeight={500}
                     textAnchor='middle'
                 >
-                    CNA Ploidy Distribution
+                    CN Distribution
                 </text>
                 <g ref={xAxisRef} transform={`translate(0,${yRange[0]})`}></g>
                 <g ref={yAxisRef} transform={`translate(${xRange[0]}, 0)`}></g>

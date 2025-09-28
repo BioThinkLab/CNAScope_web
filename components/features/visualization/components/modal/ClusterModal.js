@@ -31,8 +31,6 @@ const ClusterModal = ({
 }) => {
     const tabItems = buildTabItems(cluster, dataset, meta)
 
-    console.log(meta)
-
     return (
         <DraggableModal
             titleContent={

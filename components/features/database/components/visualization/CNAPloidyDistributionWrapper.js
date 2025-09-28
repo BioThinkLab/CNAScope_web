@@ -8,13 +8,20 @@ import PloidyDistributionView
 import { useRef } from "react"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
+import { useCNAMatrix } from "@/components/features/database/hooks/useCNAMatrix"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 
-const CNAPloidyDistributionContent = ({ selectedWorkflow, dataset, vizRef }) => {
+const CNAPloidyDistributionContent = ({
+    selectedWorkflow,
+    dataset,
+    vizRef,
+    binSize
+}) => {
     const {
         distributions,
         isDistributionsLoading,
         isDistributionsError
-    } = usePloidyDistribution(dataset.name, selectedWorkflow)
+    } = usePloidyDistribution(dataset.name, selectedWorkflow, binSize)
 
     if (isDistributionsLoading) return <LoadingView height='920px'/>
 
@@ -28,7 +35,11 @@ const CNAPloidyDistributionContent = ({ selectedWorkflow, dataset, vizRef }) => 
     )
 }
 
-const CNAPloidyDistributionWrapper = ({ selectedWorkflow, dataset }) => {
+const CNAPloidyDistributionWrapper = ({
+    selectedWorkflow,
+    dataset,
+    binSize
+}) => {
     const vizRef = useRef(null)
 
     return (
@@ -48,7 +59,7 @@ const CNAPloidyDistributionWrapper = ({ selectedWorkflow, dataset }) => {
                         fontSize: '36px'
                     }}
                 >
-                    CNA Ploidy Distribution
+                    CN Distribution(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -59,16 +70,15 @@ const CNAPloidyDistributionWrapper = ({ selectedWorkflow, dataset }) => {
                     >
                         Download SVG Chart
                     </Button>
-                    {/*<Button*/}
-                    {/*    type="primary"*/}
-                    {/*    onClick={() => vizRef.current?.downloadPng()}*/}
-                    {/*>*/}
-                    {/*    Download PNG Chart*/}
-                    {/*</Button>*/}
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAPloidyDistributionContent selectedWorkflow={selectedWorkflow} dataset={dataset} vizRef={vizRef}/>
+                <CNAPloidyDistributionContent
+                    selectedWorkflow={selectedWorkflow}
+                    dataset={dataset}
+                    vizRef={vizRef}
+                    binSize={binSize}
+                />
             </CNAVisualizationContainer>
         </Stack>
     )

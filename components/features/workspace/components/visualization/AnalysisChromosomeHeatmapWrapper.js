@@ -10,6 +10,8 @@ import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import CNAChromosomeHeatmapView
     from "@/components/features/visualization/components/CNAChromosomeHeatmap/CNAChromosomeHeatmapView"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
+import { transformTaskCNType } from "@/components/features/workspace/utils/visualization/CNTypeUtils"
 
 const AnalysisChromosomeHeatmapContent = ({ task, vizRef }) => {
     const {
@@ -55,6 +57,7 @@ const AnalysisChromosomeHeatmapContent = ({ task, vizRef }) => {
 
 const AnalysisChromosomeHeatmapWrapper = ({ task }) => {
     const vizRef = useRef(null)
+    const CNType = transformTaskCNType(task)
 
     return (
         <Stack spacing={4}>
@@ -73,7 +76,7 @@ const AnalysisChromosomeHeatmapWrapper = ({ task }) => {
                         fontSize: '36px'
                     }}
                 >
-                    Bin-Level CNA Heatmap
+                    Bin-Level CNA Heatmap(<CNTypePrompt CNType={CNType} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

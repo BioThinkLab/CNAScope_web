@@ -74,7 +74,7 @@ const timelineItems = [
                             <li>
                                 <strong>Key Features:</strong> Curated CNA profiles with functional annotations;
                                 interactive
-                                visualization charts (heatmaps, phylogenetic trees, embedding plots, ploidy charts,
+                                visualization charts (heatmaps, phylogenetic trees, embedding plots, CN charts,
                                 focal/consensus plots).
                             </li>
                             <li>

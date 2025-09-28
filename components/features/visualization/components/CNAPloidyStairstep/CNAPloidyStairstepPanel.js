@@ -208,7 +208,7 @@ const CNAPloidyStairstepPanel = forwardRef(({
                     fontWeight={500}
                     textAnchor='middle'
                 >
-                    Ploidy Stairstep
+                    CN Stairstep
                 </text>
                 <g ref={legendRef} transform={`translate(${legendOffset}, ${config.chart.marginTop + 45})`}></g>
                 <g ref={xAxisRef} transform={`translate(0,${yRange[0]})`}></g>

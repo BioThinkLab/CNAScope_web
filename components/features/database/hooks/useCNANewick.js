@@ -2,9 +2,9 @@ import useSWR from "swr"
 import { getCNANewickUrl } from "@/lib/api/dataset"
 import { fetcher } from "@/lib/api/fetcher"
 
-export const useCNANewick = (datasetName, workflow) => {
+export const useCNANewick = (datasetName, workflow, binSize) => {
     const { data, error, isLoading, mutate } = useSWR(
-        getCNANewickUrl(datasetName, workflow),
+        getCNANewickUrl(datasetName, workflow, binSize),
         fetcher
     )
 

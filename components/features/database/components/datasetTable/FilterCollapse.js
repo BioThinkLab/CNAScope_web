@@ -68,6 +68,17 @@ const defaultFormatFn = (value) => {
     return value ? value : 'NA'
 }
 
+const cnaTypeValueMap = {
+    'Bin Integer': 'Bin Absolute',
+    'Bin Log': 'Bin Log',
+    'Gene Integer': 'Gene Absolute',
+    'Gene Log': 'Gene Log'
+}
+
+const CNTypeFormatFn = (value) => {
+    return value ? cnaTypeValueMap[value] : 'NA'
+}
+
 export const FilterCheckBox = ({
     name,
     options,
@@ -119,6 +130,7 @@ const buildCollapseItems = (availableFilters, filters, setFilters) => {
                     options={availableFilters[key]}
                     selected={filters}
                     setSelected={setFilters}
+                    formatFn={key === 'cn_type' ? CNTypeFormatFn : defaultFormatFn}
                 />
         })
     )

@@ -159,17 +159,21 @@ const statusMap = {
     'F': 'Failed'
 }
 
-const typeMap = {
-    'A': 'NA Statistics',
-    'B': 'NA Statistics + NA Classification',
-    'C': 'NA Statistics + NA Classification + NA-assisted PPI analysis'
-}
-
 const statusBadgeMap = {
     'Running': <Badge status="processing" text="Running"/>,
     'Success': <Badge status="success" text="Success"/>,
     'Pending': <Badge status="default" text="Pending"/>,
     'Failed': <Badge status="error" text="Failed"/>
+}
+
+const valueTypeMap = {
+    'int': 'Absolute',
+    'log': 'Log'
+}
+
+const windowTypeMap = {
+    'bin': 'Bin',
+    'gene': 'Gene'
 }
 
 const generateTaskInformationItems = (taskInformation) => {
@@ -237,14 +241,14 @@ const generateTaskInformationItems = (taskInformation) => {
         taskInformationItems.push({
             key: 'valueType',
             label: 'CNA Value Type',
-            children: taskInformation['data']['value_type'],
+            children: valueTypeMap[taskInformation['data']['value_type']] || '--',
             span: 1
         })
 
         taskInformationItems.push({
             key: 'windowType',
             label: 'Window Type',
-            children: taskInformation['data']['window_type'],
+            children: windowTypeMap[taskInformation['data']['window_type']] || '--',
             span: 1
         })
     }

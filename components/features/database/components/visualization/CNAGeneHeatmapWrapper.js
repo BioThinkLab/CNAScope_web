@@ -11,25 +11,31 @@ import CNAGeneHeatmapView from "@/components/features/visualization/components/C
 import { useRef } from "react"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 
-const CNAGeneHeatmapContent = ({ selectedWorkflow, dataset, vizRef }) => {
+const CNAGeneHeatmapContent = ({
+    selectedWorkflow,
+    dataset,
+    binSize,
+    vizRef
+}) => {
     const {
         meta,
         isMetaLoading,
         isMetaError
-    } = useCNAMeta(dataset.name, selectedWorkflow)
+    } = useCNAMeta(dataset.name, selectedWorkflow, binSize)
 
     const {
         newick,
         isNewickLoading,
         isNewickError
-    } = useCNANewick(dataset.name, selectedWorkflow)
+    } = useCNANewick(dataset.name, selectedWorkflow, binSize)
 
     const {
         genes,
         isGenesLoading,
         isGenesError
-    } = useCNAGeneList(dataset.name, selectedWorkflow)
+    } = useCNAGeneList(dataset.name, selectedWorkflow, binSize)
 
     const geneMatrixFetcher = (selectedGenes) => {
         return api.post(getCNAGeneMatrixUrl(), {
@@ -58,7 +64,7 @@ const CNAGeneHeatmapContent = ({ selectedWorkflow, dataset, vizRef }) => {
     )
 }
 
-const CNAGeneHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
+const CNAGeneHeatmapWrapper = ({ selectedWorkflow, dataset, binSize }) => {
     const vizRef = useRef(null)
 
     return (
@@ -78,7 +84,7 @@ const CNAGeneHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
                         fontSize: '36px',
                     }}
                 >
-                    Gene-Level CNA Heatmap
+                    Gene-Level CNA Heatmap(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -98,7 +104,12 @@ const CNAGeneHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAGeneHeatmapContent dataset={dataset} selectedWorkflow={selectedWorkflow} vizRef={vizRef}/>
+                <CNAGeneHeatmapContent
+                    dataset={dataset}
+                    selectedWorkflow={selectedWorkflow}
+                    binSize={binSize}
+                    vizRef={vizRef}
+                />
             </CNAVisualizationContainer>
         </Stack>
     )

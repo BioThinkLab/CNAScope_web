@@ -1,7 +1,7 @@
 import { useRouter } from "next/router"
 import { useGlobalMessage } from "@/context/MessageContext"
 import { useState } from "react"
-import { Button, Card, Form, InputNumber, Select, Space, Spin, Typography, Upload } from "antd"
+import { Button, Card, Form, Input, InputNumber, Select, Space, Spin, Typography, Upload } from "antd"
 import { Box, Stack } from "@mui/system"
 import ActionButtonGroup from "@/components/features/workflow/components/modules/ActionButtonGroup"
 import {
@@ -38,7 +38,7 @@ const WINDOW_TYPE_CHOICES = [
 ]
 
 const VALUE_TYPE_CHOICES = [
-    { value: 'int', label: 'Integer' },
+    { value: 'int', label: 'Absolute' },
     { value: 'log', label: 'Log' },
 ]
 
@@ -148,6 +148,10 @@ const BasicCNAAnnotationModule = ({}) => {
             fd.append('window_type', values.window_type)
             fd.append('value_type', values.value_type)
 
+            if (values.email) {
+                fd.append('email', values.email)
+            }
+
             const file = values.input_file?.[0]?.originFileObj
             if (file) fd.append('input_file', file, file.name)
 
@@ -221,6 +225,7 @@ const BasicCNAAnnotationModule = ({}) => {
                         obs_type: 'sample',
                         window_type: 'bin',
                         value_type: 'int',
+                        email: '',
                     }}
                 >
                     <Form.Item
@@ -254,6 +259,15 @@ const BasicCNAAnnotationModule = ({}) => {
                         <Select placeholder="Select value type">
                             {VALUE_TYPE_CHOICES.map(o => <Option key={o.value} value={o.value}>{o.label}</Option>)}
                         </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="email"
+                        label="Email"
+                        tooltip="Optional. Provide your email if you wish to receive notifications."
+                        rules={[{ type: 'email', message: 'Please enter a valid email address.' }]}
+                    >
+                        <Input placeholder="Enter your email (optional)" />
                     </Form.Item>
 
                     <Form.Item

@@ -6,37 +6,106 @@ import ErrorView from "@/components/common/status/ErrorView"
 import CNAEmbeddingMapView from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapView"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
-import { useRef } from "react"
+import { useMemo, useRef } from "react"
 import { useCNANewick } from "@/components/features/database/hooks/useCNANewick"
+import { processMeta } from "@/components/features/visualization/utils/embeddingMapUtils"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
+import { useCNAGeneList } from "@/components/features/database/hooks/useCNAGeneList"
+import { useCNATermList } from "@/components/features/database/hooks/useCNATermList"
+import { getCNAGeneMatrixUrl, getCNATermMatrixUrl } from "@/lib/api/dataset"
+import api from "@/lib/api/axios"
 
-const CNAEmbeddingMapContent = ({ selectedWorkflow, dataset, vizRef }) => {
+const CNAEmbeddingMapContent = ({
+    selectedWorkflow,
+    dataset,
+    vizRef,
+    binSize
+}) => {
     const {
         meta,
         isMetaLoading,
         isMetaError
-    } = useCNAMeta(dataset.name, selectedWorkflow)
+    } = useCNAMeta(dataset.name, selectedWorkflow, binSize)
 
     const {
         newick,
         isNewickLoading,
         isNewickError
-    } = useCNANewick(dataset.name, selectedWorkflow)
+    } = useCNANewick(dataset.name, selectedWorkflow, binSize)
 
-    if (isMetaLoading || isNewickLoading) return <LoadingView height='920px'/>
+    const {
+        genes,
+        isGenesLoading,
+        isGenesError
+    } = useCNAGeneList(dataset.name, selectedWorkflow, binSize)
 
-    if (isMetaError || isNewickError) return <ErrorView height='920px'/>
+    const {
+        terms,
+        isTermsLoading,
+        isTermsError
+    } = useCNATermList(dataset.name, selectedWorkflow, binSize)
+
+    const { parsedMeta, embeddingMethods, extents } = useMemo(() => {
+        if (!meta) return { parsedMeta: [], embeddingMethods: [], extents: {} }
+
+        return processMeta(meta)
+    }, [meta])
+
+    const processedGenes = useMemo(() => {
+        if (!genes) return []
+
+        return genes.map(gene => ({value: gene.gene}))
+    }, [genes])
+
+    const processedTerms = useMemo(() => {
+        if (!terms) return []
+
+        return terms.map(term => ({ value: term.gene }))
+    }, [terms])
+
+    const geneVectorFetcher = (gene) => {
+        return api.post(getCNAGeneMatrixUrl(), {
+            datasetName: dataset.name,
+            workflowType: selectedWorkflow,
+            binSize: binSize,
+            genes: [gene]
+        })
+    }
+
+    const termVectorFetcher = (term) => {
+        return api.post(getCNATermMatrixUrl(), {
+            datasetName: dataset.name,
+            workflowType: selectedWorkflow,
+            binSize:binSize,
+            terms: [term]
+        })
+    }
+
+    if (isMetaLoading || isNewickLoading || isGenesLoading || isTermsLoading) return <LoadingView height='920px'/>
+
+    if (isMetaError || isNewickError || isGenesError || isTermsError) return <ErrorView height='920px'/>
 
     return (
         <CNAEmbeddingMapView
-            meta={meta}
+            meta={parsedMeta}
+            embeddingMethods={embeddingMethods}
+            extents={extents}
             newick={newick}
+            genes={processedGenes}
+            terms={processedTerms}
             dataset={dataset}
+            geneVectorFetcher={geneVectorFetcher}
+            termVectorFetcher={termVectorFetcher}
             vizRef={vizRef}
         />
     )
 }
 
-const CNAEmbeddingMapWrapper = ({ selectedWorkflow, dataset }) => {
+const CNAEmbeddingMapWrapper = ({
+    selectedWorkflow,
+    dataset,
+    binSize
+}) => {
     const vizRef = useRef(null)
 
     return (
@@ -56,7 +125,7 @@ const CNAEmbeddingMapWrapper = ({ selectedWorkflow, dataset }) => {
                         fontSize: '36px'
                     }}
                 >
-                    CNA Embedding Map
+                    CNA Embedding Map(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -67,16 +136,15 @@ const CNAEmbeddingMapWrapper = ({ selectedWorkflow, dataset }) => {
                     >
                         Download SVG Chart
                     </Button>
-                    {/*<Button*/}
-                    {/*    type="primary"*/}
-                    {/*    onClick={() => vizRef.current?.downloadPng()}*/}
-                    {/*>*/}
-                    {/*    Download PNG Chart*/}
-                    {/*</Button>*/}
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAEmbeddingMapContent dataset={dataset} selectedWorkflow={selectedWorkflow} vizRef={vizRef}/>
+                <CNAEmbeddingMapContent
+                    dataset={dataset}
+                    selectedWorkflow={selectedWorkflow}
+                    vizRef={vizRef}
+                    binSize={binSize}
+                />
             </CNAVisualizationContainer>
         </Stack>
     )

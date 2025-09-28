@@ -11,30 +11,37 @@ import CNAGeneHeatmapView from "@/components/features/visualization/components/C
 import { useRef } from "react"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 
-const CNATermHeatmapContent = ({ selectedWorkflow, dataset, vizRef }) => {
+const CNATermHeatmapContent = ({
+    selectedWorkflow,
+    dataset,
+    vizRef,
+    binSize
+}) => {
     const {
         meta,
         isMetaLoading,
         isMetaError
-    } = useCNAMeta(dataset.name, selectedWorkflow)
+    } = useCNAMeta(dataset.name, selectedWorkflow, binSize)
 
     const {
         newick,
         isNewickLoading,
         isNewickError
-    } = useCNANewick(dataset.name, selectedWorkflow)
+    } = useCNANewick(dataset.name, selectedWorkflow, binSize)
 
     const {
         terms,
         isTermsLoading,
         isTermsError
-    } = useCNATermList(dataset.name, selectedWorkflow)
+    } = useCNATermList(dataset.name, selectedWorkflow, binSize)
 
     const geneMatrixFetcher = (selectedTerms) => {
         return api.post(getCNATermMatrixUrl(), {
             datasetName: dataset.name,
             workflowType: selectedWorkflow,
+            binSize: binSize,
             terms: selectedTerms
         })
     }
@@ -58,7 +65,7 @@ const CNATermHeatmapContent = ({ selectedWorkflow, dataset, vizRef }) => {
     )
 }
 
-const CNATermHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
+const CNATermHeatmapWrapper = ({ selectedWorkflow, dataset, binSize }) => {
     const vizRef = useRef(null)
 
     return (
@@ -78,7 +85,7 @@ const CNATermHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
                         fontSize: '36px'
                     }}
                 >
-                    Term-Level CNA Heatmap
+                    Term-Level CNA Heatmap(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -89,16 +96,15 @@ const CNATermHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
                     >
                         Download SVG Chart
                     </Button>
-                    {/*<Button*/}
-                    {/*    type="primary"*/}
-                    {/*    onClick={() => vizRef.current?.downloadPng()}*/}
-                    {/*>*/}
-                    {/*    Download PNG Chart*/}
-                    {/*</Button>*/}
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNATermHeatmapContent selectedWorkflow={selectedWorkflow} dataset={dataset} vizRef={vizRef}/>
+                <CNATermHeatmapContent
+                    selectedWorkflow={selectedWorkflow}
+                    dataset={dataset}
+                    vizRef={vizRef}
+                    binSize={binSize}
+                />
             </CNAVisualizationContainer>
         </Stack>
     )

@@ -1,10 +1,44 @@
 import { Card, Select, Typography } from "antd"
-import { Box } from "@mui/system"
+import { Box, Grid, Stack } from "@mui/system"
 
 const { Text } = Typography
 const { Option } = Select
 
-const WorkflowSelector = ({ workflow, selectedWorkflow, handleSelectedWorkflowChange }) => {
+const buildBinSizes = (dataset) => {
+    const binSizes = [
+        {
+            label: '5M',
+            value: '5M'
+        }
+    ]
+
+    if (dataset.source === 'GDC Portal') {
+        binSizes.push(
+            {
+                label: '500kb',
+                value: '500kb'
+            },
+        )
+        binSizes.push(
+            {
+                label: '200kb',
+                value: '200kb'
+            }
+        )
+    }
+
+    return binSizes
+}
+
+const WorkflowSelector = ({
+    dataset,
+    workflow,
+    selectedWorkflow,
+    handleSelectedWorkflowChange,
+    binSize,
+    handleBinSizeChange
+}) => {
+    const binSizeOptions = buildBinSizes(dataset)
 
     return (
         <Card
@@ -16,22 +50,55 @@ const WorkflowSelector = ({ workflow, selectedWorkflow, handleSelectedWorkflowCh
             }
         >
             <Text type="secondary" style={{ fontSize: '20px' }}>
-                Select a workflow to view CNA features.
+                Select a workflow to view CNA features, and specify the desired Bin Size to refine the results.
             </Text>
 
-            <Select
-                style={{ width: '100%', marginTop: 16 }}
-                placeholder="Please select a contig"
-                onChange={handleSelectedWorkflowChange}
-                value={selectedWorkflow}
-                size='large'
-            >
-                {(workflow ? workflow.split(',') : ['NA']).map((w) => (
-                    <Option key={w} value={w} style={{ fontSize: '16px' }}>
-                        {w}
-                    </Option>
-                ))}
-            </Select>
+            <Grid container spacing={2}>
+                <Grid size={6} sx={{ marginTop: 2 }}>
+                    <Stack direction='row' spacing={2} alignItems='center'>
+                        <Box component='span' sx={{ fontSize: '20px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                            Workflow:
+                        </Box>
+                        <Select
+                            style={{ width: '100%' }}
+                            placeholder="Please select a Workflow"
+                            onChange={handleSelectedWorkflowChange}
+                            value={selectedWorkflow}
+                            size='large'
+                        >
+                            {(workflow ? workflow.split(',') : ['NA']).map((w) => (
+                                <Option key={w} value={w} style={{ fontSize: '16px' }}>
+                                    {w}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Stack>
+                </Grid>
+                <Grid size={6} sx={{ marginTop: 2 }}>
+                    <Stack direction='row' spacing={2} alignItems='center'>
+                        <Box component='span' sx={{ fontSize: '20px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                            Bin Size:
+                        </Box>
+                        <Select
+                            style={{ width: '100%' }}
+                            placeholder="Please select a Bin Size"
+                            onChange={handleBinSizeChange}
+                            value={binSize}
+                            size='large'
+                        >
+                            {
+                                binSizeOptions.map(
+                                    (item, index) => (
+                                        <Option key={index} value={item.value} style={{ fontSize: '16px' }}>
+                                            {item.label}
+                                        </Option>
+                                    )
+                                )
+                            }
+                        </Select>
+                    </Stack>
+                </Grid>
+            </Grid>
         </Card>
     )
 }

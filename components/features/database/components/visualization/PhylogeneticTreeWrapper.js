@@ -8,19 +8,25 @@ import { useRef } from "react"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
 import { useCNAMeta } from "@/components/features/database/hooks/useCNAMeta"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 
-const PhylogeneticTreeContent = ({ selectedWorkflow, dataset, vizRef }) => {
+const PhylogeneticTreeContent = ({
+    selectedWorkflow,
+    dataset,
+    vizRef,
+    binSize
+}) => {
     const {
         meta,
         isMetaLoading,
         isMetaError
-    } = useCNAMeta(dataset.name, selectedWorkflow)
+    } = useCNAMeta(dataset.name, selectedWorkflow, binSize)
 
     const {
         newick,
         isNewickLoading,
         isNewickError
-    } = useCNANewick(dataset.name, selectedWorkflow)
+    } = useCNANewick(dataset.name, selectedWorkflow, binSize)
 
     if (isMetaLoading || isNewickLoading) return <LoadingView height='920px'/>
 
@@ -35,7 +41,11 @@ const PhylogeneticTreeContent = ({ selectedWorkflow, dataset, vizRef }) => {
     )
 }
 
-const PhylogeneticTreeWrapper = ({ selectedWorkflow, dataset }) => {
+const PhylogeneticTreeWrapper = ({
+    selectedWorkflow,
+    dataset,
+    binSize
+}) => {
     const vizRef = useRef(null)
 
     return (
@@ -55,7 +65,7 @@ const PhylogeneticTreeWrapper = ({ selectedWorkflow, dataset }) => {
                         fontSize: '36px'
                     }}
                 >
-                    CNA Phylogenetic Tree
+                    CNA Phylogenetic Tree(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -66,16 +76,15 @@ const PhylogeneticTreeWrapper = ({ selectedWorkflow, dataset }) => {
                     >
                         Download SVG Chart
                     </Button>
-                    {/*<Button*/}
-                    {/*    type="primary"*/}
-                    {/*    onClick={() => vizRef.current?.downloadPng()}*/}
-                    {/*>*/}
-                    {/*    Download PNG Chart*/}
-                    {/*</Button>*/}
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <PhylogeneticTreeContent selectedWorkflow={selectedWorkflow} dataset={dataset} vizRef={vizRef}/>
+                <PhylogeneticTreeContent
+                    selectedWorkflow={selectedWorkflow}
+                    dataset={dataset}
+                    vizRef={vizRef}
+                    binSize={binSize}
+                />
             </CNAVisualizationContainer>
         </Stack>
     )

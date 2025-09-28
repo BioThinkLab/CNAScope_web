@@ -10,25 +10,31 @@ import CNAChromosomeHeatmapView
 import { useRef } from "react"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 
-const CNAChromosomeHeatmapContent = ({ selectedWorkflow, dataset, vizRef }) => {
+const CNAChromosomeHeatmapContent = ({
+    selectedWorkflow,
+    dataset,
+    vizRef,
+    binSize
+}) => {
     const {
         matrix,
         isMatrixLoading,
         isMatrixError
-    } = useCNAMatrix(dataset.name, selectedWorkflow)
+    } = useCNAMatrix(dataset.name, selectedWorkflow, binSize)
 
     const {
         meta,
         isMetaLoading,
         isMetaError
-    } = useCNAMeta(dataset.name, selectedWorkflow)
+    } = useCNAMeta(dataset.name, selectedWorkflow, binSize)
 
     const {
         tree,
         isTreeLoading,
         isTreeError
-    } = useCNATree(dataset.name, selectedWorkflow)
+    } = useCNATree(dataset.name, selectedWorkflow, binSize)
 
     if (isMatrixLoading || isMetaLoading || isTreeLoading) {
         return <LoadingView height='920px'/>
@@ -47,12 +53,17 @@ const CNAChromosomeHeatmapContent = ({ selectedWorkflow, dataset, vizRef }) => {
             tree={tree}
             baselineCNA={baselineCNA}
             reference={dataset['reference']}
+            binSize={binSize}
             vizRef={vizRef}
         />
     )
 }
 
-const CNAChromosomeHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
+const CNAChromosomeHeatmapWrapper = ({
+    selectedWorkflow,
+    dataset,
+    binSize
+}) => {
     const vizRef = useRef(null)
 
     return (
@@ -72,7 +83,7 @@ const CNAChromosomeHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
                         fontSize: '36px'
                     }}
                 >
-                    Bin-Level CNA Heatmap
+                    Bin-Level CNA Heatmap(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -83,16 +94,15 @@ const CNAChromosomeHeatmapWrapper = ({ selectedWorkflow, dataset }) => {
                     >
                         Download SVG Chart
                     </Button>
-                    {/*<Button*/}
-                    {/*    type="primary"*/}
-                    {/*    onClick={() => vizRef.current?.downloadPng()}*/}
-                    {/*>*/}
-                    {/*    Download PNG Chart*/}
-                    {/*</Button>*/}
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAChromosomeHeatmapContent selectedWorkflow={selectedWorkflow} dataset={dataset} vizRef={vizRef}/>
+                <CNAChromosomeHeatmapContent
+                    selectedWorkflow={selectedWorkflow}
+                    dataset={dataset}
+                    vizRef={vizRef}
+                    binSize={binSize}
+                />
             </CNAVisualizationContainer>
         </Stack>
     )

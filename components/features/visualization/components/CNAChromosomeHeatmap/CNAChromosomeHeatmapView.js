@@ -1,9 +1,15 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import CNAChromosomeHeatmapSettingPanel
     from "@/components/features/visualization/components/CNAChromosomeHeatmap/CNAChromosomeHeatmapSettingPanel"
 import SplitterLayout from "@/components/layouts/SplitterLayout"
 import CNAChromosomeHeatmapPanel
     from "@/components/features/visualization/components/CNAChromosomeHeatmap/CNAChromosomeHeatmapPanel"
+
+const binStepMap = {
+    '5M': 5000000,
+    '500kb': 500000,
+    '200kb': 200000
+}
 
 const CNAChromosomeHeatmapView = ({
     matrix,
@@ -11,6 +17,7 @@ const CNAChromosomeHeatmapView = ({
     tree,
     baselineCNA,
     reference,
+    binSize,
     vizRef
 }) => {
     const [isShowLeft, setIsShowLeft] = useState(true)
@@ -58,6 +65,19 @@ const CNAChromosomeHeatmapView = ({
         }))
     }
 
+    useEffect(() => {
+        if (binSize === '5M') {
+            handleConfigChange('heatmap', 'blockWidth', 2)
+            handleConfigChange('heatmap', 'blockGap', 0.1)
+        } else if (binSize === '500kb') {
+            handleConfigChange('heatmap', 'blockWidth', 0.5)
+            handleConfigChange('heatmap', 'blockGap', 0)
+        } else if (binSize === '200kb') {
+            handleConfigChange('heatmap', 'blockWidth', 0.1)
+            handleConfigChange('heatmap', 'blockGap', 0)
+        }
+    }, [binSize])
+
     return (
         <SplitterLayout
             isShowLeft={isShowLeft}
@@ -78,6 +98,7 @@ const CNAChromosomeHeatmapView = ({
                     config={config}
                     isShowLeft={isShowLeft}
                     handleIsShowLeftChange={handleIsShowLeftChange}
+                    binStep={binStepMap[binSize]}
                     ref={vizRef}
                 />
             }

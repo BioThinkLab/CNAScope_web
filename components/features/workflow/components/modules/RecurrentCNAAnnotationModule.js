@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useGlobalMessage } from "@/context/MessageContext"
 import { useRouter } from "next/router"
-import { Button, Card, Form, InputNumber, Select, Space, Spin, Typography, Upload } from "antd"
+import { Button, Card, Form, Input, InputNumber, Select, Space, Spin, Typography, Upload } from "antd"
 import { Box, Stack } from "@mui/system"
 import ActionButtonGroup from "@/components/features/workflow/components/modules/ActionButtonGroup"
 import { AnalysisBasicAlert } from "@/components/features/workflow/components/modules/AnalysisAlert"
@@ -127,6 +127,10 @@ const RecurrentCNAAnnotationModule = ({}) => {
             fd.append('ref', values.ref)
             fd.append('obs_type', values.obs_type)
 
+            if (values.email) {
+                fd.append('email', values.email)
+            }
+
             const file = values.input_file?.[0]?.originFileObj
             if (file) fd.append('input_file', file, file.name)
 
@@ -199,7 +203,8 @@ const RecurrentCNAAnnotationModule = ({}) => {
                         onFinish={onSubmit}
                         initialValues={{
                             ref: 'hg38',
-                            obs_type: 'sample'
+                            obs_type: 'sample',
+                            email: '',
                         }}
                     >
                         <Form.Item name="ref" label="Reference" rules={[{ required: true }]}>
@@ -212,6 +217,15 @@ const RecurrentCNAAnnotationModule = ({}) => {
                             <Select placeholder="Select observation type">
                                 {OBS_TYPE_CHOICES.map(o => <Option key={o.value} value={o.value}>{o.label}</Option>)}
                             </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="email"
+                            label="Email"
+                            tooltip="Optional. Provide your email if you wish to receive notifications."
+                            rules={[{ type: 'email', message: 'Please enter a valid email address.' }]}
+                        >
+                            <Input placeholder="Enter your email (optional)" />
                         </Form.Item>
 
                         <Form.Item

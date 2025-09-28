@@ -1,8 +1,7 @@
 import * as d3 from 'd3'
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react"
 import { initAxis, initAxisDomain, initFigureConfig } from "@/components/features/visualization/utils/embeddingMapUtils"
-import { Box, Stack } from "@mui/system"
-import SplitterControlButton from "@/components/common/button/SplitterControlButton"
+import { Stack } from "@mui/system"
 import {
     EmbeddingScatterPlotTooltipTemplate
 } from "@/components/features/visualization/components/tooltipTemplate/EmbeddingMapTooltipTemplate"
@@ -15,9 +14,7 @@ const EmbeddingMapPanel = forwardRef(({
     cluster,
     meta,
     extents,
-    config,
-    isShowLeft,
-    handleIsShowLeftChange
+    config
 }, ref) => {
     const svgRef = useRef(null)
     const toolTipRef = useRef(null)

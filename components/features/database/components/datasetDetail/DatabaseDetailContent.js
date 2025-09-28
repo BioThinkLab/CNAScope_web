@@ -22,10 +22,15 @@ import DatabaseTutorialModal from "@/components/features/database/components/dat
 
 const DatabaseDetailContent = ({ dataset }) => {
     const [selectedWorkflow, setSelectedWorkflow] = useState(null)
+    const [binSize, setBinSize] = useState('5M')
     const { resetTutorialState } = useDetailPageTutorialStore()
 
     const handleSelectedWorkflowChange = (newWorkflow) => {
         setSelectedWorkflow(newWorkflow)
+    }
+
+    const handleBinSizeChange = (newBinSize) => {
+        setBinSize(newBinSize)
     }
 
     useEffect(() => {
@@ -54,35 +59,70 @@ const DatabaseDetailContent = ({ dataset }) => {
                 )
             }
             <WorkflowSelector
+                dataset={dataset}
                 workflow={dataset.workflow}
                 selectedWorkflow={selectedWorkflow}
                 handleSelectedWorkflowChange={handleSelectedWorkflowChange}
+                binSize={binSize}
+                handleBinSizeChange={handleBinSizeChange}
             />
             {
                 selectedWorkflow ? (
                     <>
                         {
                             dataset['cn_type'] !== 'Gene Integer' && dataset['cn_type'] !== 'Gene Log' ? (
-                                <CNAChromosomeHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                                <CNAChromosomeHeatmapWrapper
+                                    dataset={dataset}
+                                    selectedWorkflow={selectedWorkflow}
+                                    binSize={binSize}
+                                />
                             ) : (
                                 <></>
                             )
                         }
-                        <CNAGeneHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-                        <CNATermHeatmapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-                        <PhylogeneticTreeWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
-                        <CNAEmbeddingMapWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        <CNAGeneHeatmapWrapper
+                            dataset={dataset}
+                            selectedWorkflow={selectedWorkflow}
+                            binSize={binSize}
+                        />
+                        <CNATermHeatmapWrapper
+                            dataset={dataset}
+                            selectedWorkflow={selectedWorkflow}
+                            binSize={binSize}
+                        />
+                        <PhylogeneticTreeWrapper
+                            dataset={dataset}
+                            selectedWorkflow={selectedWorkflow}
+                            binSize={binSize}
+                        />
+                        <CNAEmbeddingMapWrapper
+                            dataset={dataset}
+                            selectedWorkflow={selectedWorkflow}
+                            binSize={binSize}
+                        />
                         {
                             dataset['cn_type'] !== 'Gene Integer' && dataset['cn_type'] !== 'Gene Log' ? (
-                                <CNAPloidyStairstepWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                                <CNAPloidyStairstepWrapper
+                                    dataset={dataset}
+                                    selectedWorkflow={selectedWorkflow}
+                                    binSize={binSize}
+                                />
                             ) : (
                                 <></>
                             )
                         }
-                        <CNAPloidyDistributionWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                        <CNAPloidyDistributionWrapper
+                            dataset={dataset}
+                            selectedWorkflow={selectedWorkflow}
+                            binSize={binSize}
+                        />
                         {
                             dataset.source === 'GDC Portal' ? (
-                                <CNAFocalCNAWrapper dataset={dataset} selectedWorkflow={selectedWorkflow}/>
+                                <CNAFocalCNAWrapper
+                                    dataset={dataset}
+                                    selectedWorkflow={selectedWorkflow}
+                                    binSize={binSize}
+                                />
                             ) : (
                                 <></>
                             )

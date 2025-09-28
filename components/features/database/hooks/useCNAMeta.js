@@ -2,9 +2,9 @@ import useSWR from "swr"
 import { getCNAMetaUrl } from "@/lib/api/dataset"
 import { fetcher } from "@/lib/api/fetcher"
 
-export const useCNAMeta = (datasetName, workflow) => {
+export const useCNAMeta = (datasetName, workflow, binSize) => {
     const { data, error, isLoading, mutate } = useSWR(
-        getCNAMetaUrl(datasetName, workflow),
+        getCNAMetaUrl(datasetName, workflow, binSize),
         fetcher
     )
 
