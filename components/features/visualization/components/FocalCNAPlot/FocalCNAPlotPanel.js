@@ -70,22 +70,22 @@ const FocalCNAPlotPanel = forwardRef(({
 
     const {
         significantAmpRegions,
-        spiltAmpRegionsMap,
+        ampRegionMap,
         significantDelRegions,
-        spiltDelRegionsMap
+        delRegionMap
     } = useMemo(
         () => preprocessDataNew(focalInfo.amp, focalInfo.del, scores, reference),
         [focalInfo.amp, focalInfo.del, reference, scores]
     )
 
     const ampNodes = useMemo(
-        () => transformRegionsToNodes(spiltAmpRegionsMap, 'G-score', chromosome),
-        [chromosome, spiltAmpRegionsMap]
+        () => transformRegionsToNodes(ampRegionMap, 'G-score', chromosome),
+        [ampRegionMap, chromosome]
     )
 
     const delNodes = useMemo(
-        () => transformRegionsToNodes(spiltDelRegionsMap, 'G-score', chromosome),
-        [chromosome, spiltDelRegionsMap]
+        () => transformRegionsToNodes(delRegionMap, 'G-score', chromosome),
+        [chromosome, delRegionMap]
     )
 
     const yAxisMax = useMemo(

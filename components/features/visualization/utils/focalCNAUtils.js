@@ -19,17 +19,24 @@ export const preprocessDataNew = (ampRegions, delRegions, scoresGISTIC, version)
     const significantAmpRegions = preprocessRegions(ampRegions)
     const ampScoresGISTIC = scoresGISTIC.filter(record => record.type === 'Amp')
     const spiltAmpRegionsMap = spiltRegions(significantAmpRegions, ampScoresGISTIC, version)
+    const ampChromosomeBins = getAllChromosomeBins(version)
+    const ampRegionMap = processChromosomes(ampChromosomeBins, spiltAmpRegionsMap, 'amp')
+
 
     // Del regions preprocess.
     const significantDelRegions = preprocessRegions(delRegions)
     const delScoresGISTIC = scoresGISTIC.filter(record => record.type === 'Del')
     const spiltDelRegionsMap = spiltRegions(significantDelRegions, delScoresGISTIC, version)
+    const delChromosomeBins = getAllChromosomeBins(version)
+    const delRegionMap = processChromosomes(delChromosomeBins, spiltDelRegionsMap, 'del')
+
+
 
     return {
         significantAmpRegions,
-        spiltAmpRegionsMap,
+        ampRegionMap,
         significantDelRegions,
-        spiltDelRegionsMap
+        delRegionMap
     }
 }
 
@@ -104,6 +111,106 @@ export const spiltRegions = (significantRegions, regions, version) => {
     }
 
     return result
+}
+
+const getChromosomeBins = (chromosomeLengthMap, chromosome) => {
+    const chromosomeLength = chromosomeLengthMap[chromosome]
+    const binSize = 200000
+
+    const bins = []
+    let start = 1
+    let end = binSize
+
+    while (end < chromosomeLength) {
+        bins.push({ start, end })
+        start = end + 1
+        end = start + binSize - 1
+    }
+
+    bins.push({ start, end: chromosomeLength })
+
+    return bins
+}
+
+const getAllChromosomeBins = (version) => {
+    const chromosomeLengthMap = version === 'hg38' ? hg38ChromosomeLength : hg19ChromosomeLength
+    const binsByChromosome = {}
+
+    // 遍历每个染色体，排除 chrX 和 chrY
+    for (const chromosomeName in hg38ChromosomeLength) {
+        if (chromosomeName !== 'chrX' && chromosomeName !== 'chrY') {
+            binsByChromosome[chromosomeName] = getChromosomeBins(chromosomeLengthMap, chromosomeName)
+        }
+    }
+
+    return binsByChromosome
+}
+
+// 判断两个区间是否重叠
+function checkOverlap(interval1, interval2) {
+    return !(interval1.end < interval2.start || interval1.start > interval2.end);
+}
+
+// 获取每个区间的最大G-score
+function getMaxGScore(interval, significantRegions, normalRegions) {
+    // 查找与显著区域重叠的区间
+    const overlappingSignificant = significantRegions.filter(region => checkOverlap(interval, region));
+
+    if (overlappingSignificant.length > 0) {
+        // 如果有显著区域重叠，返回最大G-score
+        return Math.max(...overlappingSignificant.map(region => region['G-score']));
+    }
+
+    // 如果没有显著区域重叠，查找正常区域
+    const overlappingNormal = normalRegions.filter(region => checkOverlap(interval, region));
+
+    if (overlappingNormal.length > 0) {
+        // 如果有正常区域重叠，返回最大正常区域的G-score
+        return Math.max(...overlappingNormal.map(region => region['G-score']));
+    }
+
+    return 0; // 如果没有重叠区域，返回0
+}
+
+// 处理每个染色体的区间数据，计算G-score并分类
+function processChromosomes(intervals, chromosomeBins, type) {
+    const processedData = {};
+
+    for (const chromosome in intervals) {
+        const chrIntervals = intervals[chromosome];
+        const significantRegions = chromosomeBins[chromosome].significantRegions;
+        const normalRegions = chromosomeBins[chromosome].normalRegions;
+
+        // 初始化染色体数据结构
+        processedData[chromosome] = {
+            normalRegions: [],
+            significantRegions: []
+        };
+
+        // 处理每个区间
+        chrIntervals.forEach(interval => {
+            const maxGScore = getMaxGScore(interval, significantRegions, normalRegions);
+            const isSignificant = significantRegions.some(region => checkOverlap(interval, region));
+
+            // 创建区间数据对象，保留所需的属性
+            const regionData = {
+                "type": type,
+                "chromosome": chromosome,
+                "start": interval.start,
+                "end": interval.end,
+                "G-score": maxGScore
+            };
+
+            // 根据类型将区间添加到相应的数组
+            if (isSignificant) {
+                processedData[chromosome].significantRegions.push(regionData);
+            } else {
+                processedData[chromosome].normalRegions.push(regionData);
+            }
+        });
+    }
+
+    return processedData;
 }
 
 const splitSingleChromosomeRegionsByOverlap = (regions, significantRegions) => {

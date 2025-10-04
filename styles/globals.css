@@ -18,3 +18,19 @@ body {
 *::-webkit-scrollbar-track {
   background: transparent;
 }
+
+.venntooltip {
+  position: absolute;
+  text-align: center;
+  width: 128px;
+  height: 16px;
+  background: #333;
+  color: #ddd;
+  padding: 2px;
+  padding-bottom: 10px;
+  border: 0px;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none; /* 禁止tooltip响应鼠标事件 */
+  transform: translate(0, -25%); /* 将 tooltip 调整到指针上方 */
+}

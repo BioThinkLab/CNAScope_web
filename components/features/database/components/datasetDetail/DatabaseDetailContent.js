@@ -19,6 +19,11 @@ import CNAPloidyDistributionWrapper
     from "@/components/features/database/components/visualization/CNAPloidyDistributionWrapper"
 import { useDetailPageTutorialStore } from "@/stores/DetailPageTutorialStore"
 import DatabaseTutorialModal from "@/components/features/database/components/datasetDetail/DatabaseTutorialModal"
+import CNASpatialMapWrapper from "@/components/features/database/components/visualization/CNASpatialMapWrapper"
+import ConsensusFocalGeneVennWrapper
+    from "@/components/features/database/components/visualization/ConsensusFocalGeneVennWrapper"
+import CNAPathwayEnrichmentPlotWrapper
+    from "@/components/features/database/components/visualization/CNAPathwayEnrichmentPlotWrapper"
 
 const DatabaseDetailContent = ({ dataset }) => {
     const [selectedWorkflow, setSelectedWorkflow] = useState(null)
@@ -101,6 +106,17 @@ const DatabaseDetailContent = ({ dataset }) => {
                             binSize={binSize}
                         />
                         {
+                            dataset['modality'] === 'ST' ? (
+                                <CNASpatialMapWrapper
+                                    selectedWorkflow={selectedWorkflow}
+                                    dataset={dataset}
+                                    binSize={binSize}
+                                />
+                            ) : (
+                                <></>
+                            )
+                        }
+                        {
                             dataset['cn_type'] !== 'Gene Integer' && dataset['cn_type'] !== 'Gene Log' ? (
                                 <CNAPloidyStairstepWrapper
                                     dataset={dataset}
@@ -118,11 +134,17 @@ const DatabaseDetailContent = ({ dataset }) => {
                         />
                         {
                             dataset.source === 'GDC Portal' ? (
-                                <CNAFocalCNAWrapper
-                                    dataset={dataset}
-                                    selectedWorkflow={selectedWorkflow}
-                                    binSize={binSize}
-                                />
+                                <>
+                                    <ConsensusFocalGeneVennWrapper
+                                        dataset={dataset}
+                                    />
+                                    <CNAFocalCNAWrapper
+                                        dataset={dataset}
+                                    />
+                                    <CNAPathwayEnrichmentPlotWrapper
+                                        dataset={dataset}
+                                    />
+                                </>
                             ) : (
                                 <></>
                             )

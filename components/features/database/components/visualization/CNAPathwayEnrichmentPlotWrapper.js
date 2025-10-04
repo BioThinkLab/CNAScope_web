@@ -1,30 +1,30 @@
-import { Box, Stack } from "@mui/system"
-import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
-import { useFocalCNAInfo } from "@/components/features/database/hooks/useFocalCNAInfo"
-import LoadingView from "@/components/common/status/LoadingView"
-import ErrorView from "@/components/common/status/ErrorView"
-import FocalCNAView from "@/components/features/visualization/components/FocalCNAPlot/FocalCNAView"
 import { useRef } from "react"
+import { Box, Stack } from "@mui/system"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
-import CNTypePrompt from "@/components/common/text/CNTypePrompt"
-import useFocalCNAOptions from "@/components/features/database/hooks/useFocalCNAOptions"
+import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
+import { usePathwayEnrichmentOptions } from "@/components/features/database/hooks/usePathwayEnrichmentOptions"
+import LoadingView from "@/components/common/status/LoadingView"
+import ErrorView from "@/components/common/status/ErrorView"
+import CNAPathwayEnrichmentView
+    from "@/components/features/visualization/components/CNAPathwayEnrichmentPlot/CNAPathwayEnrichmentView"
 
-const CNAFocalCNAContent = ({
+const CNAPathwayEnrichmentPlotContent = ({
     dataset,
-    vizRef,
+    vizRef
 }) => {
     const {
-        focalOptions,
-        isFocalOptionsLoading,
-        isFocalOptionsError
-    } = useFocalCNAOptions(dataset.name)
+        options,
+        isOptionsLoading,
+        isOptionsError
+    } = usePathwayEnrichmentOptions(dataset.name)
 
-    if (isFocalOptionsLoading) return <LoadingView height='920px'/>
+    if (isOptionsLoading) return <LoadingView height='920px'/>
 
-    if (isFocalOptionsError) return <ErrorView height='920px'/>
+    if (isOptionsError) return <ErrorView height='920px'/>
 
-    if (Object.keys(focalOptions).length === 0) {
+    if (Object.keys(options).length === 0) {
         return (
             <ErrorView height='920px'>
                 <Box sx={{
@@ -36,7 +36,7 @@ const CNAFocalCNAContent = ({
                     alignItems: 'center',
                 }}>
                     <Box sx={{ fontWeight: 500, fontSize: '28px', textAlign: 'center' }}>
-                        This dataset is not suitable for Focal CNA & Gene visualization.
+                        This dataset is not suitable for Pathway Enrichment Plot visualization.
                     </Box>
                 </Box>
             </ErrorView>
@@ -44,16 +44,15 @@ const CNAFocalCNAContent = ({
     }
 
     return (
-        <FocalCNAView
+        <CNAPathwayEnrichmentView
             datasetName={dataset.name}
-            focalOptions={focalOptions}
-            reference={dataset['reference']}
+            options={options}
             vizRef={vizRef}
         />
     )
 }
 
-const CNAFocalCNAWrapper = ({
+const CNAPathwayEnrichmentPlotWrapper = ({
     dataset
 }) => {
     const vizRef = useRef(null)
@@ -75,7 +74,7 @@ const CNAFocalCNAWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    Focal CNA & Gene(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    Focal/Consensus Term(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -89,7 +88,7 @@ const CNAFocalCNAWrapper = ({
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAFocalCNAContent
+                <CNAPathwayEnrichmentPlotContent
                     dataset={dataset}
                     vizRef={vizRef}
                 />
@@ -98,4 +97,4 @@ const CNAFocalCNAWrapper = ({
     )
 }
 
-export default CNAFocalCNAWrapper
+export default CNAPathwayEnrichmentPlotWrapper

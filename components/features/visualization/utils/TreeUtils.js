@@ -106,6 +106,48 @@ export const preprocessAndLayout = (
     }
 }
 
+export const layoutTree = (
+    root,
+    cluster,
+    hierarchicalClusteringTreeSetting,
+    heatMapSetting
+) => {
+    const { middles, leaves } = cutTree(root, cluster)
+    const fileIds = []
+    const leavesAssociateFileIds = {}
+
+    // Get current hierarchical clustering tree leaves associate file id list.
+    for (const leaf of leaves) {
+        const leafFileIds = leaf.leaves().map(l => l.data.name)
+        fileIds.push(...leafFileIds)
+        leavesAssociateFileIds[leaf.data.name] = leafFileIds
+    }
+
+    // Calculate axis length
+    const yMetaLength = heatMapSetting.mode === 'Fixed' ? heatMapSetting.rectHeight * fileIds.length : heatMapSetting.height
+
+    // Meta HeatMap y axis
+    const yMeta = d3.scaleBand()
+        .domain(fileIds)
+        .range([0, yMetaLength])
+
+    // Layout hierarchical clustering tree.
+    layoutCutTree(
+        root,
+        middles,
+        leaves,
+        leavesAssociateFileIds,
+        hierarchicalClusteringTreeSetting.width,
+        yMeta
+    )
+
+    return {
+        nodes: [...middles, ...leaves],
+        leaves: leaves,
+        yMeta: yMeta,
+    }
+}
+
 export const preprocessAndLayoutMeta = (
     root,
     cluster,

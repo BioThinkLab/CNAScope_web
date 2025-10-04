@@ -7,26 +7,6 @@ import {
     RenderButtonGroup
 } from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapSettingPanel"
 
-const CNTypeLabelMap = {
-    allele: 'Allele-Specific Copy Number Segment',
-    cns: 'Copy Number Segment',
-    mcns: 'Masked Copy Number Segments'
-}
-
-const buildCNTypeOptions = (focalOptions) => {
-    return Object.keys(focalOptions).map(key => ({
-        label: CNTypeLabelMap[key],
-        value: key
-    }))
-}
-
-const buildWorkflowOptions = (focalOptions ,type) => {
-    return focalOptions[type].map(workflow => ({
-        label: workflow,
-        value: workflow
-    }))
-}
-
 const chromosomeOptions = [
     { value: 'all', label: 'All' },
     { value: 'chr1', label: 'Chr1' },
@@ -54,49 +34,21 @@ const chromosomeOptions = [
 ]
 
 const DataSetting = ({
-    focalOptions,
-    renderDataSetting,
-    handleRenderDataSettingChange,
-    onRender,
-    onReset
+    chromosome,
+    handleChromosomeChange,
 }) => {
-    const CNTypeOptions = buildCNTypeOptions(focalOptions)
-    const workflowOptions = buildWorkflowOptions(focalOptions, renderDataSetting['type'])
 
     return (
-        <Stack spacing={3}>
-            <Stack spacing={1}>
-                <Box sx={{ fontWeight: 500 }}>Protocol Type:</Box>
-                <Select
-                    value={renderDataSetting.type}
-                    onChange={(value) => handleRenderDataSettingChange('type', value)}
-                    options={CNTypeOptions}
-                    style={{ width: '240px' }}
-                    size='large'
-                />
-                <Box sx={{ fontWeight: 500 }}>Workflow:</Box>
-                <Select
-                    value={renderDataSetting.workflow}
-                    onChange={(value) => handleRenderDataSettingChange('workflow', value)}
-                    options={workflowOptions}
-                    style={{ width: '240px' }}
-                    size='large'
-                />
-                <Box sx={{ fontWeight: 500 }}>Chromosome:</Box>
-                <Select
-                    value={renderDataSetting.chromosome}
-                    onChange={(value) => handleRenderDataSettingChange('chromosome', value)}
-                    options={chromosomeOptions}
-                    style={{ width: '240px' }}
-                    size='large'
-                />
-            </Stack>
-            <RenderButtonGroup
-                onRender={onRender}
-                resetRenderData={onReset}
+        <Stack spacing={1}>
+            <Box sx={{ fontWeight: 500 }}>Chromosome:</Box>
+            <Select
+                value={chromosome}
+                onChange={handleChromosomeChange}
+                options={chromosomeOptions}
+                style={{ width: '240px' }}
+                size='large'
             />
         </Stack>
-
     )
 }
 
@@ -122,11 +74,8 @@ const ChartSetting = ({ config, configKey, handleConfigChange }) => (
 const buildCollapseItems = (
     config,
     handleConfigChange,
-    focalOptions,
-    renderDataSetting,
-    handleRenderDataSettingChange,
-    onRender,
-    onReset
+    chromosome,
+    handleChromosomeChange,
 ) => [
     {
         key: 'data',
@@ -134,11 +83,8 @@ const buildCollapseItems = (
         extra: <PieChartOutlined/>,
         children: (
             <DataSetting
-                focalOptions={focalOptions}
-                renderDataSetting={renderDataSetting}
-                handleRenderDataSettingChange={handleRenderDataSettingChange}
-                onRender={onRender}
-                onReset={onReset}
+                chromosome={chromosome}
+                handleChromosomeChange={handleChromosomeChange}
             />
         )
     },
@@ -156,14 +102,11 @@ const buildCollapseItems = (
     }
 ]
 
-const FocalCNASettingPanel = ({
-    focalOptions,
-    renderDataSetting,
-    handleRenderDataSettingChange,
+const AnalysisFocalCNASettingPanel = ({
+    chromosome,
+    handleChromosomeChange,
     config,
-    handleConfigChange,
-    onRender,
-    onReset
+    handleConfigChange
 }) => {
     const [activeKey, setActiveKey] = useState(['data', 'chart'])
 
@@ -171,13 +114,10 @@ const FocalCNASettingPanel = ({
         return buildCollapseItems(
             config,
             handleConfigChange,
-            focalOptions,
-            renderDataSetting,
-            handleRenderDataSettingChange,
-            onRender,
-            onReset
+            chromosome,
+            handleChromosomeChange,
         )
-    }, [config, focalOptions, handleConfigChange, handleRenderDataSettingChange, onRender, onReset, renderDataSetting])
+    }, [chromosome, config, handleChromosomeChange, handleConfigChange])
 
     const handleCollapseChange = (props) => {
         setActiveKey(props)
@@ -215,4 +155,4 @@ const FocalCNASettingPanel = ({
     )
 }
 
-export default FocalCNASettingPanel
+export default AnalysisFocalCNASettingPanel

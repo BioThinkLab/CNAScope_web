@@ -13,6 +13,7 @@ import {
 } from "@/components/features/visualization/components/tooltipTemplate/EmbeddingMapTooltipTemplate"
 import { VerticalColorLegend } from "@/components/features/visualization/components/legend/ColorLegend"
 import { downloadSvg } from "@/components/features/visualization/utils/downloadUtils"
+import _ from 'lodash'
 
 const GeneEmbeddingMapPanel = forwardRef(({
     embeddingMethod,
@@ -20,7 +21,8 @@ const GeneEmbeddingMapPanel = forwardRef(({
     meta,
     gene,
     genes,
-    config
+    config,
+    isLog
 }, ref) => {
     const svgRef = useRef(null)
     const toolTipRef = useRef(null)
@@ -43,7 +45,7 @@ const GeneEmbeddingMapPanel = forwardRef(({
         yRange,
         CNARange,
         CNAValueScale
-    } = initGeneFigureConfig(920, config)
+    } = initGeneFigureConfig(920, config, isLog)
     const axisDomain = initAxisDomain(embeddingMethod, extents)
     const { x, y } = initAxis(axisDomain, xRange, yRange)
 
@@ -112,7 +114,10 @@ const GeneEmbeddingMapPanel = forwardRef(({
                                 fontWeight={500}
                                 fill="#B0B0B0"
                             >
-                                Color By: Gene ({gene})
+                                <tspan fontWeight="bold" fill="#000000" opacity={0.6}>Color By: </tspan>
+                                <tspan>Gene ({gene.value})&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tspan>
+                                <tspan fontWeight="bold" fill="#000000" opacity={0.6}>Variance: </tspan>
+                                <tspan>{_.round(gene.variance, 3)}</tspan>
                             </text>
                         </g>
                         <g ref={xAxisRef} transform={`translate(${xOffsetScatterPlot}, ${yOffsetXAxis})`}>

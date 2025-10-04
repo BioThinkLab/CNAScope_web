@@ -49,7 +49,7 @@ export const initFigureConfig = (height, cluster, config) => {
     }
 }
 
-export const initGeneFigureConfig = (height, config) => {
+export const initGeneFigureConfig = (height, config, isLog) => {
     const svgHeight = height - SCROLLBAR_HEIGHT
     const innerHeight = svgHeight - config.chart.margin * 2
     const yTitleHeight = config.title.marginTop + config.title.marginBottom + Math.ceil(config.title.fontSize * 1.31)
@@ -70,7 +70,7 @@ export const initGeneFigureConfig = (height, config) => {
     const xRange = [0, figureSize]
     const yRange = [figureSize, 0]
 
-    const CNARange = [0, 2, 10]
+    const CNARange = isLog ? [-1, 0, 1] : [0, 2, 10]
     const CNAValueScale = d3.scaleSqrt(CNARange, ["#add8e6", "#e0e0e0", "#6A0220"])
 
     return {
@@ -237,7 +237,9 @@ export const processMeta = (meta) => {
         if (extents[f].min === Infinity) extents[f] = { min: null, max: null }
     }
 
-    return { parsedMeta: rows, embeddingMethods: supportedMethods, extents }
+    const filteredMethods = supportedMethods.filter(method => method.value !== 'n_spatial')
+
+    return { parsedMeta: rows, embeddingMethods: filteredMethods, extents }
 }
 
 export const clusterMeta = (meta, newick, cluster) => {
@@ -260,4 +262,35 @@ export const clusterMeta = (meta, newick, cluster) => {
         const cluster = idToCluster.get(row.id) || null  // 如果没有找到，则设为null
         return { ...row, cluster }
     })
+}
+
+export const processTopCNVariances = (topCNVariances) => {
+    const binOptions = []
+    const geneOptions = []
+    const termOptions = []
+
+    for (const item of topCNVariances) {
+        if (item['Type'] === 'Bin') {
+            binOptions.push({
+                value: item['id'],
+                variance: item['Variance']
+            })
+        } else if (item['Type'] === 'Gene') {
+            geneOptions.push({
+                value: item['id'],
+                variance: item['Variance']
+            })
+        } else if (item['Type'] === 'Term') {
+            termOptions.push({
+                value: item['id'],
+                variance: item['Variance']
+            })
+        }
+    }
+
+    return {
+        binOptions,
+        geneOptions,
+        termOptions
+    }
 }

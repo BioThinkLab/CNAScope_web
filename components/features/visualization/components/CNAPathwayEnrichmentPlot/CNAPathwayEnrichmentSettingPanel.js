@@ -10,8 +10,20 @@ import {
 const CNTypeLabelMap = {
     allele: 'Allele-Specific Copy Number Segment',
     cns: 'Copy Number Segment',
-    mcns: 'Masked Copy Number Segments'
+    mcns: 'Masked Copy Number Segments',
+    consensus: 'Consensus'
 }
+
+const alterationTypeOptions = [
+    {
+        label: 'AMP',
+        value: 'AMP'
+    },
+    {
+        label: 'DEL',
+        value: 'DEL'
+    }
+]
 
 const buildCNTypeOptions = (focalOptions) => {
     return Object.keys(focalOptions).map(key => ({
@@ -27,41 +39,15 @@ const buildWorkflowOptions = (focalOptions ,type) => {
     }))
 }
 
-const chromosomeOptions = [
-    { value: 'all', label: 'All' },
-    { value: 'chr1', label: 'Chr1' },
-    { value: 'chr2', label: 'Chr2' },
-    { value: 'chr3', label: 'Chr3' },
-    { value: 'chr4', label: 'Chr4' },
-    { value: 'chr5', label: 'Chr5' },
-    { value: 'chr6', label: 'Chr6' },
-    { value: 'chr7', label: 'Chr7' },
-    { value: 'chr8', label: 'Chr8' },
-    { value: 'chr9', label: 'Chr9' },
-    { value: 'chr10', label: 'Chr10' },
-    { value: 'chr11', label: 'Chr11' },
-    { value: 'chr12', label: 'Chr12' },
-    { value: 'chr13', label: 'Chr13' },
-    { value: 'chr14', label: 'Chr14' },
-    { value: 'chr15', label: 'Chr15' },
-    { value: 'chr16', label: 'Chr16' },
-    { value: 'chr17', label: 'Chr17' },
-    { value: 'chr18', label: 'Chr18' },
-    { value: 'chr19', label: 'Chr19' },
-    { value: 'chr20', label: 'Chr20' },
-    { value: 'chr21', label: 'Chr21' },
-    { value: 'chr22', label: 'Chr22' },
-]
-
 const DataSetting = ({
-    focalOptions,
+    options,
     renderDataSetting,
     handleRenderDataSettingChange,
     onRender,
     onReset
 }) => {
-    const CNTypeOptions = buildCNTypeOptions(focalOptions)
-    const workflowOptions = buildWorkflowOptions(focalOptions, renderDataSetting['type'])
+    const CNTypeOptions = buildCNTypeOptions(options)
+    const workflowOptions = buildWorkflowOptions(options, renderDataSetting['type'])
 
     return (
         <Stack spacing={3}>
@@ -82,11 +68,11 @@ const DataSetting = ({
                     style={{ width: '240px' }}
                     size='large'
                 />
-                <Box sx={{ fontWeight: 500 }}>Chromosome:</Box>
+                <Box sx={{ fontWeight: 500 }}>Alteration Type:</Box>
                 <Select
-                    value={renderDataSetting.chromosome}
-                    onChange={(value) => handleRenderDataSettingChange('chromosome', value)}
-                    options={chromosomeOptions}
+                    value={renderDataSetting.alterationType}
+                    onChange={(value) => handleRenderDataSettingChange('alterationType', value)}
+                    options={alterationTypeOptions}
                     style={{ width: '240px' }}
                     size='large'
                 />
@@ -96,35 +82,48 @@ const DataSetting = ({
                 resetRenderData={onReset}
             />
         </Stack>
-
     )
 }
 
 const ChartSetting = ({ config, configKey, handleConfigChange }) => (
     <Stack spacing={2}>
         <SettingNumberInput
-            title='Margin Horizontal:'
+            title='Margin Ledt:'
             config={config}
             configKey={configKey}
-            configSubKey='marginX'
+            configSubKey='marginLeft'
             handleConfigChange={handleConfigChange}
         />
         <SettingNumberInput
-            title='Margin Vertical:'
+            title='Margin Right:'
             config={config}
             configKey={configKey}
-            configSubKey='marginY'
+            configSubKey='marginRight'
+            handleConfigChange={handleConfigChange}
+        />
+        <SettingNumberInput
+            title='Margin Top:'
+            config={config}
+            configKey={configKey}
+            configSubKey='marginTop'
+            handleConfigChange={handleConfigChange}
+        />
+        <SettingNumberInput
+            title='Margin Bottom:'
+            config={config}
+            configKey={configKey}
+            configSubKey='marginBottom'
             handleConfigChange={handleConfigChange}
         />
     </Stack>
 )
 
 const buildCollapseItems = (
-    config,
-    handleConfigChange,
-    focalOptions,
+    options,
     renderDataSetting,
     handleRenderDataSettingChange,
+    config,
+    handleConfigChange,
     onRender,
     onReset
 ) => [
@@ -134,7 +133,7 @@ const buildCollapseItems = (
         extra: <PieChartOutlined/>,
         children: (
             <DataSetting
-                focalOptions={focalOptions}
+                options={options}
                 renderDataSetting={renderDataSetting}
                 handleRenderDataSettingChange={handleRenderDataSettingChange}
                 onRender={onRender}
@@ -156,8 +155,8 @@ const buildCollapseItems = (
     }
 ]
 
-const FocalCNASettingPanel = ({
-    focalOptions,
+const CNAPathwayEnrichmentSettingPanel = ({
+    options,
     renderDataSetting,
     handleRenderDataSettingChange,
     config,
@@ -167,17 +166,18 @@ const FocalCNASettingPanel = ({
 }) => {
     const [activeKey, setActiveKey] = useState(['data', 'chart'])
 
+
     const items = useMemo(() => {
         return buildCollapseItems(
-            config,
-            handleConfigChange,
-            focalOptions,
+            options,
             renderDataSetting,
             handleRenderDataSettingChange,
+            config,
+            handleConfigChange,
             onRender,
             onReset
         )
-    }, [config, focalOptions, handleConfigChange, handleRenderDataSettingChange, onRender, onReset, renderDataSetting])
+    }, [config, handleConfigChange, handleRenderDataSettingChange, onRender, onReset, options, renderDataSetting])
 
     const handleCollapseChange = (props) => {
         setActiveKey(props)
@@ -215,4 +215,4 @@ const FocalCNASettingPanel = ({
     )
 }
 
-export default FocalCNASettingPanel
+export default CNAPathwayEnrichmentSettingPanel

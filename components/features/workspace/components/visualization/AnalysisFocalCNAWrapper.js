@@ -3,13 +3,12 @@ import { Box, Stack } from "@mui/system"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
 import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
-import { useFocalCNAInfo } from "@/components/features/database/hooks/useFocalCNAInfo"
 import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
-import FocalCNAView from "@/components/features/visualization/components/FocalCNAPlot/FocalCNAView"
 import { useAnalysisFocalCNAInfo } from "@/components/features/workspace/hooks/useAnalysisFocalCNAInfo"
 import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 import { transformTaskCNType } from "@/components/features/workspace/utils/visualization/CNTypeUtils"
+import AnalysisFocalCNAView from "@/components/features/visualization/components/FocalCNAPlot/AnalysisFocalCNAView"
 
 const AnalysisFocalCNAContent = ({ task, vizRef }) => {
     const {
@@ -23,7 +22,7 @@ const AnalysisFocalCNAContent = ({ task, vizRef }) => {
     if (isFocalInfoError) return <ErrorView height='920px'/>
 
     return (
-        <FocalCNAView
+        <AnalysisFocalCNAView
             focalInfo={focalInfo}
             reference={task.data.ref}
             vizRef={vizRef}

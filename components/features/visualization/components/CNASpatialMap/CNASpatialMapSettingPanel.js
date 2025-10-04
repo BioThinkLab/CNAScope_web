@@ -1,165 +1,24 @@
 import { useEffect, useMemo, useState } from "react"
-import { PieChartOutlined, SettingOutlined } from "@ant-design/icons"
 import { Box, Stack } from "@mui/system"
-import { AutoComplete, Button, Collapse, ConfigProvider, Select } from "antd"
+import { Button, Collapse, ConfigProvider, Select } from "antd"
+import { PieChartOutlined, SettingOutlined } from "@ant-design/icons"
 import { SettingNumberInput } from "@/components/features/visualization/components/input/SettingInput"
-
-export const colorByOptions = [
-    {
-        value: 'cluster',
-        label: 'Cluster'
-    },
-    {
-        value: 'bin',
-        label: 'Bin'
-    },
-    {
-        value: 'gene',
-        label: 'Gene'
-    },
-    {
-        value: 'term',
-        label: 'Term'
-    }
-]
-
-export const clusterOptions = Array.from({ length: 9 }).map((_, i) => ({
-    value: i + 2,
-    label: i + 2
-}))
-
-export const ClusterSelector = ({
-    colorOptions,
-    handleColorOptionsChange
-}) => (
-    <>
-        <Box sx={{ fontWeight: 500 }}>Cluster:</Box>
-        <Select
-            value={colorOptions.cluster}
-            onChange={(value) => handleColorOptionsChange('cluster', value)}
-            options={clusterOptions}
-            style={{ width: '240px' }}
-            size='large'
-        />
-    </>
-)
-
-export const BinSelector = ({
-    bins,
-    binValue,
-    onBinValueChange,
-    handleColorOptionsChange
-}) => (
-    <>
-        <Box sx={{ fontWeight: 500 }}>Bin:</Box>
-        <AutoComplete
-            value={binValue}
-            onSelect={(_, option) => handleColorOptionsChange('bin', option)}
-            onChange={onBinValueChange}
-            options={bins}
-            filterOption={
-                (inputValue, option) =>
-                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-            }
-            style={{ width: '240px' }}
-        />
-    </>
-)
-
-export const GeneSelector = ({
-    genes,
-    geneValue,
-    onGeneValueChange,
-    handleColorOptionsChange
-}) => (
-    <>
-        <Box sx={{ fontWeight: 500 }}>Selected Gene:</Box>
-        <AutoComplete
-            value={geneValue}
-            onSelect={(_, option) => handleColorOptionsChange('gene', option)}
-            onChange={onGeneValueChange}
-            options={genes}
-            filterOption={
-                (inputValue, option) =>
-                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-            }
-            style={{ width: '240px' }}
-        />
-    </>
-)
-
-export const TermSelector = ({
-    terms,
-    termValue,
-    onTermValueChange,
-    handleColorOptionsChange
-}) => (
-    <>
-        <Box sx={{ fontWeight: 500 }}>Selected Term:</Box>
-        <AutoComplete
-            value={termValue}
-            onSelect={(_, option) => handleColorOptionsChange('term', option)}
-            onChange={onTermValueChange}
-            options={terms}
-            filterOption={
-                (inputValue, option) =>
-                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-            }
-            popupMatchSelectWidth={750}
-            style={{ width: '240px' }}
-        />
-    </>
-)
-
-export const RenderButtonGroup = ({
-    onRender,
-    resetRenderData,
-}) => (
-    <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
-        <Button
-            style={{
-                width: '110px',
-                backgroundColor: '#41B3A2',
-                color: '#FFFFFF',
-                borderColor: '#41B3A2'
-            }}
-            onClick={onRender}
-        >
-            Render
-        </Button>
-        <Button
-            style={{
-                width: '110px',
-                color: '#41B3A2',
-                borderColor: '#41B3A2'
-            }}
-            onClick={resetRenderData}
-        >
-            Reset
-        </Button>
-    </Stack>
-)
+import {
+    ClusterSelector, colorByOptions,
+    GeneSelector, RenderButtonGroup, TermSelector
+} from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapSettingPanel"
 
 const DataSetting = ({
-    bins,
     genes,
     terms,
-    embeddingMethod,
-    handleEmbeddingMethodChange,
     colorOptions,
     handleColorOptionsChange,
     onRender,
     resetRenderData,
-    metaFieldOptions,
     showModal
 }) => {
-    const [binValue, setBinValue] = useState('')
     const [geneValue, setGeneValue] = useState('')
     const [termValue, setTermValue] = useState('')
-
-    const onBinValueChange = data => {
-        setBinValue(data)
-    }
 
     const onGeneValueChange = data => {
         setGeneValue(data)
@@ -168,12 +27,6 @@ const DataSetting = ({
     const onTermValueChange = data => {
         setTermValue(data)
     }
-
-    useEffect(() => {
-        if (colorOptions.bin) {
-            setBinValue(colorOptions.bin)
-        }
-    }, [colorOptions.bin])
 
     useEffect(() => {
         if (colorOptions.gene) {
@@ -191,14 +44,6 @@ const DataSetting = ({
         'cluster': (
             <ClusterSelector
                 colorOptions={colorOptions}
-                handleColorOptionsChange={handleColorOptionsChange}
-            />
-        ),
-        'bin': (
-            <BinSelector
-                bins={bins}
-                binValue={binValue}
-                onBinValueChange={onBinValueChange}
                 handleColorOptionsChange={handleColorOptionsChange}
             />
         ),
@@ -223,14 +68,6 @@ const DataSetting = ({
     return (
         <Stack spacing={3}>
             <Stack spacing={1}>
-                <Box sx={{ fontWeight: 500 }}>Embedding Method:</Box>
-                <Select
-                    value={embeddingMethod}
-                    onChange={handleEmbeddingMethodChange}
-                    options={metaFieldOptions}
-                    style={{ width: '240px' }}
-                    size='large'
-                />
                 <Box sx={{ fontWeight: 500 }}>Color By:</Box>
                 <Select
                     value={colorOptions.colorBy}
@@ -324,59 +161,15 @@ const TitleSetting = ({ config, configKey, handleConfigChange }) => (
     </Stack>
 )
 
-const LegendSetting = ({ config, configKey, handleConfigChange }) => (
-    <Stack spacing={2}>
-        <SettingNumberInput
-            title='Width:'
-            config={config}
-            configKey={configKey}
-            configSubKey='width'
-            handleConfigChange={handleConfigChange}
-        />
-        <SettingNumberInput
-            title='Height:'
-            config={config}
-            configKey={configKey}
-            configSubKey='height'
-            handleConfigChange={handleConfigChange}
-        />
-        <SettingNumberInput
-            title='Legend Vertical Gap:'
-            config={config}
-            configKey={configKey}
-            configSubKey='itemVerticalGap'
-            handleConfigChange={handleConfigChange}
-        />
-        <SettingNumberInput
-            title='Item Horizontal Gap:'
-            config={config}
-            configKey={configKey}
-            configSubKey='itemHorizontalGap'
-            handleConfigChange={handleConfigChange}
-        />
-        <SettingNumberInput
-            title='Margin Left:'
-            config={config}
-            configKey={configKey}
-            configSubKey='marginLeft'
-            handleConfigChange={handleConfigChange}
-        />
-    </Stack>
-)
-
 const buildCollapseItems = (
-    bins,
     genes,
     terms,
     config,
     handleConfigChange,
-    embeddingMethod,
-    handleEmbeddingMethodChange,
     colorOptions,
     handleColorOptionsChange,
     onRender,
     resetRenderData,
-    metaFieldOptions,
     showModal
 ) => [
     {
@@ -385,16 +178,12 @@ const buildCollapseItems = (
         extra: <PieChartOutlined/>,
         children: (
             <DataSetting
-                bins={bins}
                 genes={genes}
                 terms={terms}
-                embeddingMethod={embeddingMethod}
-                handleEmbeddingMethodChange={handleEmbeddingMethodChange}
                 colorOptions={colorOptions}
                 handleColorOptionsChange={handleColorOptionsChange}
                 onRender={onRender}
                 resetRenderData={resetRenderData}
-                metaFieldOptions={metaFieldOptions}
                 showModal={showModal}
             />
         )
@@ -435,54 +224,34 @@ const buildCollapseItems = (
             />
         )
     },
-    // {
-    //     key: 'legend',
-    //     label: 'Legend Setting',
-    //     extra: <SettingOutlined/>,
-    //     children: (
-    //         <LegendSetting
-    //             config={config}
-    //             configKey='legend'
-    //             handleConfigChange={handleConfigChange}
-    //         />
-    //     )
-    // },
 ]
 
-const CNAEmbeddingMapSettingPanel = ({
-    bins,
+const CNASpatialMapSettingPanel = ({
     genes,
     terms,
-    embeddingMethod,
-    handleEmbeddingMethodChange,
     colorOptions,
     handleColorOptionsChange,
     config,
     handleConfigChange,
     onRender,
     resetRenderData,
-    metaFieldOptions,
     showModal
 }) => {
     const [activeKey, setActiveKey] = useState(['data', 'chart'])
 
     const items = useMemo(() => {
         return buildCollapseItems(
-            bins,
             genes,
             terms,
             config,
             handleConfigChange,
-            embeddingMethod,
-            handleEmbeddingMethodChange,
             colorOptions,
             handleColorOptionsChange,
             onRender,
             resetRenderData,
-            metaFieldOptions,
             showModal
         )
-    }, [bins, genes, terms, config, handleConfigChange, embeddingMethod, handleEmbeddingMethodChange, colorOptions, handleColorOptionsChange, onRender, resetRenderData, metaFieldOptions, showModal])
+    }, [genes, terms, config, handleConfigChange, colorOptions, handleColorOptionsChange, onRender, resetRenderData, showModal])
 
     const handleCollapseChange = (props) => {
         setActiveKey(props)
@@ -520,4 +289,4 @@ const CNAEmbeddingMapSettingPanel = ({
     )
 }
 
-export default CNAEmbeddingMapSettingPanel
+export default CNASpatialMapSettingPanel

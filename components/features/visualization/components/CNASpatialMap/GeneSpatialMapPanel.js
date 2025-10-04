@@ -5,22 +5,20 @@ import {
     initGeneFigureConfig
 } from "@/components/features/visualization/utils/embeddingMapUtils"
 import * as d3 from "d3"
+import { downloadSvg } from "@/components/features/visualization/utils/downloadUtils"
+import { Stack } from "@mui/system"
+import { VerticalColorLegend } from "@/components/features/visualization/components/legend/ColorLegend"
 import { createPortal } from "react-dom"
 import CustomTooltip from "@/components/features/visualization/components/tooltip/ToolTip"
-import { Stack } from "@mui/system"
 import {
     GeneEmbeddingScatterPlotTooltipTemplate
 } from "@/components/features/visualization/components/tooltipTemplate/EmbeddingMapTooltipTemplate"
-import { downloadSvg } from "@/components/features/visualization/utils/downloadUtils"
-import { VerticalColorLegend } from "@/components/features/visualization/components/legend/ColorLegend"
-import _ from "lodash"
 
-const TermEmbeddingMapPanel = forwardRef(({
-    embeddingMethod,
+const GeneSpatialMapPanel = forwardRef(({
     extents,
     meta,
-    term,
-    terms,
+    gene,
+    genes,
     config,
     isLog
 }, ref) => {
@@ -29,6 +27,10 @@ const TermEmbeddingMapPanel = forwardRef(({
     const xAxisRef = useRef(null)
     const yAxisRef = useRef(null)
     const dotsRef = useRef(null)
+
+    const embeddingMethod = 'n_spatial'
+
+    console.log(isLog)
 
     const {
         svgWidth,
@@ -70,18 +72,18 @@ const TermEmbeddingMapPanel = forwardRef(({
             .attr('cx', d => x(d[`${embeddingMethod}1`]))
             .attr('cy', d => y(d[`${embeddingMethod}2`]))
             .attr('r', config.scatter.radius)
-            .attr('fill', d => CNAValueScale(terms[d.id]))
+            .attr('fill', d => CNAValueScale(genes[d.id]))
             .on('pointerenter pointermove',
                 (event, d) => handleDotPointerEnter(
                     event, d.id,
                     [d[`${embeddingMethod}1`], d[`${embeddingMethod}2`]],
-                    terms[d.id],
+                    genes[d.id],
                     toolTipRef
                 )
             )
             .on('pointerleave', () => handleDotPointerLeft(toolTipRef))
 
-    }, [CNAValueScale, config.scatter.radius, embeddingMethod, terms, meta, x, y])
+    }, [CNAValueScale, config.scatter.radius, embeddingMethod, genes, meta, x, y])
 
     useImperativeHandle(ref, () => ({
         downloadSvg: () => {
@@ -104,7 +106,7 @@ const TermEmbeddingMapPanel = forwardRef(({
                                 textAnchor='middle'
                                 fontWeight={500}
                             >
-                                {embeddingMethod.slice(2)} Embedding Map
+                                Spatial Map
                             </text>
                             <text
                                 fontSize={config.title.subFontSize}
@@ -114,10 +116,7 @@ const TermEmbeddingMapPanel = forwardRef(({
                                 fontWeight={500}
                                 fill="#B0B0B0"
                             >
-                                <tspan fontWeight="bold" fill="#000000" opacity={0.6}>Color By: </tspan>
-                                <tspan>Term ({term.value})&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tspan>
-                                <tspan fontWeight="bold" fill="#000000" opacity={0.6}>Variance: </tspan>
-                                <tspan>{_.round(term.variance, 3)}</tspan>
+                                Color By: Gene ({gene})
                             </text>
                         </g>
                         <g ref={xAxisRef} transform={`translate(${xOffsetScatterPlot}, ${yOffsetXAxis})`}>
@@ -171,6 +170,6 @@ const handleDotPointerLeft = (tooltipRef) => {
     tooltipRef.current.hideTooltip()
 }
 
-TermEmbeddingMapPanel.displayName = 'TermEmbeddingMapPanel'
+GeneSpatialMapPanel.displayName = 'GeneSpatialMapPanel'
 
-export default TermEmbeddingMapPanel
+export default GeneSpatialMapPanel

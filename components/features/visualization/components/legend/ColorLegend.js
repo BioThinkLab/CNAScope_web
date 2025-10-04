@@ -196,7 +196,7 @@ export const VerticalColorLegend = (
         const context = canvas.getContext("2d");
         for (let i = 0; i < n; ++i) {
             context.fillStyle = color(i / (n - 1));
-            context.fillRect(0, i, 1, 1);
+            context.fillRect(0, n - 1 - i, 1, 1);
         }
         return canvas;
     }
@@ -218,7 +218,7 @@ export const VerticalColorLegend = (
         if (color.interpolate) {
             const n = Math.min(color.domain().length, color.range().length);
 
-            x = color.copy().rangeRound(d3.quantize(d3.interpolate(marginTop, height - marginBottom), n));
+            x = color.copy().rangeRound(d3.quantize(d3.interpolate(height - marginBottom, marginTop), n));
 
             colorLegend.append("image")
                 .attr("x", marginLeft)
@@ -315,12 +315,13 @@ export const VerticalColorLegend = (
                 .ticks(ticks, typeof tickFormat === "string" ? tickFormat : undefined)
                 .tickFormat(typeof tickFormat === "function" ? tickFormat : undefined)
                 .tickSize(tickSize)
-                .tickValues(tickValues))
+                .tickValues(tickValues)
+            )
             .call(tickAdjust)
             .call(g => g.select(".domain").remove())
             .call(g => g.append("text")
-                .attr("x", -(width - marginLeft - marginRight) / 2)
-                .attr("y", marginTop - 10)
+                .attr("x", -width / 2)
+                .attr("y", marginTop - 15)
                 .attr("fill", "currentColor")
                 .attr("text-anchor", "start")
                 .attr("font-weight", "bold")

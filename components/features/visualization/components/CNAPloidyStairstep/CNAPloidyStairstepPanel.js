@@ -5,8 +5,6 @@ import {
     parseCNAMatrixToNodePairs,
     sortChromosomes
 } from "@/components/features/visualization/utils/ploidyStairstepUtils"
-import { Box, Stack } from "@mui/system"
-import SplitterControlButton from "@/components/common/button/SplitterControlButton"
 import { useContainerSize } from "@/components/common/container/ResponsiveVisualizationContainer"
 import { createPortal } from "react-dom"
 import CustomTooltip from "@/components/features/visualization/components/tooltip/ToolTip"

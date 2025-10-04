@@ -1,11 +1,14 @@
 import { useState } from "react"
 import SplitterLayout from "@/components/layouts/SplitterLayout"
-import FocalCNASettingPanel from "@/components/features/visualization/components/FocalCNAPlot/FocalCNASettingPanel"
-import FocalCNAPlotPanel from "@/components/features/visualization/components/FocalCNAPlot/FocalCNAPlotPanel"
+import CNAPathwayEnrichmentSettingPanel
+    from "@/components/features/visualization/components/CNAPathwayEnrichmentPlot/CNAPathwayEnrichmentSettingPanel"
 import api from "@/lib/api/axios"
-import { getFocalCNAInfoUrl } from "@/lib/api/dataset"
+import { getPathwayEnrichmentPlotUrl } from "@/lib/api/dataset"
 import LoadingView from "@/components/common/status/LoadingView"
 import { Box } from "@mui/system"
+import SplitterControlButton from "@/components/common/button/SplitterControlButton"
+import CNAPathwayEnrichmentPanel
+    from "@/components/features/visualization/components/CNAPathwayEnrichmentPlot/CNAPathwayEnrichmentPanel"
 
 const initRenderDataSetting = (focalOptions) => {
     const key = Object.keys(focalOptions)[0]
@@ -13,56 +16,33 @@ const initRenderDataSetting = (focalOptions) => {
     return {
         type: key,
         workflow: focalOptions[key][0],
-        chromosome: 'all'
+        alterationType: 'AMP'
     }
 }
 
-const FocalCNAView = ({
+const CNAPathwayEnrichmentView = ({
     datasetName,
-    focalInfo,
-    focalOptions,
-    reference,
+    options,
     vizRef
 }) => {
-    const [renderDataSetting, setRenderDataSetting] = useState(initRenderDataSetting(focalOptions))
+    const [renderDataSetting, setRenderDataSetting] = useState(initRenderDataSetting(options))
     const [renderData, setRenderData] = useState(null)
     const [processing, setProcessing] = useState(false)
     const [isShowLeft, setIsShowLeft] = useState(true)
     const [config, setConfig] = useState({
-        chart: {
-            marginX: 30,
-            marginY: 20
-        },
-        areaPlot: {
-            width: 500
-        },
-        title: {
-            marginTop: 5,
-            marginBottom: 5,
-            fontSize: 24
-        },
-        legend: {
-            width: 90,
-            height: 20,
-            itemGap: 5,
-            marginTop: 10,
-            marginBottom: 0,
-            symbolWidth: 30,
-            fontSize: 14
-        },
-        label: {
-            fontSize: 10,
-            height: 70
-        },
-        chromosomeAxis: {
-            height: 20
-        },
-    })
+            chart: {
+                marginLeft: 30,
+                marginRight: 150,
+                marginTop: 100,
+                marginBottom: 100,
+            }
+        }
+    )
 
     const handleRenderDataSettingChange = (key, value) => {
         setRenderDataSetting(prev => {
             if (key === 'type') {
-                const newWorkflow = focalOptions[value][0]
+                const newWorkflow = options[value][0]
                 return {
                     ...prev,
                     [key]: value,
@@ -95,13 +75,13 @@ const FocalCNAView = ({
         setProcessing(true)
 
         try {
-            api.get(getFocalCNAInfoUrl(datasetName, renderDataSetting.type, renderDataSetting.workflow))
+            api.get(getPathwayEnrichmentPlotUrl(datasetName, renderDataSetting.type, renderDataSetting.workflow))
                 .then(res => {
-                    setRenderData({
-                        amp: res.data['amp'],
-                        del: res.data['del'],
-                        scores: res.data['scores']
-                    })
+                    setRenderData(
+                        res.data.filter(
+                            item => item['CNA_Type'] === renderDataSetting.alterationType
+                        )
+                    )
                 })
         } catch (err) {
             console.log(err)
@@ -119,8 +99,8 @@ const FocalCNAView = ({
             isShowLeft={isShowLeft}
             leftPanelWidth={300}
             leftPanel={
-                <FocalCNASettingPanel
-                    focalOptions={focalOptions}
+                <CNAPathwayEnrichmentSettingPanel
+                    options={options}
                     renderDataSetting={renderDataSetting}
                     handleRenderDataSettingChange={handleRenderDataSettingChange}
                     config={config}
@@ -130,32 +110,36 @@ const FocalCNAView = ({
                 />
             }
             rightPanel={
-                <FocalCNAPlotPanelWrapper
+                <CNAPathwayEnrichmentWrapper
                     processing={processing}
-                    chromosome={renderDataSetting.chromosome}
                     renderData={renderData}
                     config={config}
-                    reference={reference}
                     isShowLeft={isShowLeft}
                     handleIsShowLeftChange={handleIsShowLeftChange}
                     vizRef={vizRef}
                 />
             }
         />
+
     )
 }
 
-const FocalCNAPlotPanelWrapper = ({
+const CNAPathwayEnrichmentWrapper = ({
     processing,
-    chromosome,
     renderData,
     config,
-    reference,
     isShowLeft,
     handleIsShowLeftChange,
     vizRef
 }) => (
-    <>
+    <Box sx={{ position: 'relative', height: '920px' }}>
+        <Box sx={{ position: 'absolute', top: '14px', left: '4px' }}>
+            <SplitterControlButton
+                isShowLeft={isShowLeft}
+                handleIsShowLeftChange={handleIsShowLeftChange}
+                title='Setting Options'
+            />
+        </Box>
         {
             processing ? (
                 <LoadingView
@@ -172,22 +156,33 @@ const FocalCNAPlotPanelWrapper = ({
                     alignItems: 'center',
                 }}>
                     <Box sx={{ fontWeight: 500, fontSize: '28px', textAlign: 'center' }}>
-                        Use the Data Setting panel to configure the CNA Type and Workflow. Click Render to generate the visualization based on your selections.
+                        Use the Data Setting panel to configure the CNA Type and Workflow. Click Render to generate the
+                        visualization based on your selections.
+                    </Box>
+                </Box>
+            ) : renderData.length === 0 ? (
+                <Box sx={{
+                    width: '100%',
+                    height: '100%',
+                    padding: '0px 60px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <Box sx={{ fontWeight: 500, fontSize: '28px', textAlign: 'center' }}>
+                        No significant terms are enriched under current data setting, please change the Protocol-Worflow
+                        Type, Workflow, and Alterantion Type
                     </Box>
                 </Box>
             ) : (
-                <FocalCNAPlotPanel
-                    chromosome={chromosome}
-                    focalInfo={renderData}
+                <CNAPathwayEnrichmentPanel
+                    renderData={renderData}
                     config={config}
-                    reference={reference}
-                    isShowLeft={isShowLeft}
-                    handleIsShowLeftChange={handleIsShowLeftChange}
                     ref={vizRef}
                 />
             )
         }
-    </>
+    </Box>
 )
 
-export default FocalCNAView
+export default CNAPathwayEnrichmentView

@@ -8,11 +8,22 @@ import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import CNAEmbeddingMapView from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapView"
 import { useAnalysisCNANewick } from "@/components/features/workspace/hooks/useAnalysisCNANewick"
-import { processMeta } from "@/components/features/visualization/utils/embeddingMapUtils"
+import { processMeta, processTopCNVariances } from "@/components/features/visualization/utils/embeddingMapUtils"
 import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 import { transformTaskCNType } from "@/components/features/workspace/utils/visualization/CNTypeUtils"
+import api from "@/lib/api/axios"
+import {
+    getAnalysisCNAGeneMatrixUrl,
+    getAnalysisCNATermsMatrixUrl,
+    getAnalysisCNAVectorUrl
+} from "@/lib/api/analysis"
+import { useAnalysisTopCNVariance } from "@/components/features/workspace/hooks/useAnalysisTopCNVariance"
 
-const AnalysisEmbeddingMapContent = ({ task, vizRef }) => {
+const AnalysisEmbeddingMapContent = ({
+    task,
+    CNType,
+    vizRef
+}) => {
     const {
         meta,
         isMetaLoading,
@@ -25,15 +36,50 @@ const AnalysisEmbeddingMapContent = ({ task, vizRef }) => {
         isNewickError
     } = useAnalysisCNANewick(task.data.uuid)
 
+    const {
+        topCNVariances,
+        isTopCNVariancesLoading,
+        isTopCNVariancesError
+    } = useAnalysisTopCNVariance(task.data.uuid)
+
     const { parsedMeta, embeddingMethods, extents } = useMemo(() => {
         if (!meta) return { parsedMeta: [], embeddingMethods: [], extents: {} }
 
         return processMeta(meta)
     }, [meta])
 
-    if (isMetaLoading || isNewickLoading) return <LoadingView height='920px'/>
+    const { binOptions, geneOptions, termOptions } = useMemo(() => {
+        if (!topCNVariances) return { binOptions: [], geneOptions: [], termOptions: [] }
 
-    if (isMetaError || isNewickError) return <ErrorView height='920px'/>
+        return processTopCNVariances(topCNVariances)
+    }, [topCNVariances])
+
+    const isLog = CNType === 'Gene Log' || CNType === 'Bin Log'
+
+    const binVectorFetcher = (bin) => {
+        return api.post(getAnalysisCNAVectorUrl(), {
+            uuid: task.data.uuid,
+            bins: [bin]
+        })
+    }
+
+    const geneVectorFetcher = (gene) => {
+        return api.post(getAnalysisCNAGeneMatrixUrl(), {
+            uuid: task.data.uuid,
+            genes: [gene]
+        })
+    }
+
+    const termVectorFetcher = (term) => {
+        return api.post(getAnalysisCNATermsMatrixUrl(), {
+            uuid: task.data.uuid,
+            terms: [term]
+        })
+    }
+
+    if (isMetaLoading || isNewickLoading || isTopCNVariancesLoading) return <LoadingView height='920px'/>
+
+    if (isMetaError || isNewickError || isTopCNVariancesError) return <ErrorView height='920px'/>
 
     return (
         <CNAEmbeddingMapView
@@ -41,7 +87,14 @@ const AnalysisEmbeddingMapContent = ({ task, vizRef }) => {
             embeddingMethods={embeddingMethods}
             extents={extents}
             newick={newick}
+            bins={binOptions}
+            genes={geneOptions}
+            terms={termOptions}
             dataset={null}
+            binVectorFetcher={binVectorFetcher}
+            geneVectorFetcher={geneVectorFetcher}
+            termVectorFetcher={termVectorFetcher}
+            isLog={isLog}
             vizRef={vizRef}
         />
     )
@@ -88,7 +141,7 @@ const AnalysisEmbeddingMapWrapper = ({ task }) => {
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <AnalysisEmbeddingMapContent task={task} vizRef={vizRef}/>
+                <AnalysisEmbeddingMapContent task={task} CNType={CNType} vizRef={vizRef}/>
             </CNAVisualizationContainer>
         </Stack>
     )

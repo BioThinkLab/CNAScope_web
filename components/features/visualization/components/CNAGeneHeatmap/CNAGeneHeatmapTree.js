@@ -15,7 +15,8 @@ const CNAGeneHeatmapTree = ({
     goToTreeNode,
     settings,
     showTooltip,
-    hideTooltip
+    hideTooltip,
+    isShowNodeCurve=true
 }) => {
     const chartWrapperRef = useRef(null)
     const linksRef = useRef(null)
@@ -51,7 +52,7 @@ const CNAGeneHeatmapTree = ({
                 }
             })
             .on('mouseover', (event, d) => {
-                if (leaves.includes(d)) {
+                if (leaves.includes(d) && isShowNodeCurve) {
                     showHoverCurve(curvesRef, d, settings.width, settings.marginToHeatmap)
                 }
                 showTooltip(event, treeNodeTooltipTemplate(d.data.name, d.parent ? d.parent.data.name : 'NONE', d.value, d.data.distanceToRoot))
@@ -60,7 +61,7 @@ const CNAGeneHeatmapTree = ({
                 showTooltip(event, treeNodeTooltipTemplate(d.data.name, d.parent ? d.parent.data.name : 'NONE', d.value, d.data.distanceToRoot))
             })
             .on('mouseout', hideTooltip)
-    }, [nodes, goToTreeNode, settings.nodeRadius, hideTooltip, showTooltip, settings.width, leaves, settings.marginToHeatmap])
+    }, [nodes, goToTreeNode, settings.nodeRadius, hideTooltip, showTooltip, settings.width, leaves, settings.marginToHeatmap, isShowNodeCurve])
 
     return (
         <g ref={chartWrapperRef}>

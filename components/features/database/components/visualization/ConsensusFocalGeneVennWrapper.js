@@ -1,30 +1,35 @@
-import { Box, Stack } from "@mui/system"
-import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
-import { useFocalCNAInfo } from "@/components/features/database/hooks/useFocalCNAInfo"
-import LoadingView from "@/components/common/status/LoadingView"
-import ErrorView from "@/components/common/status/ErrorView"
-import FocalCNAView from "@/components/features/visualization/components/FocalCNAPlot/FocalCNAView"
 import { useRef } from "react"
+import { Box, Stack } from "@mui/system"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
-import CNTypePrompt from "@/components/common/text/CNTypePrompt"
-import useFocalCNAOptions from "@/components/features/database/hooks/useFocalCNAOptions"
+import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
+import { useConsensusFocalGene } from "@/components/features/database/hooks/useConsensusFocalGene"
+import LoadingView from "@/components/common/status/LoadingView"
+import ErrorView from "@/components/common/status/ErrorView"
+import ConsensusFocalGeneVennView
+    from "@/components/features/visualization/components/ConsensusFocalGeneVenn/ConsensusFocalGeneVennView"
+import { useConsensusGene } from "@/components/features/database/hooks/useConsensusGene"
 
-const CNAFocalCNAContent = ({
+const ConsensusFocalGeneVennContent = ({
     dataset,
-    vizRef,
+    vizRef
 }) => {
     const {
-        focalOptions,
-        isFocalOptionsLoading,
-        isFocalOptionsError
-    } = useFocalCNAOptions(dataset.name)
+        consensusFocalGene,
+        isConsensusFocalGeneLoading,
+        isConsensusFocalGeneError
+    } = useConsensusFocalGene(dataset.name)
 
-    if (isFocalOptionsLoading) return <LoadingView height='920px'/>
+    const {
+        consensusGene,
+        isConsensusGeneLoading,
+        isConsensusGeneError
+    } = useConsensusGene(dataset.name)
 
-    if (isFocalOptionsError) return <ErrorView height='920px'/>
+    if (isConsensusFocalGeneLoading || isConsensusGeneLoading) return <LoadingView height='920px'/>
 
-    if (Object.keys(focalOptions).length === 0) {
+    if (isConsensusFocalGeneError || isConsensusGeneError) {
         return (
             <ErrorView height='920px'>
                 <Box sx={{
@@ -36,7 +41,7 @@ const CNAFocalCNAContent = ({
                     alignItems: 'center',
                 }}>
                     <Box sx={{ fontWeight: 500, fontSize: '28px', textAlign: 'center' }}>
-                        This dataset is not suitable for Focal CNA & Gene visualization.
+                        This dataset is not suitable for Venn visualization of consensus focal genes.
                     </Box>
                 </Box>
             </ErrorView>
@@ -44,16 +49,16 @@ const CNAFocalCNAContent = ({
     }
 
     return (
-        <FocalCNAView
+        <ConsensusFocalGeneVennView
+            consensusFocalGene={consensusFocalGene}
+            consensusGene={consensusGene}
             datasetName={dataset.name}
-            focalOptions={focalOptions}
-            reference={dataset['reference']}
             vizRef={vizRef}
         />
     )
 }
 
-const CNAFocalCNAWrapper = ({
+const ConsensusFocalGeneVennWrapper = ({
     dataset
 }) => {
     const vizRef = useRef(null)
@@ -75,7 +80,7 @@ const CNAFocalCNAWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    Focal CNA & Gene(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    Consensus Gene(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -89,7 +94,7 @@ const CNAFocalCNAWrapper = ({
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAFocalCNAContent
+                <ConsensusFocalGeneVennContent
                     dataset={dataset}
                     vizRef={vizRef}
                 />
@@ -98,4 +103,4 @@ const CNAFocalCNAWrapper = ({
     )
 }
 
-export default CNAFocalCNAWrapper
+export default ConsensusFocalGeneVennWrapper

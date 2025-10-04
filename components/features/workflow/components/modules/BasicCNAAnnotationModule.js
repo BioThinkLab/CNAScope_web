@@ -78,7 +78,7 @@ const buildViewResultItems = (router) => [
     {
         key: '1',
         label: (
-            <Box onClick={() => router.push('/workspace/detail?taskId=5935135b-e52c-43aa-a949-0b526c000013')}>
+            <Box onClick={() => router.push('/workspace/detail?taskId=78a1e758-b153-4aa2-a031-246388aaf025')}>
                 TCGA-ACC
             </Box>
         )
@@ -86,7 +86,7 @@ const buildViewResultItems = (router) => [
     {
         key: '2',
         label: (
-            <Box onClick={() => router.push('/workspace/detail?taskId=d7b6653e-b819-44db-a9c7-78719b0587d6')}>
+            <Box onClick={() => router.push('/workspace/detail?taskId=46b4de38-409f-4585-b972-4bcfb6d83caa')}>
                 WCDT-MCRPC
             </Box>
         )
@@ -94,7 +94,7 @@ const buildViewResultItems = (router) => [
     {
         key: '3',
         label: (
-            <Box onClick={() => router.push('/workspace/detail?taskId=69420ed8-532f-4701-b081-1ea77a12fca5')}>
+            <Box onClick={() => router.push('/workspace/detail?taskId=f0c404b6-552a-4004-a2d4-96b2eeb4760f')}>
                 BRCA-T10
             </Box>
         )

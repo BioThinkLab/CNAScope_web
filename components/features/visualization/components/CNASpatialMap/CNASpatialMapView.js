@@ -1,35 +1,30 @@
 import { useMemo, useState } from "react"
-import SplitterLayout from "@/components/layouts/SplitterLayout"
-import CNAEmbeddingMapSettingPanel
-    from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapSettingPanel"
-import EmbeddingMapPanel from "@/components/features/visualization/components/CNAEmbeddingMap/EmbeddingMapPanel"
 import { clusterMeta } from "@/components/features/visualization/utils/embeddingMapUtils"
+import * as d3 from "d3"
+import SplitterLayout from "@/components/layouts/SplitterLayout"
+import ClusterModal from "@/components/features/visualization/components/modal/ClusterModal"
+import CNASpatialMapSettingPanel
+    from "@/components/features/visualization/components/CNASpatialMap/CNASpatialMapSettingPanel"
 import { Box } from "@mui/system"
 import SplitterControlButton from "@/components/common/button/SplitterControlButton"
-import ClusterModal from "@/components/features/visualization/components/modal/ClusterModal"
 import LoadingView from "@/components/common/status/LoadingView"
-import * as d3 from 'd3'
-import GeneEmbeddingMapPanel from "@/components/features/visualization/components/CNAEmbeddingMap/GeneEmbeddingMapPanel"
-import TermEmbeddingMapPanel from "@/components/features/visualization/components/CNAEmbeddingMap/TermEmbeddingMapPanel"
-import BinEmbeddingMapPanel from "@/components/features/visualization/components/CNAEmbeddingMap/BinEmbeddingMapPanel"
+import ClusterSpatialMapPanel from "@/components/features/visualization/components/CNASpatialMap/ClusterSpatialMapPanel"
+import GeneSpatialMapPanel from "@/components/features/visualization/components/CNASpatialMap/GeneSpatialMapPanel"
+import TermSpatialMapPanel from "@/components/features/visualization/components/CNASpatialMap/TermSpatialMapPanel"
 
-const CNAEmbeddingMapView = ({
+const CNASpatialMapView = ({
     meta,
-    embeddingMethods,
     extents,
     newick,
-    bins,
     genes,
     terms,
     dataset,
-    binVectorFetcher,
     geneVectorFetcher,
     termVectorFetcher,
     isLog,
     vizRef
 }) => {
-    const [embeddingMethod, setEmbeddingMethod] = useState(embeddingMethods[0].value)
-    const [colorOptions, setColorOptions] = useState({ colorBy: 'cluster', cluster: 5, gene: genes[0], term: terms[0], bin: bins[0] })
+    const [colorOptions, setColorOptions] = useState({ colorBy: 'cluster', cluster: 5, gene: genes[0].value, term: terms[0].value })
     const [renderData, setRenderData] = useState(null)
     const [isShowLeft, setIsShowLeft] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -60,10 +55,6 @@ const CNAEmbeddingMapView = ({
     const processedMeta = useMemo(() => {
         return clusterMeta(meta, newick, colorOptions.cluster)
     }, [colorOptions.cluster, meta, newick])
-
-    const handleEmbeddingMethodChange = (newEmbeddingMethod) => {
-        setEmbeddingMethod(newEmbeddingMethod)
-    }
 
     const handleColorOptionsChange = (name, newOption) => {
         setColorOptions(prev => ({...prev, [name]: newOption}))
@@ -104,28 +95,13 @@ const CNAEmbeddingMapView = ({
 
                 // 可选：让出一次渲染帧，确保 loading 能画出来
                 await new Promise(requestAnimationFrame)
-            } else if (colorOptions.colorBy === 'bin') {
-                const response = await binVectorFetcher(colorOptions.bin.value)
-                const vector = d3.csvParse(response.data, d3.autoType)
-                    .reduce((acc, { id, ...rest }) => {
-                        acc[id] = Object.values(rest)[0]
-                        return acc
-                    }, {})
-
-                setRenderData({
-                    type: 'bin',
-                    bin: colorOptions.bin,
-                    processedMeta,
-                    binVector: vector
-                })
             } else if (colorOptions.colorBy === 'gene') {
-                const response = await geneVectorFetcher(colorOptions.gene.value)
+                const response = await geneVectorFetcher(colorOptions.gene)
                 const vector = d3.csvParse(response.data, d3.autoType)
                     .reduce((acc, { id, ...rest }) => {
                         acc[id] = Object.values(rest)[0]
                         return acc
                     }, {})
-
                 setRenderData({
                     type: 'gene',
                     gene: colorOptions.gene,
@@ -133,13 +109,12 @@ const CNAEmbeddingMapView = ({
                     geneVector: vector
                 })
             } else if (colorOptions.colorBy === 'term') {
-                const response = await termVectorFetcher(colorOptions.term.value)
+                const response = await termVectorFetcher(colorOptions.term)
                 const vector = d3.csvParse(response.data, d3.autoType)
                     .reduce((acc, { id, ...rest }) => {
                         acc[id] = Object.values(rest)[0]
                         return acc
                     }, {})
-
                 setRenderData({
                     type: 'term',
                     term: colorOptions.term,
@@ -166,25 +141,20 @@ const CNAEmbeddingMapView = ({
                 isShowLeft={isShowLeft}
                 leftPanelWidth={300}
                 leftPanel={
-                    <CNAEmbeddingMapSettingPanel
-                        bins={bins}
+                    <CNASpatialMapSettingPanel
                         genes={genes}
                         terms={terms}
-                        embeddingMethod={embeddingMethod}
-                        handleEmbeddingMethodChange={handleEmbeddingMethodChange}
                         colorOptions={colorOptions}
                         handleColorOptionsChange={handleColorOptionsChange}
                         config={config}
                         handleConfigChange={handleConfigChange}
                         onRender={onRender}
                         resetRenderData={resetRenderData}
-                        metaFieldOptions={embeddingMethods}
                         showModal={showModal}
                     />
                 }
                 rightPanel={
-                    <EmbeddingMapPanelWrapper
-                        embeddingMethod={embeddingMethod}
+                    <SpatialMapPanelWrapper
                         renderData={renderData}
                         extents={extents}
                         config={config}
@@ -208,7 +178,6 @@ const CNAEmbeddingMapView = ({
 }
 
 const ClusterVizComponents = ({
-    embeddingMethod,
     renderData,
     extents,
     config,
@@ -229,8 +198,7 @@ const ClusterVizComponents = ({
                     </Box>
                 </Box>
             ) : (
-                <EmbeddingMapPanel
-                    embeddingMethod={embeddingMethod}
+                <ClusterSpatialMapPanel
                     cluster={renderData?.cluster}
                     meta={renderData?.processedMeta}
                     extents={extents}
@@ -242,8 +210,7 @@ const ClusterVizComponents = ({
     </>
 )
 
-const EmbeddingMapPanelWrapper = ({
-    embeddingMethod,
+const SpatialMapPanelWrapper = ({
     renderData,
     extents,
     config,
@@ -256,7 +223,6 @@ const EmbeddingMapPanelWrapper = ({
     const embeddingVizMap = {
         cluster: (
             <ClusterVizComponents
-                embeddingMethod={embeddingMethod}
                 renderData={renderData}
                 extents={extents}
                 config={config}
@@ -265,21 +231,8 @@ const EmbeddingMapPanelWrapper = ({
                 vizRef={vizRef}
             />
         ),
-        bin: (
-            <BinEmbeddingMapPanel
-                embeddingMethod={embeddingMethod}
-                meta={renderData?.processedMeta}
-                bin={renderData?.bin}
-                bins={renderData?.binVector}
-                extents={extents}
-                config={config}
-                isLog={isLog}
-                ref={vizRef}
-            />
-        ),
         gene: (
-            <GeneEmbeddingMapPanel
-                embeddingMethod={embeddingMethod}
+            <GeneSpatialMapPanel
                 meta={renderData?.processedMeta}
                 gene={renderData?.gene}
                 genes={renderData?.geneVector}
@@ -290,8 +243,7 @@ const EmbeddingMapPanelWrapper = ({
             />
         ),
         term: (
-            <TermEmbeddingMapPanel
-                embeddingMethod={embeddingMethod}
+            <TermSpatialMapPanel
                 meta={renderData?.processedMeta}
                 term={renderData?.term}
                 terms={renderData?.termVector}
@@ -339,4 +291,4 @@ const EmbeddingMapPanelWrapper = ({
     )
 }
 
-export default CNAEmbeddingMapView
+export default CNASpatialMapView

@@ -1,20 +1,21 @@
-import { Box, Stack } from "@mui/system"
-import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
 import { useCNAMeta } from "@/components/features/database/hooks/useCNAMeta"
+import { useCNANewick } from "@/components/features/database/hooks/useCNANewick"
+import { useCNAGeneList } from "@/components/features/database/hooks/useCNAGeneList"
+import { useCNATermList } from "@/components/features/database/hooks/useCNATermList"
+import { useMemo, useRef } from "react"
+import { processMeta } from "@/components/features/visualization/utils/embeddingMapUtils"
+import api from "@/lib/api/axios"
+import { getCNAGeneMatrixUrl, getCNATermMatrixUrl } from "@/lib/api/dataset"
 import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
-import CNAEmbeddingMapView from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapView"
+import { Box, Stack } from "@mui/system"
+import CNTypePrompt from "@/components/common/text/CNTypePrompt"
 import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
-import { useMemo, useRef } from "react"
-import { useCNANewick } from "@/components/features/database/hooks/useCNANewick"
-import { processMeta, processTopCNVariances } from "@/components/features/visualization/utils/embeddingMapUtils"
-import CNTypePrompt from "@/components/common/text/CNTypePrompt"
-import { getCNAGeneMatrixUrl, getCNATermMatrixUrl, getCNAVectorUrl } from "@/lib/api/dataset"
-import api from "@/lib/api/axios"
-import { useTopCNVariance } from "@/components/features/database/hooks/useTopCNVariance"
+import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
+import CNASpatialMapView from "@/components/features/visualization/components/CNASpatialMap/CNASpatialMapView"
 
-const CNAEmbeddingMapContent = ({
+const CNASpatialMapContent = ({
     selectedWorkflow,
     dataset,
     vizRef,
@@ -33,33 +34,36 @@ const CNAEmbeddingMapContent = ({
     } = useCNANewick(dataset.name, selectedWorkflow, binSize)
 
     const {
-        topCNVariances,
-        isTopCNVariancesLoading,
-        isTopCNVariancesError
-    } = useTopCNVariance(dataset.name, selectedWorkflow, binSize)
+        genes,
+        isGenesLoading,
+        isGenesError
+    } = useCNAGeneList(dataset.name, selectedWorkflow, binSize)
 
-    const { parsedMeta, embeddingMethods, extents } = useMemo(() => {
+    const {
+        terms,
+        isTermsLoading,
+        isTermsError
+    } = useCNATermList(dataset.name, selectedWorkflow, binSize)
+
+    const { parsedMeta, extents } = useMemo(() => {
         if (!meta) return { parsedMeta: [], embeddingMethods: [], extents: {} }
 
         return processMeta(meta)
     }, [meta])
 
-    const { binOptions, geneOptions, termOptions } = useMemo(() => {
-        if (!topCNVariances) return { binOptions: [], geneOptions: [], termOptions: [] }
+    const processedGenes = useMemo(() => {
+        if (!genes) return []
 
-        return processTopCNVariances(topCNVariances)
-    }, [topCNVariances])
+        return genes.map(gene => ({value: gene.gene}))
+    }, [genes])
+
+    const processedTerms = useMemo(() => {
+        if (!terms) return []
+
+        return terms.map(term => ({ value: term.gene }))
+    }, [terms])
 
     const isLog = dataset['cn_type'] === 'Gene Log' || dataset['cn_type'] === 'Bin Log'
-
-    const binVectorFetcher = (bin) => {
-        return api.post(getCNAVectorUrl(), {
-            datasetName: dataset.name,
-            workflowType: selectedWorkflow,
-            binSize: binSize,
-            bins: [bin]
-        })
-    }
 
     const geneVectorFetcher = (gene) => {
         return api.post(getCNAGeneMatrixUrl(), {
@@ -74,26 +78,23 @@ const CNAEmbeddingMapContent = ({
         return api.post(getCNATermMatrixUrl(), {
             datasetName: dataset.name,
             workflowType: selectedWorkflow,
-            binSize: binSize,
+            binSize:binSize,
             terms: [term]
         })
     }
 
-    if (isMetaLoading || isNewickLoading || isTopCNVariancesLoading) return <LoadingView height='920px'/>
+    if (isMetaLoading || isNewickLoading || isGenesLoading || isTermsLoading) return <LoadingView height='920px'/>
 
-    if (isMetaError || isNewickError || isTopCNVariancesError) return <ErrorView height='920px'/>
+    if (isMetaError || isNewickError || isGenesError || isTermsError) return <ErrorView height='920px'/>
 
     return (
-        <CNAEmbeddingMapView
+        <CNASpatialMapView
             meta={parsedMeta}
-            embeddingMethods={embeddingMethods}
             extents={extents}
             newick={newick}
-            bins={binOptions}
-            genes={geneOptions}
-            terms={termOptions}
+            genes={processedGenes}
+            terms={processedTerms}
             dataset={dataset}
-            binVectorFetcher={binVectorFetcher}
             geneVectorFetcher={geneVectorFetcher}
             termVectorFetcher={termVectorFetcher}
             isLog={isLog}
@@ -102,7 +103,7 @@ const CNAEmbeddingMapContent = ({
     )
 }
 
-const CNAEmbeddingMapWrapper = ({
+const CNASpatialMapWrapper = ({
     selectedWorkflow,
     dataset,
     binSize
@@ -126,7 +127,7 @@ const CNAEmbeddingMapWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    CNA Embedding Map(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{ fontSize: '24px' }}/>)
+                    CNA Spatial Map(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button
@@ -140,7 +141,7 @@ const CNAEmbeddingMapWrapper = ({
                 </Stack>
             </Stack>
             <CNAVisualizationContainer>
-                <CNAEmbeddingMapContent
+                <CNASpatialMapContent
                     dataset={dataset}
                     selectedWorkflow={selectedWorkflow}
                     vizRef={vizRef}
@@ -151,4 +152,4 @@ const CNAEmbeddingMapWrapper = ({
     )
 }
 
-export default CNAEmbeddingMapWrapper
+export default CNASpatialMapWrapper

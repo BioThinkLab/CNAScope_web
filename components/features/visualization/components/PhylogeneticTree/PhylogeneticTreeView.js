@@ -2,8 +2,8 @@ import { useState } from "react"
 import SplitterLayout from "@/components/layouts/SplitterLayout"
 import PhylogeneticTreeSettingPanel
     from "@/components/features/visualization/components/PhylogeneticTree/PhylogeneticTreeSettingPanel"
-import PhylogeneticTreePanel
-    from "@/components/features/visualization/components/PhylogeneticTree/PhylogeneticTreePanel"
+import PhylogeneticCutTreePanel
+    from "@/components/features/visualization/components/PhylogeneticTree/PhylogeneticCutTreePanel"
 
 const PhylogeneticTreeView = ({ meta, newick, vizRef }) => {
     const [isShowLeft, setIsShowLeft] = useState(true)
@@ -11,6 +11,22 @@ const PhylogeneticTreeView = ({ meta, newick, vizRef }) => {
         chart: {
             marginX: 30,
             marginY: 20
+        },
+        heatmap: {
+            mode: 'Fixed',
+            CNARectWidth: 16,
+            metaRectWidth: 16,
+            rectHeight: 10,
+            height: 1000
+        },
+        tree: {
+            width: 1000,
+            nodeRadius: 4,
+            marginToHeatmap: 20
+        },
+        nodeHistory: {
+            width: 35,
+            height: 20,
         }
     })
 
@@ -33,19 +49,19 @@ const PhylogeneticTreeView = ({ meta, newick, vizRef }) => {
             isShowLeft={isShowLeft}
             leftPanelWidth={300}
             leftPanel={
-              <PhylogeneticTreeSettingPanel
-                  config={config}
-                  handleConfigChange={handleConfigChange}
-              />
+                <PhylogeneticTreeSettingPanel
+                    config={config}
+                    handleConfigChange={handleConfigChange}
+                />
             }
             rightPanel={
-              <PhylogeneticTreePanel
-                  newick={newick}
-                  config={config}
-                  isShowLeft={isShowLeft}
-                  handleIsShowLeftChange={handleIsShowLeftChange}
-                  ref={vizRef}
-              />
+                <PhylogeneticCutTreePanel
+                    newick={newick}
+                    config={config}
+                    isShowLeft={isShowLeft}
+                    handleIsShowLeftChange={handleIsShowLeftChange}
+                    ref={vizRef}
+                />
             }
         />
     )

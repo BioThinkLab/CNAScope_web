@@ -5,18 +5,16 @@ import {
     initGeneFigureConfig
 } from "@/components/features/visualization/utils/embeddingMapUtils"
 import * as d3 from "d3"
+import { downloadSvg } from "@/components/features/visualization/utils/downloadUtils"
+import { Stack } from "@mui/system"
+import { VerticalColorLegend } from "@/components/features/visualization/components/legend/ColorLegend"
 import { createPortal } from "react-dom"
 import CustomTooltip from "@/components/features/visualization/components/tooltip/ToolTip"
-import { Stack } from "@mui/system"
 import {
     GeneEmbeddingScatterPlotTooltipTemplate
 } from "@/components/features/visualization/components/tooltipTemplate/EmbeddingMapTooltipTemplate"
-import { downloadSvg } from "@/components/features/visualization/utils/downloadUtils"
-import { VerticalColorLegend } from "@/components/features/visualization/components/legend/ColorLegend"
-import _ from "lodash"
 
-const TermEmbeddingMapPanel = forwardRef(({
-    embeddingMethod,
+const TermSpatialMapPanel = forwardRef(({
     extents,
     meta,
     term,
@@ -29,6 +27,8 @@ const TermEmbeddingMapPanel = forwardRef(({
     const xAxisRef = useRef(null)
     const yAxisRef = useRef(null)
     const dotsRef = useRef(null)
+
+    const embeddingMethod = 'n_spatial'
 
     const {
         svgWidth,
@@ -104,7 +104,7 @@ const TermEmbeddingMapPanel = forwardRef(({
                                 textAnchor='middle'
                                 fontWeight={500}
                             >
-                                {embeddingMethod.slice(2)} Embedding Map
+                                Spatial Map
                             </text>
                             <text
                                 fontSize={config.title.subFontSize}
@@ -114,10 +114,7 @@ const TermEmbeddingMapPanel = forwardRef(({
                                 fontWeight={500}
                                 fill="#B0B0B0"
                             >
-                                <tspan fontWeight="bold" fill="#000000" opacity={0.6}>Color By: </tspan>
-                                <tspan>Term ({term.value})&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tspan>
-                                <tspan fontWeight="bold" fill="#000000" opacity={0.6}>Variance: </tspan>
-                                <tspan>{_.round(term.variance, 3)}</tspan>
+                                Color By: Term ({term})
                             </text>
                         </g>
                         <g ref={xAxisRef} transform={`translate(${xOffsetScatterPlot}, ${yOffsetXAxis})`}>
@@ -171,6 +168,6 @@ const handleDotPointerLeft = (tooltipRef) => {
     tooltipRef.current.hideTooltip()
 }
 
-TermEmbeddingMapPanel.displayName = 'TermEmbeddingMapPanel'
+TermSpatialMapPanel.displayName = 'TermSpatialMapPanel'
 
-export default TermEmbeddingMapPanel
+export default TermSpatialMapPanel
