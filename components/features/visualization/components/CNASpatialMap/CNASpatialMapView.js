@@ -11,20 +11,23 @@ import LoadingView from "@/components/common/status/LoadingView"
 import ClusterSpatialMapPanel from "@/components/features/visualization/components/CNASpatialMap/ClusterSpatialMapPanel"
 import GeneSpatialMapPanel from "@/components/features/visualization/components/CNASpatialMap/GeneSpatialMapPanel"
 import TermSpatialMapPanel from "@/components/features/visualization/components/CNASpatialMap/TermSpatialMapPanel"
+import BinSpatialMapPanel from "@/components/features/visualization/components/CNASpatialMap/BinSpatialMapPanel"
 
 const CNASpatialMapView = ({
     meta,
     extents,
     newick,
+    bins,
     genes,
     terms,
     dataset,
+    binVectorFetcher,
     geneVectorFetcher,
     termVectorFetcher,
     isLog,
     vizRef
 }) => {
-    const [colorOptions, setColorOptions] = useState({ colorBy: 'cluster', cluster: 5, gene: genes[0].value, term: terms[0].value })
+    const [colorOptions, setColorOptions] = useState({ colorBy: 'cluster', cluster: 5, gene: genes[0], term: terms[0], bin: bins[0] })
     const [renderData, setRenderData] = useState(null)
     const [isShowLeft, setIsShowLeft] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -95,8 +98,22 @@ const CNASpatialMapView = ({
 
                 // 可选：让出一次渲染帧，确保 loading 能画出来
                 await new Promise(requestAnimationFrame)
+            }else if (colorOptions.colorBy === 'bin') {
+                const response = await binVectorFetcher(colorOptions.bin.value)
+                const vector = d3.csvParse(response.data, d3.autoType)
+                    .reduce((acc, { id, ...rest }) => {
+                        acc[id] = Object.values(rest)[0]
+                        return acc
+                    }, {})
+
+                setRenderData({
+                    type: 'bin',
+                    bin: colorOptions.bin,
+                    processedMeta,
+                    binVector: vector
+                })
             } else if (colorOptions.colorBy === 'gene') {
-                const response = await geneVectorFetcher(colorOptions.gene)
+                const response = await geneVectorFetcher(colorOptions.gene.value)
                 const vector = d3.csvParse(response.data, d3.autoType)
                     .reduce((acc, { id, ...rest }) => {
                         acc[id] = Object.values(rest)[0]
@@ -109,7 +126,7 @@ const CNASpatialMapView = ({
                     geneVector: vector
                 })
             } else if (colorOptions.colorBy === 'term') {
-                const response = await termVectorFetcher(colorOptions.term)
+                const response = await termVectorFetcher(colorOptions.term.value)
                 const vector = d3.csvParse(response.data, d3.autoType)
                     .reduce((acc, { id, ...rest }) => {
                         acc[id] = Object.values(rest)[0]
@@ -142,6 +159,7 @@ const CNASpatialMapView = ({
                 leftPanelWidth={300}
                 leftPanel={
                     <CNASpatialMapSettingPanel
+                        bins={bins}
                         genes={genes}
                         terms={terms}
                         colorOptions={colorOptions}
@@ -229,6 +247,17 @@ const SpatialMapPanelWrapper = ({
                 isShowLeft={isShowLeft}
                 handleIsShowLeftChange={handleIsShowLeftChange}
                 vizRef={vizRef}
+            />
+        ),
+        bin: (
+            <BinSpatialMapPanel
+                meta={renderData?.processedMeta}
+                bin={renderData?.bin}
+                bins={renderData?.binVector}
+                extents={extents}
+                config={config}
+                isLog={isLog}
+                ref={vizRef}
             />
         ),
         gene: (

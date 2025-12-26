@@ -4,6 +4,7 @@ import DividerLine from "@/components/ui/DividerLine"
 import HomeFocus from "@/components/features/home/HomeFocusV2"
 import KeywordCloud from "@/components/features/home/KeyWordCloud"
 import News from "@/components/features/home/News"
+import PublicationAlert from "@/components/features/home/PublicationAlert"
 
 export default function Home() {
     return (
@@ -33,6 +34,9 @@ export default function Home() {
                     </Box>
                 </Grid>
             </Grid>
+            <Box sx={{ marginTop: '24px', mx: '48px' }}>
+                <PublicationAlert/>
+            </Box>
         </Stack>
     )
 }

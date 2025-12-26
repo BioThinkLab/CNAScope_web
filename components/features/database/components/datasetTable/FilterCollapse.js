@@ -146,7 +146,7 @@ const keyLabelMap = {
     workflow: 'Workflow',
     cn_type: 'CNA Value Type',
     reference: 'Reference',
-    cancer_type: 'Cancer Type'
+    cancer_type: 'Cancer Subtype'
 }
 
 export default FilterCollapse

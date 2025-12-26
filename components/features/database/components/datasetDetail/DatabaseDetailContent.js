@@ -38,6 +38,8 @@ const DatabaseDetailContent = ({ dataset }) => {
         setBinSize(newBinSize)
     }
 
+    const isLargeDataset = ['scRNA', 'scDNA', 'spaRNA', 'spaDNA'].includes(dataset['modality']) && (dataset['cell_num'] > 5000 || dataset['spot_num'] > 5000)
+
     useEffect(() => {
         if (dataset.workflow) {
             const firstWorkflow = dataset.workflow.split(',')[0]
@@ -57,7 +59,7 @@ const DatabaseDetailContent = ({ dataset }) => {
                     <SCDNADatasetSampleTable dataset={dataset}/>
                 ) : dataset.modality === 'scRNA' ? (
                     <SCRNADatasetSampleTable dataset={dataset}/>
-                ) : dataset.modality === 'ST' ? (
+                ) : dataset.modality === 'spaRNA' ? (
                     <STDatasetSampleTable dataset={dataset}/>
                 ) : (
                     <></>
@@ -75,7 +77,7 @@ const DatabaseDetailContent = ({ dataset }) => {
                 selectedWorkflow ? (
                     <>
                         {
-                            dataset['cn_type'] !== 'Gene Integer' && dataset['cn_type'] !== 'Gene Log' ? (
+                            dataset['cn_type'] !== 'Gene Integer' && dataset['cn_type'] !== 'Gene Log' && !isLargeDataset ? (
                                 <CNAChromosomeHeatmapWrapper
                                     dataset={dataset}
                                     selectedWorkflow={selectedWorkflow}
@@ -85,28 +87,36 @@ const DatabaseDetailContent = ({ dataset }) => {
                                 <></>
                             )
                         }
-                        <CNAGeneHeatmapWrapper
-                            dataset={dataset}
-                            selectedWorkflow={selectedWorkflow}
-                            binSize={binSize}
-                        />
-                        <CNATermHeatmapWrapper
-                            dataset={dataset}
-                            selectedWorkflow={selectedWorkflow}
-                            binSize={binSize}
-                        />
-                        <PhylogeneticTreeWrapper
-                            dataset={dataset}
-                            selectedWorkflow={selectedWorkflow}
-                            binSize={binSize}
-                        />
+                        {
+                            !isLargeDataset ? (
+                                <>
+                                    <CNAGeneHeatmapWrapper
+                                        dataset={dataset}
+                                        selectedWorkflow={selectedWorkflow}
+                                        binSize={binSize}
+                                    />
+                                    <CNATermHeatmapWrapper
+                                        dataset={dataset}
+                                        selectedWorkflow={selectedWorkflow}
+                                        binSize={binSize}
+                                    />
+                                    <PhylogeneticTreeWrapper
+                                        dataset={dataset}
+                                        selectedWorkflow={selectedWorkflow}
+                                        binSize={binSize}
+                                    />
+                                </>
+                            ) : (
+                                <></>
+                            )
+                        }
                         <CNAEmbeddingMapWrapper
                             dataset={dataset}
                             selectedWorkflow={selectedWorkflow}
                             binSize={binSize}
                         />
                         {
-                            dataset['modality'] === 'ST' ? (
+                            dataset['modality'] === 'spaRNA' || dataset['modality'] === 'spaDNA' ? (
                                 <CNASpatialMapWrapper
                                     selectedWorkflow={selectedWorkflow}
                                     dataset={dataset}
@@ -117,7 +127,7 @@ const DatabaseDetailContent = ({ dataset }) => {
                             )
                         }
                         {
-                            dataset['cn_type'] !== 'Gene Integer' && dataset['cn_type'] !== 'Gene Log' ? (
+                            dataset['cn_type'] !== 'Gene Integer' && dataset['cn_type'] !== 'Gene Log' && !isLargeDataset ? (
                                 <CNAPloidyStairstepWrapper
                                     dataset={dataset}
                                     selectedWorkflow={selectedWorkflow}
@@ -127,11 +137,17 @@ const DatabaseDetailContent = ({ dataset }) => {
                                 <></>
                             )
                         }
-                        <CNAPloidyDistributionWrapper
-                            dataset={dataset}
-                            selectedWorkflow={selectedWorkflow}
-                            binSize={binSize}
-                        />
+                        {
+                            !isLargeDataset ? (
+                                <CNAPloidyDistributionWrapper
+                                    dataset={dataset}
+                                    selectedWorkflow={selectedWorkflow}
+                                    binSize={binSize}
+                                />
+                            ) : (
+                                <></>
+                            )
+                        }
                         {
                             dataset.source === 'GDC Portal' ? (
                                 <>

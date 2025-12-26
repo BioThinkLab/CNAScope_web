@@ -19,7 +19,7 @@ const HomeIntroduction = ({  }) => (
             alignItems: 'center',
         }}
     >
-        <Grid size={5.5} offset={0.5}>
+        <Grid size={4.5} offset={0.5}>
             <Stack spacing={3}>
                 <Stack spacing={2}>
                     <Box component='h6' sx={{fontSize: '40px', fontWeight: 'bold', paddingBottom: '12px'}}>
@@ -28,9 +28,9 @@ const HomeIntroduction = ({  }) => (
                         <Box component='span' sx={{ color: '#e97132', fontWeight: 'bold' }}>Scope</Box>
                     </Box>
                     <Box component='h6' sx={{fontSize: '20px', paddingBottom: '12px', fontWeight: '400', lineHeight: '1.5'}}>
-                        CNAScope curates and functionally annotates over <strong>334,187</strong> CNA profiles and <strong>286,812</strong> metadata from <strong>354 </strong>
-                        datasets, <strong>97,203</strong> samples, <strong>71,009</strong> single cells, and <strong>118,600</strong> spatial spots, spanning <strong>82</strong> cancer subtypes from
-                        <strong> 6</strong> data sources and <strong>55</strong> cancer initiatives and institutions.
+                        CNAScope curates and functionally annotates over <strong>3,954,361</strong> CNA profiles and <strong>3,946,319</strong> metadata from <strong>810 </strong>
+                        datasets, <strong>174,464</strong> samples, <strong>3,018,672</strong> single cells, and <strong>764,232</strong> spatial spots, spanning <strong>77</strong> cancer subtypes from
+                        <strong> 8</strong> data sources and <strong>55</strong> cancer initiatives and institutions.
                     </Box>
                 </Stack>
                 <Stack direction="row" spacing={2}>
@@ -69,7 +69,7 @@ const HomeIntroduction = ({  }) => (
                 </Stack>
             </Stack>
         </Grid>
-        <Grid size={6}>
+        <Grid size={7}>
             <img
                 src="/CNAScope-graph_summary.svg"
                 alt="Framework"

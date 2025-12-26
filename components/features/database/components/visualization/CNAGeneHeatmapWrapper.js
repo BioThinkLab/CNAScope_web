@@ -41,6 +41,7 @@ const CNAGeneHeatmapContent = ({
         return api.post(getCNAGeneMatrixUrl(), {
             datasetName: dataset.name,
             workflowType: selectedWorkflow,
+            binSize: binSize,
             genes: selectedGenes
         })
     }
@@ -84,7 +85,7 @@ const CNAGeneHeatmapWrapper = ({ selectedWorkflow, dataset, binSize }) => {
                         fontSize: '36px',
                     }}
                 >
-                    Gene-Level CNA Heatmap(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    Gene-Level CNA Heatmap (<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

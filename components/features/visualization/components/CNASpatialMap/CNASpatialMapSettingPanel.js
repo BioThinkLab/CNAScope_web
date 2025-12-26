@@ -4,11 +4,13 @@ import { Button, Collapse, ConfigProvider, Select } from "antd"
 import { PieChartOutlined, SettingOutlined } from "@ant-design/icons"
 import { SettingNumberInput } from "@/components/features/visualization/components/input/SettingInput"
 import {
+    BinSelector,
     ClusterSelector, colorByOptions,
     GeneSelector, RenderButtonGroup, TermSelector
 } from "@/components/features/visualization/components/CNAEmbeddingMap/CNAEmbeddingMapSettingPanel"
 
 const DataSetting = ({
+    bins,
     genes,
     terms,
     colorOptions,
@@ -17,8 +19,19 @@ const DataSetting = ({
     resetRenderData,
     showModal
 }) => {
+    const [binValue, setBinValue] = useState('')
     const [geneValue, setGeneValue] = useState('')
     const [termValue, setTermValue] = useState('')
+
+    const onBinValueChange = data => {
+        setBinValue(data)
+    }
+
+    useEffect(() => {
+        if (colorOptions.bin) {
+            setBinValue(colorOptions.bin)
+        }
+    }, [colorOptions.bin])
 
     const onGeneValueChange = data => {
         setGeneValue(data)
@@ -44,6 +57,14 @@ const DataSetting = ({
         'cluster': (
             <ClusterSelector
                 colorOptions={colorOptions}
+                handleColorOptionsChange={handleColorOptionsChange}
+            />
+        ),
+        'bin': (
+            <BinSelector
+                bins={bins}
+                binValue={binValue}
+                onBinValueChange={onBinValueChange}
                 handleColorOptionsChange={handleColorOptionsChange}
             />
         ),
@@ -162,6 +183,7 @@ const TitleSetting = ({ config, configKey, handleConfigChange }) => (
 )
 
 const buildCollapseItems = (
+    bins,
     genes,
     terms,
     config,
@@ -178,6 +200,7 @@ const buildCollapseItems = (
         extra: <PieChartOutlined/>,
         children: (
             <DataSetting
+                bins={bins}
                 genes={genes}
                 terms={terms}
                 colorOptions={colorOptions}
@@ -227,6 +250,7 @@ const buildCollapseItems = (
 ]
 
 const CNASpatialMapSettingPanel = ({
+    bins,
     genes,
     terms,
     colorOptions,
@@ -241,6 +265,7 @@ const CNASpatialMapSettingPanel = ({
 
     const items = useMemo(() => {
         return buildCollapseItems(
+            bins,
             genes,
             terms,
             config,
@@ -251,7 +276,7 @@ const CNASpatialMapSettingPanel = ({
             resetRenderData,
             showModal
         )
-    }, [genes, terms, config, handleConfigChange, colorOptions, handleColorOptionsChange, onRender, resetRenderData, showModal])
+    }, [bins, genes, terms, config, handleConfigChange, colorOptions, handleColorOptionsChange, onRender, resetRenderData, showModal])
 
     const handleCollapseChange = (props) => {
         setActiveKey(props)

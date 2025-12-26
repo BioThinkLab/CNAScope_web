@@ -136,7 +136,7 @@ const ClusterSpatialMapPanel = forwardRef(({
                                 textAnchor='middle'
                                 fontWeight={500}
                             >
-                                Spatial Map
+                                Spatial Distribution Plot
                             </text>
                         </g>
                         <g ref={xAxisRef} transform={`translate(${xOffsetScatterPlot}, ${yOffsetXAxis})`}>

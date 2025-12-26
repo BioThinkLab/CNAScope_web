@@ -120,7 +120,7 @@ const CNAPhylogeneticTreeContent = ({}) => (
             or cells) and branches indicating their phylogenetic divergence, with branch lengths reflecting the degree
             of CNA differences.
         </Paragraph>
-        <Image src='/tutorial/CNAPhylogeneticTree.png' alt='CNAPhylogeneticTree.png'/>
+        <Image src='/tutorial/CNAPhylogeneticTree.gif' alt='CNAPhylogeneticTree.png'/>
     </>
 )
 

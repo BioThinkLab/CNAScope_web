@@ -74,7 +74,7 @@ const CNAPathwayEnrichmentPlotWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    Focal/Consensus Term(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    Focal/Consensus Term (<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

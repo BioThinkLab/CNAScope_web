@@ -85,7 +85,7 @@ const CNATermHeatmapWrapper = ({ selectedWorkflow, dataset, binSize }) => {
                         fontSize: '36px'
                     }}
                 >
-                    Term-Level CNA Heatmap(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    Term-Level CNA Heatmap (<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

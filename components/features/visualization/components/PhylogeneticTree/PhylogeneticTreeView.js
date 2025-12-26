@@ -13,7 +13,7 @@ const PhylogeneticTreeView = ({ meta, newick, vizRef }) => {
             marginY: 20
         },
         heatmap: {
-            mode: 'Fixed',
+            mode: 'Adaptive',
             CNARectWidth: 16,
             metaRectWidth: 16,
             rectHeight: 10,

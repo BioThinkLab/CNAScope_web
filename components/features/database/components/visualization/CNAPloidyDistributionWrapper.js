@@ -59,7 +59,7 @@ const CNAPloidyDistributionWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    CN Distribution(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    CN Distribution (<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

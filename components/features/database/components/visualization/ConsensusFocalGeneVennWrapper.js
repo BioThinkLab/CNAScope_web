@@ -80,7 +80,7 @@ const ConsensusFocalGeneVennWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    Consensus Gene(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    Consensus Gene (<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

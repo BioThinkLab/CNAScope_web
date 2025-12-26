@@ -22,7 +22,6 @@ const FUSE_KEYS = [
     'protocol',
     'platform',
     'workflow',
-    'cn_type',
     'reference',
     'cancer_type',
     'cancer_type_full_name'
@@ -174,7 +173,6 @@ const buildFilters = (datasets) => {
         protocol: getUniqueValues(datasets, 'protocol'),
         platform: getSortedUnique(datasets.map(d => d.platform)),
         workflow: getUniqueValues(datasets, 'workflow'),
-        cn_type: getSortedUnique(datasets.map(d => d.cn_type)),
         reference: getSortedUnique(datasets.map(d => d.reference)),
         cancer_type: getSortedUnique(datasets.map(d => d.cancer_type)),
     }

@@ -87,11 +87,18 @@ const columns = [
         render: workflow => <MultiTagList value={workflow} color='geekblue'/>
     },
     {
-        title: 'CNA Value Type',
-        dataIndex: 'cn_type',
-        sorter: (a, b) => a.cn_type.toLowerCase().localeCompare(b.cn_type.toLowerCase()),
+        title: 'Raw CN Scale',
+        dataIndex: 'raw_cn_scale',
+        sorter: (a, b) => a.raw_cn_scale.toLowerCase().localeCompare(b.raw_cn_scale.toLowerCase()),
         align: 'center',
-        render: CNAValueType => <CNAValueTypeChip value={CNAValueType}/>
+        render: rawCNScale => <BasicChip value={rawCNScale}/>
+    },
+    {
+        title: 'Raw Locus Type',
+        dataIndex: 'raw_locus_type',
+        sorter: (a, b) => a.raw_locus_type.toLowerCase().localeCompare(b.raw_locus_type.toLowerCase()),
+        align: 'center',
+        render: rawLocusType => <BasicChip value={rawLocusType}/>
     },
     {
         title: 'Reference',
@@ -102,14 +109,14 @@ const columns = [
 
     },
     {
-        title: 'Cancer Type',
+        title: 'Cancer Subtype',
         dataIndex: 'cancer_type',
         sorter: (a, b) => a['cancer_type'].toLowerCase().localeCompare(b['cancer_type'].toLowerCase()),
         align: 'center',
         render: cancerType => <EllipsisText text={cancerType}/>
     },
     {
-        title: 'Cancer Type Full Name',
+        title: 'Cancer Subtype Full Name',
         dataIndex: 'cancer_type_full_name',
         sorter: (a, b) => a['cancer_type_full_name'].toLowerCase().localeCompare(b['cancer_type_full_name'].toLowerCase()),
         align: 'center',
@@ -135,6 +142,13 @@ const columns = [
         sorter: (a, b) => (a['spot_num' ?? 0]) - (b['spot_num'] ?? 0),
         align: 'center',
         render: spotNum => <EllipsisText text={spotNum}/>
+    },
+    {
+        title: 'Usage Permission',
+        dataIndex: 'usage_permission',
+        sorter: (a, b) => a.usage_permission.toLowerCase().localeCompare(b.usage_permission.toLowerCase()),
+        align: 'center',
+        render: usagePermission => <EllipsisText text={usagePermission}/>
     },
     {
         title: 'Action',

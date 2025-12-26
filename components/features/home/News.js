@@ -10,7 +10,33 @@ const timelineItems = [
         dot: <CalendarOutlined style={{ fontSize: '20px' }}/>,
         children: (
             <>
-                <Title level={4} style={{ marginBottom: 8 }}>Version 3.0 (2025-7-31): New Workflows for User-Driven
+                <Title level={4} style={{ marginBottom: 8 }}>Version 1.3 (2025-10-5): Data Expansion, Enrichment
+                    Analysis, and Platform Improvements</Title>
+                <Box>
+                    <strong>Expanded data sources</strong> with NCBI GEO, and Broad SCP, and additional single-cell/spatial
+                    datasets.<br/>
+                    <strong>New Features:</strong>
+                    <ul style={{ paddingLeft: '20px', margin: 0 }}>
+                        <li>
+                            Added pathway enrichment analysis with interactive plots;
+                        </li>
+                        <li>
+                            integrated spatial variability annotation via Moran&apos;s I for ST data;
+                        </li>
+                        <li>
+                            Bug Fixes.
+                        </li>
+                    </ul>
+                </Box>
+            </>
+        )
+    },
+    {
+        color: 'blue',
+        dot: <CalendarOutlined style={{ fontSize: '20px' }}/>,
+        children: (
+            <>
+                <Title level={4} style={{ marginBottom: 8 }}>Version 1.2 (2025-7-31): New Workflows for User-Driven
                     Analysis</Title>
                 <Box>
                     Added two workflows: <strong>Basic CNA Annotation</strong> and <strong>Recurrent CNA
@@ -36,7 +62,7 @@ const timelineItems = [
         dot: <CalendarOutlined style={{ fontSize: '20px' }}/>,
         children: (
             <>
-                <Title level={4} style={{ marginBottom: 8 }}>Version 2.0 (2025-6-30): Data Expansion and UI
+                <Title level={4} style={{ marginBottom: 8 }}>Version 1.1 (2025-6-30): Data Expansion and UI
                     Enhancements</Title>
                 <Box>
                     Expanded data sources to include <strong>10x Official, cBioPortal, COSMIC, HSCGD, scTML, and

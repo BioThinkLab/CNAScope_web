@@ -3,9 +3,13 @@ import { useCNANewick } from "@/components/features/database/hooks/useCNANewick"
 import { useCNAGeneList } from "@/components/features/database/hooks/useCNAGeneList"
 import { useCNATermList } from "@/components/features/database/hooks/useCNATermList"
 import { useMemo, useRef } from "react"
-import { processMeta } from "@/components/features/visualization/utils/embeddingMapUtils"
+import {
+    processMeta,
+    processSpatialTopCNVariances,
+    processTopCNVariances
+} from "@/components/features/visualization/utils/embeddingMapUtils"
 import api from "@/lib/api/axios"
-import { getCNAGeneMatrixUrl, getCNATermMatrixUrl } from "@/lib/api/dataset"
+import { getCNAGeneMatrixUrl, getCNATermMatrixUrl, getCNAVectorUrl } from "@/lib/api/dataset"
 import LoadingView from "@/components/common/status/LoadingView"
 import ErrorView from "@/components/common/status/ErrorView"
 import { Box, Stack } from "@mui/system"
@@ -14,6 +18,8 @@ import { Button } from "antd"
 import { DownloadOutlined } from "@ant-design/icons"
 import CNAVisualizationContainer from "@/components/ui/container/CNAVisualizationContainer"
 import CNASpatialMapView from "@/components/features/visualization/components/CNASpatialMap/CNASpatialMapView"
+import { useTopCNVariance } from "@/components/features/database/hooks/useTopCNVariance"
+import { useSpatialTopCNVariance } from "@/components/features/database/hooks/useSpatialTopCNVariance"
 
 const CNASpatialMapContent = ({
     selectedWorkflow,
@@ -34,16 +40,16 @@ const CNASpatialMapContent = ({
     } = useCNANewick(dataset.name, selectedWorkflow, binSize)
 
     const {
-        genes,
-        isGenesLoading,
-        isGenesError
-    } = useCNAGeneList(dataset.name, selectedWorkflow, binSize)
+        topCNVariances,
+        isTopCNVariancesLoading,
+        isTopCNVariancesError
+    } = useTopCNVariance(dataset.name, selectedWorkflow, binSize)
 
     const {
-        terms,
-        isTermsLoading,
-        isTermsError
-    } = useCNATermList(dataset.name, selectedWorkflow, binSize)
+        spatialTopCNVariances,
+        isSpatialTopCNVariancesLoading,
+        isSpatialTopCNVariancesError
+    } = useSpatialTopCNVariance(dataset.name, selectedWorkflow, binSize)
 
     const { parsedMeta, extents } = useMemo(() => {
         if (!meta) return { parsedMeta: [], embeddingMethods: [], extents: {} }
@@ -51,19 +57,22 @@ const CNASpatialMapContent = ({
         return processMeta(meta)
     }, [meta])
 
-    const processedGenes = useMemo(() => {
-        if (!genes) return []
+    const { binOptions, geneOptions, termOptions } = useMemo(() => {
+        if (!spatialTopCNVariances) return { binOptions: [], geneOptions: [], termOptions: [] }
 
-        return genes.map(gene => ({value: gene.gene}))
-    }, [genes])
-
-    const processedTerms = useMemo(() => {
-        if (!terms) return []
-
-        return terms.map(term => ({ value: term.gene }))
-    }, [terms])
+        return processSpatialTopCNVariances(spatialTopCNVariances)
+    }, [spatialTopCNVariances])
 
     const isLog = dataset['cn_type'] === 'Gene Log' || dataset['cn_type'] === 'Bin Log'
+
+    const binVectorFetcher = (bin) => {
+        return api.post(getCNAVectorUrl(), {
+            datasetName: dataset.name,
+            workflowType: selectedWorkflow,
+            binSize: binSize,
+            bins: [bin]
+        })
+    }
 
     const geneVectorFetcher = (gene) => {
         return api.post(getCNAGeneMatrixUrl(), {
@@ -83,18 +92,20 @@ const CNASpatialMapContent = ({
         })
     }
 
-    if (isMetaLoading || isNewickLoading || isGenesLoading || isTermsLoading) return <LoadingView height='920px'/>
+    if (isMetaLoading || isNewickLoading || isTopCNVariancesLoading || isSpatialTopCNVariancesLoading) return <LoadingView height='920px'/>
 
-    if (isMetaError || isNewickError || isGenesError || isTermsError) return <ErrorView height='920px'/>
+    if (isMetaError || isNewickError || isTopCNVariancesError || isSpatialTopCNVariancesError) return <ErrorView height='920px'/>
 
     return (
         <CNASpatialMapView
             meta={parsedMeta}
             extents={extents}
             newick={newick}
-            genes={processedGenes}
-            terms={processedTerms}
+            bins={binOptions}
+            genes={geneOptions}
+            terms={termOptions}
             dataset={dataset}
+            binVectorFetcher={binVectorFetcher}
             geneVectorFetcher={geneVectorFetcher}
             termVectorFetcher={termVectorFetcher}
             isLog={isLog}
@@ -127,7 +138,7 @@ const CNASpatialMapWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    CNA Spatial Map(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    Spatial Distribution Plot (<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

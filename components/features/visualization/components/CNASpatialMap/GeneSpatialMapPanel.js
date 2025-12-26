@@ -13,6 +13,7 @@ import CustomTooltip from "@/components/features/visualization/components/toolti
 import {
     GeneEmbeddingScatterPlotTooltipTemplate
 } from "@/components/features/visualization/components/tooltipTemplate/EmbeddingMapTooltipTemplate"
+import _ from "lodash"
 
 const GeneSpatialMapPanel = forwardRef(({
     extents,
@@ -29,8 +30,6 @@ const GeneSpatialMapPanel = forwardRef(({
     const dotsRef = useRef(null)
 
     const embeddingMethod = 'n_spatial'
-
-    console.log(isLog)
 
     const {
         svgWidth,
@@ -106,7 +105,7 @@ const GeneSpatialMapPanel = forwardRef(({
                                 textAnchor='middle'
                                 fontWeight={500}
                             >
-                                Spatial Map
+                                Spatial Distribution Plot
                             </text>
                             <text
                                 fontSize={config.title.subFontSize}
@@ -116,7 +115,10 @@ const GeneSpatialMapPanel = forwardRef(({
                                 fontWeight={500}
                                 fill="#B0B0B0"
                             >
-                                Color By: Gene ({gene})
+                                <tspan fontWeight="bold" fill="#000000" opacity={0.6}>Color By:</tspan>
+                                <tspan>Gene ({gene.value})&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tspan>
+                                <tspan fontWeight="bold" fill="#000000" opacity={0.6}>Moran I:</tspan>
+                                <tspan>{_.round(gene.moranI, 3)}</tspan>
                             </text>
                         </g>
                         <g ref={xAxisRef} transform={`translate(${xOffsetScatterPlot}, ${yOffsetXAxis})`}>

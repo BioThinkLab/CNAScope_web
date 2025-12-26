@@ -126,7 +126,7 @@ const CNAEmbeddingMapWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    CNA Embedding Map(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{ fontSize: '24px' }}/>)
+                    CNA Embedding Map (<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{ fontSize: '24px' }}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

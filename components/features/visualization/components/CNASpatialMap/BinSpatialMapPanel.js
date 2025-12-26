@@ -15,11 +15,11 @@ import {
 } from "@/components/features/visualization/components/tooltipTemplate/EmbeddingMapTooltipTemplate"
 import _ from "lodash"
 
-const TermSpatialMapPanel = forwardRef(({
+const BinSpatialMapPanel = forwardRef(({
     extents,
     meta,
-    term,
-    terms,
+    bin,
+    bins,
     config,
     isLog
 }, ref) => {
@@ -71,18 +71,18 @@ const TermSpatialMapPanel = forwardRef(({
             .attr('cx', d => x(d[`${embeddingMethod}1`]))
             .attr('cy', d => y(d[`${embeddingMethod}2`]))
             .attr('r', config.scatter.radius)
-            .attr('fill', d => CNAValueScale(terms[d.id]))
+            .attr('fill', d => CNAValueScale(bins[d.id]))
             .on('pointerenter pointermove',
                 (event, d) => handleDotPointerEnter(
                     event, d.id,
                     [d[`${embeddingMethod}1`], d[`${embeddingMethod}2`]],
-                    terms[d.id],
+                    bins[d.id],
                     toolTipRef
                 )
             )
             .on('pointerleave', () => handleDotPointerLeft(toolTipRef))
 
-    }, [CNAValueScale, config.scatter.radius, embeddingMethod, terms, meta, x, y])
+    }, [CNAValueScale, bins, config.scatter.radius, embeddingMethod, meta, x, y])
 
     useImperativeHandle(ref, () => ({
         downloadSvg: () => {
@@ -116,9 +116,9 @@ const TermSpatialMapPanel = forwardRef(({
                                 fill="#B0B0B0"
                             >
                                 <tspan fontWeight="bold" fill="#000000" opacity={0.6}>Color By:</tspan>
-                                <tspan>Gene ({term.value})&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tspan>
+                                <tspan>Bin ({bin.value})&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tspan>
                                 <tspan fontWeight="bold" fill="#000000" opacity={0.6}>Moran I:</tspan>
-                                <tspan>{_.round(term.moranI, 3)}</tspan>
+                                <tspan>{_.round(bin.moranI, 3)}</tspan>
                             </text>
                         </g>
                         <g ref={xAxisRef} transform={`translate(${xOffsetScatterPlot}, ${yOffsetXAxis})`}>
@@ -172,6 +172,6 @@ const handleDotPointerLeft = (tooltipRef) => {
     tooltipRef.current.hideTooltip()
 }
 
-TermSpatialMapPanel.displayName = 'TermSpatialMapPanel'
+BinSpatialMapPanel.displayName = 'BinSpatialMapPanel'
 
-export default TermSpatialMapPanel
+export default BinSpatialMapPanel

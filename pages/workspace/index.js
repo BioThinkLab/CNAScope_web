@@ -190,7 +190,22 @@ const generateTaskInformationItems = (taskInformation) => {
         key: 'Status',
         label: 'Status',
         children: (
-            statusBadgeMap[statusMap[taskInformation['data']['status']]]
+            taskInformation['data']['status'] === 'P' ?
+                <Stack direction="row" spacing={3} sx={{alignItems: 'center'}}>
+                    {statusBadgeMap[statusMap[taskInformation['data']['status']]]}
+                    <Button
+                        style={{
+                            backgroundColor: '#E47443',
+                            color: 'rgb(255, 255, 255, 0.95)',
+                            border: '1px solid #E47443',
+                            borderRadius: '20px'
+                        }}
+                    >
+                        Pending Queue Position: {Number.parseInt(taskInformation['data']['position']) + 1}
+                    </Button>
+                </Stack>
+                :
+                statusBadgeMap[statusMap[taskInformation['data']['status']]]
         ),
         span: 2
     })

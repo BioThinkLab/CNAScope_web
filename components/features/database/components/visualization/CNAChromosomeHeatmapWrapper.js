@@ -83,7 +83,7 @@ const CNAChromosomeHeatmapWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    Bin-Level CNA Heatmap(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    Bin-Level CNA Heatmap (<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

@@ -182,12 +182,13 @@ const RecurrentCNAAnnotationModule = ({}) => {
                         borderBottom: '1px solid rgb(211, 211, 211)'
                     }}
                 >
-                    Recurrent CNA Annotation
+                    Consensus CNA Annotation
                 </Title>
                 <ActionButtonGroup
                     runDemoItems={runDemoItems}
                     viewResultItems={viewResultItems}
                     onHelp={onHelp}
+                    isAnalysis={true}
                 />
                 <AnalysisBasicAlert/>
                 <Card

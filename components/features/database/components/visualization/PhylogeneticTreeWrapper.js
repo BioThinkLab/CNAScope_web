@@ -65,7 +65,7 @@ const PhylogeneticTreeWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    CNA Phylogenetic Tree(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    CNA Phylogenetic Tree (<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

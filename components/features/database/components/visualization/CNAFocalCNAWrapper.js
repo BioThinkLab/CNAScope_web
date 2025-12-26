@@ -75,7 +75,7 @@ const CNAFocalCNAWrapper = ({
                         fontSize: '36px'
                     }}
                 >
-                    Focal CNA & Gene(<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
+                    Focal CNA & Gene (<CNTypePrompt CNType={dataset['cn_type']} iconStyle={{fontSize: '24px'}}/>)
                 </Box>
                 <Stack direction='row' spacing={2}>
                     <Button

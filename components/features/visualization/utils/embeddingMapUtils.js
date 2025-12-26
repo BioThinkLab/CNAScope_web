@@ -294,3 +294,34 @@ export const processTopCNVariances = (topCNVariances) => {
         termOptions
     }
 }
+
+export const processSpatialTopCNVariances = (topCNVariances) => {
+    const binOptions = []
+    const geneOptions = []
+    const termOptions = []
+
+    for (const item of topCNVariances) {
+        if (item['Type'] === 'Bin') {
+            binOptions.push({
+                value: item['id'],
+                moranI: item['Moran I']
+            })
+        } else if (item['Type'] === 'Gene') {
+            geneOptions.push({
+                value: item['id'],
+                moranI: item['Moran I']
+            })
+        } else if (item['Type'] === 'Term') {
+            termOptions.push({
+                value: item['id'],
+                moranI: item['Moran I']
+            })
+        }
+    }
+
+    return {
+        binOptions,
+        geneOptions,
+        termOptions
+    }
+}
